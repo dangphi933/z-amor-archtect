@@ -1,0 +1,16 @@
+🏛️ CƠ SỞ LÝ THUYẾT: MÔ HÌNH RỦI RO KÉP (DUAL-LAYER RISK MODEL)
+Hệ thống Z-ARMOR của bạn từ nay sẽ vận hành theo 2 lớp khiên:
+
+Lớp 1: Bọc thép Quỹ (Setup Modal - Hard Limits)
+
+Chứa các thông số daily_dd (Ví dụ 5%) và max_dd (Ví dụ 10%).
+
+Đây là Luật tử hình của quỹ. Hệ thống tự động dịch ra số tiền tuyệt đối (Ví dụ: Quỹ 100k -> Lỗ ngày tối đa $5,000, Lỗ tổng tối đa $10,000).
+
+Lớp 2: Ngân sách Tác chiến (AI Budget Modal - Tactical Limits)
+
+Chứa các thông số thực chiến do Sếp hoặc AI đề xuất tính bằng USD (daily_remaining và tactical_max_dd).
+
+Điều kiện sinh tồn: Ngân sách tác chiến BẮT BUỘC PHẢI NHỎ HƠN HOẶC BẰNG Bọc thép Quỹ.
+
+Ví dụ: AI đề xuất hôm nay chỉ nên mạo hiểm $1,500. Số này hợp lệ vì nhỏ hơn $5,000. Nếu user ngoan cố nhập $6,000 -> Hệ thống báo động đỏ và khóa nút Lưu!

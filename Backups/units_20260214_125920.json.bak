@@ -1,0 +1,13 @@
+{
+    "MainUnit": {
+        "alias": "FlyHome Z-Armor",
+        "account_id": "AUTO_SYNC",
+        "server": "AUTO_DETECT",
+        "risk_params": {
+            "daily_remaining": 500.0,
+            "max_dd": 10.0,
+            "consistency": 80.0
+        },
+        "is_locked": false
+    }
+}

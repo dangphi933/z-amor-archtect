@@ -1,0 +1,45 @@
+# =====================================================================
+# Z-ARMOR V7.0 CORE PHYSICS & THERMODYNAMICS CONFIGURATION
+# =====================================================================
+meta
+  version 7.0.0_SaaS
+  description Trái tim Nhiệt động lực học Quản lý Capacity, Z-Load và Damping.
+
+# 1. HẰNG SỐ SINH TỒN (CONSTITUTIONAL LIMITS)
+survival_limits
+  z_armor_retention_pct 97.0    # Sàn bảo vệ Giữ lại 97% vốn (Lỗ tối đa 3%ngày)
+  max_system_drawdown_pct 12.0  # Max Drawdown tuyệt đối (Kích hoạt Dead Zone)
+  optimal_rr_ratio 1.5          # Tỷ lệ RR lịch sử lý tưởng để tính Target Profit
+  entropy_discount_factor 0.85  # Hệ số chiết khấu rủi ro thị trường
+
+# 2. CÔNG THỨC TOÁN HỌC (MATHEMATICAL ENGINE)
+formulas
+  dynamic_capacity_cd daily_limit + total_pnl
+  z_load_pressure abs(total_stl)  max(dynamic_capacity_cd, 0.01)
+  optimal_target_profit (daily_limit  optimal_rr_ratio)  entropy_discount_factor
+
+# 3. MA TRẬN TRẠNG THÁI & LƯU CHẤT (FLOW REGIMES & DAMPING)
+flow_regimes
+  LAMINAR
+    z_load_range [0.0, 0.4]
+    damping_factor 1.0          # 100% Volume
+    action OPTIMAL_FLOW
+    color_hex #00ff9d
+
+  EROSION
+    z_load_range [0.4, 0.75]
+    damping_factor 0.5          # Bóp 50% Volume
+    action VOLUME_REDUCTION
+    color_hex #f5d300
+
+  TURBULENT
+    z_load_range [0.75, 1.0]
+    damping_factor 0.1          # Bóp 90% Volume (Micro-lots)
+    action HARD_CHOKE
+    color_hex #ff2a6d
+
+  CRITICAL_BREACH
+    z_load_range [1.0, 99.9]
+    damping_factor 0.0          # Khóa lệnh mới hoàn toàn
+    action DEFENSIVE_PROTOCOL
+    color_hex #ff0000

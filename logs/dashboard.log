@@ -1,0 +1,891 @@
+python-dotenv could not parse statement starting at line 17
+python-dotenv could not parse statement starting at line 17
+INFO:     Started server process [3968]
+INFO:     Waiting for application startup.
+[STARTUP] Z-Armor Cloud Engine V8.2 dang khoi dong...
+[STARTUP] OK — san sang nhan ket noi.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:49694 - "GET /health HTTP/1.1" 404 Not Found
+python-dotenv could not parse statement starting at line 17
+python-dotenv could not parse statement starting at line 17
+INFO:     Started server process [3884]
+INFO:     Waiting for application startup.
+[STARTUP] Z-Armor Cloud Engine V8.2 dang khoi dong...
+[STARTUP] OK — san sang nhan ket noi.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49734 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49735 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49738 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49739 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49741 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49742 - "POST /heartbeat HTTP/1.1" 200 OK
+python-dotenv could not parse statement starting at line 17
+python-dotenv could not parse statement starting at line 17
+INFO:     Started server process [1112]
+INFO:     Waiting for application startup.
+[STARTUP] Z-Armor Cloud Engine V8.2 dang khoi dong...
+[STARTUP] OK — san sang nhan ket noi.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49750 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49751 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     113.22.141.142:45409 - "GET / HTTP/1.1" 200 OK
+INFO:     113.22.141.142:45409 - "GET /SetupModal.js HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49752 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49755 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49756 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49759 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49761 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49764 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49765 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49766 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49767 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49768 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49769 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49772 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49773 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49774 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     Started server process [5804]
+INFO:     Waiting for application startup.
+[STARTUP] Z-Armor Cloud Engine V8.2 dang khoi dong...
+[STARTUP] OK — san sang nhan ket noi.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49780 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     113.22.141.142:13048 - "GET / HTTP/1.1" 200 OK
+INFO:     113.22.141.142:13048 - "GET /Cockpit.js HTTP/1.1" 200 OK
+INFO:     113.22.141.142:13436 - "GET /manifest.json HTTP/1.1" 200 OK
+INFO:     113.22.141.142:13048 - "GET /LeftColumn.js HTTP/1.1" 200 OK
+INFO:     113.22.141.142:23295 - "GET /RightColumn.js HTTP/1.1" 200 OK
+INFO:     113.22.141.142:23301 - "GET /SetupModal.js HTTP/1.1" 200 OK
+INFO:     113.22.141.142:39221 - "GET /MacroModal.js HTTP/1.1" 200 OK
+INFO:     113.22.141.142:18080 - "GET /AiGuardCenter.js HTTP/1.1" 200 OK
+INFO:     113.22.141.142:8152 - "GET /aiAgentEngine.js HTTP/1.1" 200 OK
+INFO:     113.22.141.142:13048 - "GET /CockpitPatches.js HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49781 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     113.22.141.142:45335 - "GET /web/ HTTP/1.1" 404 Not Found
+INFO:     113.22.141.142:45335 - "GET /favicon.ico HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49782 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     113.22.141.142:13432 - "GET /web/ HTTP/1.1" 404 Not Found
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49783 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49784 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49785 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49786 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49787 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49788 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     113.22.141.142:23305 - "GET /web/ HTTP/1.1" 404 Not Found
+INFO:     113.22.141.142:23305 - "GET /favicon.ico HTTP/1.1" 200 OK
+INFO:     113.22.141.142:23305 - "GET /web/ HTTP/1.1" 404 Not Found
+INFO:     113.22.141.142:23305 - "GET /favicon.ico HTTP/1.1" 200 OK
+INFO:     113.22.141.142:23305 - "GET / HTTP/1.1" 200 OK
+INFO:     113.22.141.142:23305 - "GET /Cockpit.js HTTP/1.1" 200 OK
+INFO:     113.22.141.142:23243 - "GET /manifest.json HTTP/1.1" 200 OK
+INFO:     113.22.141.142:23305 - "GET /LeftColumn.js HTTP/1.1" 200 OK
+INFO:     113.22.141.142:8178 - "GET /RightColumn.js HTTP/1.1" 200 OK
+INFO:     113.22.141.142:39555 - "GET /SetupModal.js HTTP/1.1" 200 OK
+INFO:     113.22.141.142:8184 - "GET /MacroModal.js HTTP/1.1" 200 OK
+INFO:     113.22.141.142:18057 - "GET /aiAgentEngine.js HTTP/1.1" 200 OK
+INFO:     113.22.141.142:23281 - "GET /AiGuardCenter.js HTTP/1.1" 200 OK
+INFO:     113.22.141.142:23305 - "GET /CockpitPatches.js HTTP/1.1" 200 OK
+INFO:     113.22.141.142:18060 - "GET /web/ HTTP/1.1" 404 Not Found
+INFO:     113.22.141.142:18060 - "GET /favicon.ico HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49789 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     113.22.141.142:13090 - "GET /web/ HTTP/1.1" 404 Not Found
+INFO:     113.22.141.142:13090 - "GET /favicon.ico HTTP/1.1" 200 OK
+INFO:     113.22.141.142:13090 - "GET /web/ HTTP/1.1" 404 Not Found
+INFO:     113.22.141.142:13090 - "GET /favicon.ico HTTP/1.1" 200 OK
+INFO:     113.22.141.142:13090 - "GET /web/ HTTP/1.1" 404 Not Found
+INFO:     113.22.141.142:13090 - "GET /favicon.ico HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49791 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49792 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49793 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49794 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49795 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49796 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49797 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49798 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49799 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49800 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49803 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49804 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49805 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49808 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49809 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49810 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49812 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49813 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49814 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49815 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49816 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49817 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49818 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49819 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49820 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:49821 - "POST /heartbeat HTTP/1.1" 200 OK
+^CINFO:     Started server process [1068]
+INFO:     Waiting for application startup.
+[STARTUP] Z-Armor Cloud Engine V8.2 dang khoi dong...
+[STARTUP] OK — san sang nhan ket noi.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50235 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50236 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50237 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50238 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     113.23.110.140:58916 - "GET /web/ HTTP/1.1" 404 Not Found
+INFO:     113.23.110.140:58916 - "GET /favicon.ico HTTP/1.1" 200 OK
+INFO:     113.23.110.140:58916 - "GET /RightColumn.js HTTP/1.1" 304 Not Modified
+INFO:     113.23.110.140:29673 - "GET /SetupModal.js HTTP/1.1" 304 Not Modified
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50239 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50241 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     113.23.110.140:8982 - "GET / HTTP/1.1" 200 OK
+INFO:     113.23.110.140:8982 - "GET /Cockpit.js HTTP/1.1" 200 OK
+INFO:     113.23.110.140:12934 - "GET /manifest.json HTTP/1.1" 200 OK
+INFO:     113.23.110.140:8982 - "GET /LeftColumn.js HTTP/1.1" 200 OK
+INFO:     113.23.110.140:33257 - "GET /RightColumn.js HTTP/1.1" 200 OK
+INFO:     113.23.110.140:61778 - "GET /SetupModal.js HTTP/1.1" 200 OK
+INFO:     113.23.110.140:6428 - "GET /MacroModal.js HTTP/1.1" 200 OK
+INFO:     113.23.110.140:55775 - "GET /AiGuardCenter.js HTTP/1.1" 200 OK
+INFO:     113.23.110.140:54786 - "GET /aiAgentEngine.js HTTP/1.1" 200 OK
+INFO:     113.23.110.140:8982 - "GET /CockpitPatches.js HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50242 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50243 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50244 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50245 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50262 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50263 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50264 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50266 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50267 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     113.23.110.140:58660 - "GET / HTTP/1.1" 200 OK
+INFO:     113.23.110.140:31486 - "GET /manifest.json HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50268 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     113.23.110.140:41086 - "GET / HTTP/1.1" 304 Not Modified
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50276 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50277 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50280 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50281 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50282 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50283 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50284 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50285 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50286 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50287 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50288 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50289 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50291 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50292 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50293 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50294 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50295 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50296 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50297 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50298 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50299 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50300 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50301 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50302 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50304 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50307 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50308 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50309 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50310 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50314 - "POST /heartbeat HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50315 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     Started server process [6304]
+INFO:     Waiting for application startup.
+[STARTUP] Z-Armor Cloud Engine V8.2 dang khoi dong...
+[STARTUP] OK — san sang nhan ket noi.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     113.23.110.140:28858 - "GET / HTTP/1.1" 200 OK
+INFO:     113.23.110.140:28858 - "GET /Cockpit.js HTTP/1.1" 200 OK
+INFO:     113.23.110.140:14920 - "GET /manifest.json HTTP/1.1" 200 OK
+INFO:     113.23.110.140:36074 - "GET /RightColumn.js HTTP/1.1" 200 OK
+INFO:     113.23.110.140:28858 - "GET /LeftColumn.js HTTP/1.1" 200 OK
+INFO:     113.23.110.140:54659 - "GET /SetupModal.js HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /MacroModal.js HTTP/1.1" 200 OK
+INFO:     113.23.110.140:17486 - "GET /AiGuardCenter.js HTTP/1.1" 200 OK
+INFO:     113.23.110.140:28858 - "GET /CockpitPatches.js HTTP/1.1" 200 OK
+INFO:     113.23.110.140:16377 - "GET /aiAgentEngine.js HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50321 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50322 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50323 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50324 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET / HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /Cockpit.js HTTP/1.1" 200 OK
+INFO:     113.23.110.140:33445 - "GET /manifest.json HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /LeftColumn.js HTTP/1.1" 200 OK
+INFO:     113.23.110.140:24119 - "GET /RightColumn.js HTTP/1.1" 200 OK
+INFO:     113.23.110.140:16910 - "GET /MacroModal.js HTTP/1.1" 200 OK
+INFO:     113.23.110.140:11393 - "GET /SetupModal.js HTTP/1.1" 200 OK
+INFO:     113.23.110.140:41210 - "GET /AiGuardCenter.js HTTP/1.1" 200 OK
+INFO:     113.23.110.140:40179 - "GET /aiAgentEngine.js HTTP/1.1" 200 OK
+INFO:     113.23.110.140:55354 - "GET /CockpitPatches.js HTTP/1.1" 200 OK
+INFO:     113.23.110.140:41210 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:16910 - "GET /api/sync-history/MainUnit HTTP/1.1" 200 OK
+INFO:     113.23.110.140:16910 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:16910 - "GET /api/init-data HTTP/1.1" 200 OK
+INFO:     113.23.110.140:16910 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:16910 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:16910 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:16910 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:16910 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:16910 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:16910 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:16910 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:16910 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:16910 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+[2026-03-06 07:15:51] [SENDING] CHAT_ID: 7976137362 | MSG: <b>[Z-ARMOR] Test ket noi thanh cong!</b> Bot da n... | RESP: Đang đẩy tín hiệu lên Telegram...
+INFO:     113.23.110.140:30922 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:30922 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:30922 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+[2026-03-06 07:15:53] [SUCCESS] CHAT_ID: 7976137362 | MSG: <b>[Z-ARMOR] Test ket noi thanh cong!</b> Bot da n... | RESP: HTTP 200 - Tin nhắn đã bay!
+INFO:     113.23.110.140:16910 - "POST /api/test-telegram HTTP/1.1" 200 OK
+INFO:     113.23.110.140:16910 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50326 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     113.23.110.140:16910 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:16910 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:16910 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:16910 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:16910 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:16910 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:16910 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:16910 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:16910 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:16910 - "POST /api/update-unit-config HTTP/1.1" 200 OK
+INFO:     113.23.110.140:54570 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:54570 - "POST /api/panic-kill HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50327 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50328 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:63410 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:57954 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50329 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     113.23.110.140:21776 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50330 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     113.23.110.140:3799 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50331 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     113.23.110.140:57562 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50332 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     113.23.110.140:47615 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50333 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     113.23.110.140:56470 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50334 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     113.23.110.140:28750 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50335 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     113.23.110.140:14705 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50336 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:7578 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     Started server process [2116]
+INFO:     Waiting for application startup.
+[STARTUP] Z-Armor Cloud Engine V8.2 dang khoi dong...
+[STARTUP] OK — san sang nhan ket noi.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     113.23.110.140:35538 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:35538 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:24833 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:24833 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50344 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     113.23.110.140:24833 - "GET / HTTP/1.1" 200 OK
+INFO:     113.23.110.140:24833 - "GET /Cockpit.js HTTP/1.1" 200 OK
+INFO:     113.23.110.140:45439 - "GET /manifest.json HTTP/1.1" 200 OK
+INFO:     113.23.110.140:24833 - "GET /LeftColumn.js HTTP/1.1" 200 OK
+INFO:     113.23.110.140:41877 - "GET /SetupModal.js HTTP/1.1" 200 OK
+INFO:     113.23.110.140:13479 - "GET /RightColumn.js HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /MacroModal.js HTTP/1.1" 200 OK
+INFO:     113.23.110.140:24833 - "GET /CockpitPatches.js HTTP/1.1" 200 OK
+INFO:     113.23.110.140:6927 - "GET /AiGuardCenter.js HTTP/1.1" 200 OK
+INFO:     113.23.110.140:52838 - "GET /aiAgentEngine.js HTTP/1.1" 200 OK
+INFO:     113.23.110.140:6927 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/sync-history/413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50369 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:4998 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+INFO:     113.23.110.140:16296 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50370 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     113.23.110.140:52766 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50371 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     113.23.110.140:12644 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50372 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     113.23.110.140:29083 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50373 - "POST /heartbeat HTTP/1.1" 200 OK
+INFO:     113.23.110.140:8954 - "GET /api/init-data?account_id=413408816 HTTP/1.1" 200 OK
+[HEARTBEAT] INVALID_KEY | account=413408816 key=ZARMOR-T-GFL...
+INFO:     47.129.1.31:50374 - "POST /heartbeat HTTP/1.1" 200 OK

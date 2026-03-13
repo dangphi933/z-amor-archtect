@@ -1,0 +1,163 @@
+//+------------------------------------------------------------------+
+//|                                              Z_Armor_Bridge.mq5  |
+//|                        Z-ARMOR CLOUD - XÚC TU THỰC THI (MQL5 EA) |
+//|                     Phiên bản: 5.2 (Advisory Mode - CHỈ TƯ VẤN)  |
+//+------------------------------------------------------------------+
+#property copyright "Phi - Z-Armor Commander"
+#property link      "https://z-armor.cloud"
+#property version   "5.20"
+#property description "Cầu nối Webhook - Chế độ quan sát, báo động rủi ro, KHÔNG can thiệp lệnh"
+
+#include <Trade\Trade.mqh>
+CTrade trade;
+
+// 🌐 ĐỊA CHỈ MÁY CHỦ CLOUD CỦA SẾP
+input string ServerURL = "http://47.129.1.31:8000"; 
+
+//+------------------------------------------------------------------+
+//| KHỞI TẠO HỆ THỐNG
+//+------------------------------------------------------------------+
+int OnInit() {
+    Print("🚀 [Z-ARMOR] BRIDGE KHỞI ĐỘNG (CHẾ ĐỘ CỐ VẤN). Đang kết nối tới: ", ServerURL);
+    trade.SetExpertMagicNumber(999999);
+    trade.SetDeviationInPoints(10); 
+    
+    EventSetTimer(1); // Bơm dữ liệu 1 giây/lần
+    return(INIT_SUCCEEDED);
+}
+
+void OnDeinit(const int reason) {
+    EventKillTimer();
+    Print("🛑 [Z-ARMOR] BRIDGE ĐÃ NGẮT KẾT NỐI KHỎI ĐÁM MÂY.");
+}
+
+void OnTimer() {
+    if (!TerminalInfoInteger(TERMINAL_CONNECTED)) return; 
+    SendHeartbeat();
+    SendPositions();
+}
+
+//+------------------------------------------------------------------+
+//| 1. TRẠM GỬI NHỊP TIM ĐẾN CLOUD
+//+------------------------------------------------------------------+
+void SendHeartbeat() {
+    string url = ServerURL + "/api/webhook/heartbeat";
+    
+    long account_id = AccountInfoInteger(ACCOUNT_LOGIN);
+    double balance = AccountInfoDouble(ACCOUNT_BALANCE);
+    double equity = AccountInfoDouble(ACCOUNT_EQUITY);
+    double margin = AccountInfoDouble(ACCOUNT_MARGIN);
+    
+    double daily_closed_profit = 0;
+    datetime today = TimeCurrent() - (TimeCurrent() % 86400); 
+    HistorySelect(today, TimeCurrent());
+    int total_deals = HistoryDealsTotal();
+    for(int i=0; i<total_deals; i++) {
+        ulong ticket = HistoryDealGetTicket(i);
+        long type = HistoryDealGetInteger(ticket, DEAL_TYPE);
+        if(type == DEAL_TYPE_BUY || type == DEAL_TYPE_SELL) {
+            daily_closed_profit += HistoryDealGetDouble(ticket, DEAL_PROFIT) + 
+                                   HistoryDealGetDouble(ticket, DEAL_COMMISSION) + 
+                                   HistoryDealGetDouble(ticket, DEAL_SWAP);
+        }
+    }
+
+    string json = StringFormat("{\"account_id\":\"%I64d\",\"balance\":%f,\"equity\":%f,\"margin\":%f,\"daily_closed_profit\":%f}", 
+                                account_id, balance, equity, margin, daily_closed_profit);
+    
+    char req_post[], req_result[]; string req_headers;
+    
+    // 🛠️ ĐÃ VÁ LỖI 422: Cắt bỏ ký tự tàng hình \0, ép chuẩn UTF-8
+    StringToCharArray(json, req_post, 0, StringLen(json), CP_UTF8);
+    
+    // Đã tăng thời gian chờ lên 5000ms để chống dội mạng
+    int res = WebRequest("POST", url, "Content-Type: application/json\r\n", 5000, req_post, req_result, req_headers);
+    
+    if (res == 200) {
+        string responseStr = CharArrayToString(req_result);
+        ProcessAICommands(responseStr);
+    } else {
+        // Đã tắt báo lỗi rác 5203 (Timeout mạng giật lùi)
+        if (GetLastError() != 5203) {
+            Print("⚠️ [HEARTBEAT] LỖI HTTP: ", res, " | LỖI MT5: ", GetLastError());
+        }
+    }
+}
+
+//+------------------------------------------------------------------+
+//| HÀM XỬ LÝ LỆNH TỪ CLOUD (ĐÃ BỊ TƯỚC VŨ KHÍ - CHỈ RÉO CHUÔNG)
+//+------------------------------------------------------------------+
+void ProcessAICommands(string response) {
+    // 1. Nếu chạm Trần Quỹ -> Réo còi Báo động đỏ
+    if (StringFind(response, "SCRAM") >= 0) {
+        Print("🆘 [CẢNH BÁO SCRAM] TÀI KHOẢN ĐANG CHẠM TRẦN TỬ THỦ! (Bot ở chế độ Cố vấn nên KHÔNG tự cắt lệnh)");
+    }
+    
+    // 2. Nếu vi phạm Ngân sách Tác chiến -> Chỉ điểm lệnh vi phạm
+    int kill_idx = StringFind(response, "KILL_");
+    while(kill_idx >= 0) {
+        string sub = StringSubstr(response, kill_idx + 5); 
+        string ticket_str = "";
+        
+        for(int i=0; i<StringLen(sub); i++) {
+            ushort c = StringGetCharacter(sub, i);
+            if(c >= '0' && c <= '9') ticket_str += ShortToString(c);
+            else break; 
+        }
+        
+        if(StringLen(ticket_str) > 0) {
+            ulong ticket_to_kill = StringToInteger(ticket_str);
+            if(PositionSelectByTicket(ticket_to_kill)) {
+                // 🛑 Lệnh trade.PositionClose() ĐÃ BỊ VÔ HIỆU HÓA
+                Print("⚠️ [AI ADVISOR] Lệnh #", ticket_to_kill, " đang VI PHẠM KỶ LUẬT (Z-Load đỏ)! Sếp hãy tự xem xét cắt tay.");
+            }
+        }
+        
+        kill_idx = StringFind(response, "KILL_", kill_idx + 5);
+    }
+}
+
+//+------------------------------------------------------------------+
+//| 2. TRẠM GỬI THÔNG TIN VỊ THẾ CHI TIẾT
+//+------------------------------------------------------------------+
+void SendPositions() {
+    string url = ServerURL + "/api/webhook/positions";
+    long account_id = AccountInfoInteger(ACCOUNT_LOGIN);
+    
+    string json = "{\"account_id\":\"" + IntegerToString(account_id) + "\",\"positions\":[";
+    int total = PositionsTotal();
+    
+    for(int i=0; i<total; i++) {
+        ulong ticket = PositionGetTicket(i);
+        string symbol = PositionGetString(POSITION_SYMBOL);
+        long type = PositionGetInteger(POSITION_TYPE);
+        double volume = PositionGetDouble(POSITION_VOLUME);
+        double open_price = PositionGetDouble(POSITION_PRICE_OPEN);
+        double sl = PositionGetDouble(POSITION_SL);
+        double tp = PositionGetDouble(POSITION_TP);
+        double profit = PositionGetDouble(POSITION_PROFIT);
+        
+        double sl_money = 0, tp_money = 0;
+        double tick_value = SymbolInfoDouble(symbol, SYMBOL_TRADE_TICK_VALUE);
+        double tick_size = SymbolInfoDouble(symbol, SYMBOL_TRADE_TICK_SIZE);
+        
+        if (sl > 0 && tick_size > 0) sl_money = -(MathAbs(open_price - sl) / tick_size) * tick_value * volume;
+        if (tp > 0 && tick_size > 0) tp_money = (MathAbs(tp - open_price) / tick_size) * tick_value * volume;
+
+        string posJson = StringFormat("{\"ticket\":%I64u,\"symbol\":\"%s\",\"type\":%d,\"volume\":%f,\"open_price\":%f,\"sl\":%f,\"tp\":%f,\"profit\":%f,\"sl_money\":%f,\"tp_money\":%f}",
+                                      ticket, symbol, type, volume, open_price, sl, tp, profit, sl_money, tp_money);
+        json += posJson;
+        if(i < total - 1) json += ",";
+    }
+    json += "]}";
+    
+    char req_post[], req_result[]; string req_headers;
+    
+    // 🛠️ ĐÃ VÁ LỖI 422: Cắt bỏ ký tự tàng hình \0, ép chuẩn UTF-8
+    StringToCharArray(json, req_post, 0, StringLen(json), CP_UTF8);
+    
+    int res = WebRequest("POST", url, "Content-Type: application/json\r\n", 5000, req_post, req_result, req_headers);
+    if (res != 200 && GetLastError() != 5203) {
+        Print("⚠️ [POSITIONS] LỖI HTTP: ", res, " | LỖI MT5: ", GetLastError());
+    }
+}

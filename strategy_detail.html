@@ -1,0 +1,1810 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Z-ARMOR · Strategy Detail</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #060A12;
+  --surface:  #0C1420;
+  --card:     #0F1928;
+  --border:   #1C2B3A;
+  --border2:  #243548;
+  --blue:     #00B4D8;
+  --cyan:     #00E5FF;
+  --green:    #00C875;
+  --orange:   #FFA500;
+  --red:      #E53935;
+  --gold:     #FFD700;
+  --text:     #E0E0E0;
+  --dim:      #556677;
+  --dimmer:   #2A3A4A;
+  --navy:     #1A2535;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Syne', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--mono);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── SCANLINE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,180,216,0.012) 2px,
+    rgba(0,180,216,0.012) 4px
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── GRID BG ── */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,180,216,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,180,216,0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── TOP BAR ── */
+.topbar {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(6,10,18,0.95);
+  border-bottom: 1px solid var(--border2);
+  backdrop-filter: blur(12px);
+  padding: 0 24px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.topbar-left {
+  display: flex; align-items: center; gap: 12px;
+}
+.logo {
+  font-family: var(--sans);
+  font-size: 14px; font-weight: 800;
+  letter-spacing: 2px;
+  color: #fff;
+}
+.logo span { color: var(--cyan); }
+.topbar-tag {
+  font-size: 10px; letter-spacing: 1.5px;
+  color: var(--dim);
+  border: 1px solid var(--border2);
+  padding: 2px 8px; border-radius: 2px;
+  text-transform: uppercase;
+}
+.topbar-right {
+  display: flex; align-items: center; gap: 16px;
+  font-size: 11px;
+}
+.live-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green);
+  animation: pulse-dot 2s ease-in-out infinite;
+  display: inline-block;
+}
+@keyframes pulse-dot {
+  0%,100% { opacity:1; box-shadow: 0 0 4px var(--green); }
+  50%      { opacity:0.4; box-shadow: none; }
+}
+.last-update { color: var(--dim); font-size: 10px; }
+
+/* ── MAIN LAYOUT ── */
+.main {
+  position: relative; z-index: 1;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 20px 60px;
+}
+
+/* ── PAGE HEADER ── */
+.page-header {
+  margin-bottom: 24px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.page-header-left {}
+.profile-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(0,200,117,0.08);
+  border: 1px solid rgba(0,200,117,0.25);
+  border-radius: 3px;
+  padding: 3px 10px;
+  font-size: 10px; letter-spacing: 1px;
+  color: var(--green);
+  margin-bottom: 10px;
+}
+.profile-badge::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green); animation: pulse-dot 2s infinite;
+}
+.page-title {
+  font-family: var(--sans);
+  font-size: 28px; font-weight: 800;
+  letter-spacing: -0.5px;
+  color: #fff;
+  line-height: 1.1;
+}
+.page-title span { color: var(--cyan); }
+.page-subtitle {
+  margin-top: 6px;
+  font-size: 11px; color: var(--dim);
+  letter-spacing: 0.5px;
+}
+
+.switch-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 11px; letter-spacing: 1px;
+  padding: 8px 16px; border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.switch-btn:hover {
+  background: rgba(0,180,216,0.1);
+  border-color: var(--blue);
+  color: var(--cyan);
+}
+.switch-btn .icon { font-size: 14px; }
+
+/* ── SECTION CARD ── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  position: relative;
+}
+.card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 1px;
+}
+.card.blue-accent::before  { background: linear-gradient(90deg, transparent, var(--blue), transparent); }
+.card.green-accent::before { background: linear-gradient(90deg, transparent, var(--green), transparent); }
+.card.orange-accent::before { background: linear-gradient(90deg, transparent, var(--orange), transparent); }
+.card.cyan-accent::before  { background: linear-gradient(90deg, transparent, var(--cyan), transparent); }
+
+.card-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(0,0,0,0.2);
+}
+.card-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  flex-shrink: 0;
+}
+.dot-blue   { background: var(--blue); }
+.dot-green  { background: var(--green); }
+.dot-orange { background: var(--orange); }
+.dot-cyan   { background: var(--cyan); }
+.dot-dim    { background: var(--dimmer); }
+
+.card-title {
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--dim);
+}
+.card-body { padding: 14px; }
+
+/* ── PROFILE HERO ── */
+.profile-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.hero-cell {
+  background: var(--surface);
+  padding: 12px 14px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.hero-label { font-size: 9px; letter-spacing: 1.5px; color: var(--dim); text-transform: uppercase; }
+.hero-value { font-size: 16px; font-weight: 700; font-family: var(--sans); }
+.hero-value.blue   { color: var(--blue); }
+.hero-value.green  { color: var(--green); }
+.hero-value.orange { color: var(--orange); }
+.hero-value.white  { color: #fff; }
+.hero-sub { font-size: 9px; color: var(--dimmer); }
+
+/* ── FLOW DIAGRAM ── */
+.flow-wrap {
+  background: rgba(5,8,16,0.8);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 16px;
+  margin-bottom: 16px;
+  overflow-x: auto;
+}
+.flow-title {
+  font-size: 9px; letter-spacing: 2px;
+  color: var(--dimmer); text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.flow-diagram {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 560px;
+}
+.flow-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.flow-node {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 6px 10px;
+  border-radius: 3px;
+  font-size: 9px; font-weight: 700;
+  text-align: center;
+  min-width: 68px;
+  line-height: 1.3;
+}
+.fn-cloud  { background: rgba(0,180,216,0.1);  color: var(--blue);   border: 1px solid rgba(0,180,216,0.3); }
+.fn-filter { background: rgba(255,165,0,0.08); color: var(--orange); border: 1px solid rgba(255,165,0,0.25); }
+.fn-safety { background: rgba(229,57,53,0.08); color: var(--red);    border: 1px solid rgba(229,57,53,0.2); }
+.fn-size   { background: rgba(0,229,255,0.06); color: var(--cyan);   border: 1px solid rgba(0,229,255,0.2); }
+.fn-exec   { background: rgba(0,200,117,0.1);  color: var(--green);  border: 1px solid rgba(0,200,117,0.25); }
+.fn-sess   { background: rgba(76,175,80,0.08); color: #4CAF50;       border: 1px solid rgba(76,175,80,0.2); }
+.fn-dir    { background: rgba(121,134,203,0.08);color: #7986CB;      border: 1px solid rgba(121,134,203,0.2); }
+
+.flow-arrow {
+  color: var(--dimmer); font-size: 13px;
+  flex-shrink: 0;
+}
+.flow-strip {
+  display: flex; align-items: center; gap: 0;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+.strip-cell {
+  padding: 5px 12px;
+  display: flex; align-items: center; gap: 6px;
+  border-right: 1px solid var(--border);
+  flex: 1;
+}
+.strip-cell:last-child { border-right: none; }
+.strip-lbl { font-size: 9px; color: var(--dim); }
+.strip-val { font-size: 11px; font-weight: 700; }
+
+/* ── DATA ROWS ── */
+.data-rows { display: flex; flex-direction: column; gap: 2px; }
+.data-row {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  align-items: center;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(28,43,58,0.5);
+  gap: 12px;
+}
+.data-row:last-child { border-bottom: none; }
+.dr-label { font-size: 10px; color: var(--dim); }
+.dr-value { font-size: 11px; font-weight: 600; }
+.dr-value.blue   { color: var(--blue); }
+.dr-value.green  { color: var(--green); }
+.dr-value.orange { color: var(--orange); }
+.dr-value.white  { color: var(--text); }
+
+/* badge */
+.badge {
+  display: inline-block; padding: 2px 8px;
+  border-radius: 2px; font-size: 10px; font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.b-blue   { background: rgba(0,180,216,0.12); color: var(--blue);   border: 1px solid rgba(0,180,216,0.25); }
+.b-green  { background: rgba(0,200,117,0.12); color: var(--green);  border: 1px solid rgba(0,200,117,0.25); }
+.b-orange { background: rgba(255,165,0,0.12); color: var(--orange); border: 1px solid rgba(255,165,0,0.2); }
+.b-cyan   { background: rgba(0,229,255,0.08); color: var(--cyan);   border: 1px solid rgba(0,229,255,0.2); }
+.b-red    { background: rgba(229,57,53,0.1);  color: var(--red);    border: 1px solid rgba(229,57,53,0.2); }
+.b-dim    { background: rgba(42,58,74,0.5);   color: #668899;       border: 1px solid var(--border); }
+
+/* ── POSITION BAR ── */
+.pos-bar-wrap { display: flex; align-items: center; gap: 8px; flex: 1; }
+.pos-bar {
+  flex: 1; height: 6px; border-radius: 3px;
+  background: var(--dimmer); overflow: hidden;
+  position: relative;
+}
+.pos-bar-fill {
+  height: 100%; border-radius: 3px;
+  transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+}
+.fill-green  { background: linear-gradient(90deg, #00A060, #00C875); }
+.fill-blue   { background: linear-gradient(90deg, #0090B0, #00B4D8); }
+.fill-orange { background: linear-gradient(90deg, #CC8000, #FFA500); }
+.fill-red    { background: linear-gradient(90deg, #AA1A1A, #E53935); }
+.fill-cyan   { background: linear-gradient(90deg, #009BB0, #00E5FF); }
+.pos-bar-val { font-size: 12px; font-weight: 700; min-width: 36px; text-align: right; }
+.pos-bar-ticks {
+  display: flex; font-size: 8px; color: var(--dimmer);
+  padding: 0 2px;
+  margin-top: 2px;
+}
+.pos-bar-ticks span:first-child { margin-right: auto; }
+.pos-bar-ticks span:last-child  { }
+
+/* ── CHECK ROWS (Section C) ── */
+.check-rows { display: flex; flex-direction: column; gap: 3px; }
+.check-row {
+  display: grid;
+  grid-template-columns: 20px 1fr 70px 16px 1fr;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+  border-radius: 3px;
+  border-left: 3px solid transparent;
+  font-size: 10px;
+}
+.cr-ok   { border-left-color: var(--green);  background: rgba(0,200,117,0.04); }
+.cr-warn { border-left-color: var(--orange); background: rgba(255,165,0,0.04); }
+.cr-err  { border-left-color: var(--red);    background: rgba(229,57,53,0.05); }
+.cr-icon { text-align: center; font-size: 12px; }
+.cr-ok   .cr-icon { color: var(--green); }
+.cr-warn .cr-icon { color: var(--orange); }
+.cr-err  .cr-icon { color: var(--red); }
+.cr-name  { color: var(--dim); }
+.cr-local { color: #778899; text-align: right; font-size: 10px; }
+.cr-arrow { color: var(--dimmer); text-align: center; }
+.cr-advice { font-size: 10px; }
+.cr-ok   .cr-advice { color: var(--green); }
+.cr-warn .cr-advice { color: var(--orange); }
+.cr-err  .cr-advice { color: var(--red); }
+
+.health-bar-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 8px 2px;
+  font-size: 10px;
+}
+.health-lbl { color: var(--dim); }
+.health-bar { flex:1; height:5px; background: var(--dimmer); border-radius:3px; overflow:hidden; }
+.health-fill { height:100%; border-radius:3px; background: linear-gradient(90deg,#00A060,#00C875); }
+.health-val { font-weight:700; color: var(--green); min-width:32px; text-align:right; }
+
+/* ── SCOPE GRID (Section D) ── */
+.scope-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.scope-cell {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 10px 12px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.scope-lbl { font-size: 9px; letter-spacing: 1px; color: var(--dim); text-transform: uppercase; }
+.scope-val { font-size: 13px; font-weight: 700; color: var(--blue); }
+.scope-val.ok { color: var(--green); }
+.scope-val.mismatch { color: var(--orange); }
+.scope-note { font-size: 9px; color: var(--dimmer); }
+
+/* ── STRATEGY CARDS (switcher) ── */
+.switcher-section {
+  margin-top: 24px;
+  border-top: 1px solid var(--border);
+  padding-top: 24px;
+}
+.switcher-title {
+  font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--dim); margin-bottom: 12px;
+  display: flex; align-items: center; gap: 10px;
+}
+.switcher-title::after {
+  content: ''; flex:1; height:1px; background: var(--border);
+}
+.strategy-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.strategy-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.strategy-card:hover {
+  border-color: var(--border2);
+  background: rgba(15,25,40,0.9);
+  transform: translateY(-1px);
+}
+.strategy-card.active {
+  border-color: var(--green);
+  background: rgba(0,200,117,0.05);
+}
+.strategy-card.active::before {
+  content: 'ACTIVE';
+  position: absolute; top: 8px; right: 8px;
+  font-size: 8px; letter-spacing: 1px;
+  color: var(--green);
+  background: rgba(0,200,117,0.12);
+  border: 1px solid rgba(0,200,117,0.3);
+  padding: 1px 5px; border-radius: 2px;
+}
+.sc-id {
+  font-size: 20px; font-weight: 800;
+  font-family: var(--sans);
+  margin-bottom: 4px;
+}
+.s1-color { color: var(--gold); }
+.s2-color { color: var(--blue); }
+.s3-color { color: var(--orange); }
+.sc-name { font-size: 10px; color: var(--dim); margin-bottom: 10px; letter-spacing: 0.5px; }
+.sc-stats { display: flex; flex-direction: column; gap: 3px; }
+.sc-stat { display: flex; justify-content: space-between; font-size: 9px; }
+.sc-stat-k { color: var(--dimmer); }
+.sc-stat-v { font-weight: 700; }
+.sc-btn {
+  margin-top: 12px;
+  width: 100%; padding: 7px;
+  background: transparent;
+  border: 1px solid var(--border2);
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 9px; letter-spacing: 1px;
+  text-transform: uppercase;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.sc-btn:hover {
+  border-color: var(--blue);
+  color: var(--cyan);
+  background: rgba(0,180,216,0.06);
+}
+.strategy-card.active .sc-btn {
+  border-color: rgba(0,200,117,0.3);
+  color: var(--green);
+}
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 24px; right: 24px; z-index: 999;
+  background: var(--surface);
+  border: 1px solid var(--green);
+  border-radius: 4px;
+  padding: 12px 20px;
+  font-size: 11px;
+  color: var(--green);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5), 0 0 20px rgba(0,200,117,0.1);
+  transform: translateY(80px); opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  pointer-events: none;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.error { border-color: var(--red); color: var(--red); box-shadow: 0 4px 24px rgba(0,0,0,0.5), 0 0 20px rgba(229,57,53,0.1); }
+
+/* ── LOADING ── */
+.loading-overlay {
+  position: fixed; inset: 0; z-index: 500;
+  background: var(--bg);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 16px;
+}
+.loading-spinner {
+  width: 40px; height: 40px;
+  border: 2px solid var(--border);
+  border-top-color: var(--cyan);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-size: 11px; color: var(--dim); letter-spacing: 2px; }
+
+/* ── SKELETON ── */
+.skel {
+  display: inline-block; min-width: 60px; height: 14px;
+  background: linear-gradient(90deg, var(--border) 25%, var(--border2) 50%, var(--border) 75%);
+  background-size: 200% 100%;
+  animation: skel-shimmer 1.2s infinite;
+  border-radius: 2px; vertical-align: middle;
+}
+@keyframes skel-shimmer { to { background-position: -200% 0; } }
+
+/* ── SECTION LABEL ── */
+.section-label {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--blue); margin-bottom: 12px;
+}
+.section-label::after {
+  content: ''; flex:1; height:1px; background: var(--border);
+}
+
+/* responsive */
+@media (max-width: 640px) {
+  .profile-hero { grid-template-columns: 1fr 1fr; }
+  .strategy-cards { grid-template-columns: 1fr; }
+  .scope-grid { grid-template-columns: 1fr; }
+  .page-header { flex-direction: column; }
+  .flow-diagram { min-width: 480px; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   VISUAL MODEL SECTION — signal flow, entry zone, radar, timeline
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── VISUAL SECTION WRAPPER ── */
+.visual-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.visual-section-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.vs-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+.vs-title { font-size: 10px; letter-spacing: 3px; font-weight: 700; }
+.vs-body { padding: 16px; }
+
+/* ── SIGNAL FLOW NODES ── */
+.flow-nodes {
+  display: grid;
+  grid-template-columns: 1fr 28px 1fr 28px 1fr 28px 1fr 28px 1fr;
+  align-items: stretch; gap: 0; margin-bottom: 12px;
+}
+.fn-box {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 4px; padding: 10px 10px 8px;
+  transition: border-color .3s, box-shadow .3s, background .3s;
+  min-width: 0;
+}
+.fn-box.fn-active {
+  border-color: var(--fn-c, var(--blue));
+  box-shadow: 0 0 16px color-mix(in srgb, var(--fn-c, var(--blue)) 15%, transparent),
+              inset 0 0 20px color-mix(in srgb, var(--fn-c, var(--blue)) 8%, transparent);
+  background: color-mix(in srgb, var(--fn-c, var(--blue)) 5%, var(--surface));
+}
+.fn-box.fn-blocked {
+  border-color: var(--red) !important;
+  background: color-mix(in srgb, var(--red) 7%, var(--surface)) !important;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--red) 12%, transparent) !important;
+  opacity: .75;
+}
+.fn-lbl { font-size: 8px; color: var(--dim); letter-spacing: 2px; margin-bottom: 5px; }
+.fn-val {
+  font-size: 15px; font-weight: 700;
+  color: var(--fn-c, var(--text));
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.fn-sub { font-size: 9px; color: var(--dim); margin-top: 3px; line-height:1.3; }
+.fn-bar { height: 2px; border-radius:1px; background:var(--border); margin-top:7px; overflow:hidden; }
+.fn-bar-fill {
+  height:100%; border-radius:1px;
+  background: var(--fn-c, var(--blue));
+  transition: width 1s cubic-bezier(.4,0,.2,1);
+}
+
+/* flow arrows */
+.fn-arrow {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: var(--dimmer);
+  transition: color .3s;
+}
+.fn-arrow.arr-ok   { color: var(--green); }
+.fn-arrow.arr-warn { color: var(--orange); }
+.fn-arrow.arr-block{ color: var(--red); }
+
+/* flow row 2 */
+.flow-sub-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 10px;
+  background: color-mix(in srgb, var(--blue) 4%, var(--surface));
+  border: 1px solid var(--border); border-radius: 3px;
+  font-size: 9px; color: var(--dim);
+}
+.flow-sub-row span { color: var(--text); }
+.flow-sub-row .fsr-sep { color: var(--dimmer); }
+
+/* ── ENTRY ZONE CHART ── */
+.entry-canvas-wrap {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px; overflow: hidden;
+  height: 180px;
+}
+.entry-canvas-wrap svg { width:100%; height:100%; display:block; }
+
+/* ── VISUAL GRID (radar + timeline) ── */
+.visual-2col {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+@media (max-width: 640px) {
+  .visual-2col { grid-template-columns: 1fr; }
+  .flow-nodes  { grid-template-columns: 1fr 20px 1fr 20px 1fr; }
+}
+
+/* ── RADAR ── */
+.radar-wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.radar-svg  { display: block; }
+.radar-legend {
+  display: flex; flex-wrap: wrap; gap: 6px 12px;
+  justify-content: center;
+}
+.rl-item { display: flex; align-items: center; gap: 4px; font-size: 9px; color: var(--dim); }
+.rl-dot  { width:5px; height:5px; border-radius:50%; }
+
+/* ── TIMELINE ── */
+.tl-title {
+  font-size: 9px; color: var(--dim); letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+.tl-bars { display: flex; gap: 3px; align-items: flex-end; height: 90px; }
+.tl-bar {
+  flex: 1; border-radius: 2px 2px 0 0;
+  cursor: pointer; transition: opacity .15s, filter .15s; min-width: 12px;
+  position: relative;
+}
+.tl-bar:hover { filter: brightness(1.3); }
+.tl-days { display: flex; gap: 3px; margin-top: 4px; }
+.tl-day  { flex: 1; font-size: 8px; color: var(--dimmer); text-align: center; }
+
+/* compare bars */
+.cmp-section { margin-top: 14px; }
+.cmp-title { font-size: 9px; letter-spacing: 2px; color: var(--dim); margin-bottom: 10px; }
+.cmp-metric { margin-bottom: 10px; }
+.cmp-mlbl { font-size: 9px; color: var(--dim); margin-bottom: 5px; }
+.cmp-row { display: flex; align-items: center; gap: 8px; margin-bottom: 3px; }
+.cmp-id  { font-size: 9px; width: 24px; font-weight: 700; }
+.cmp-track { flex:1; height:5px; background:var(--border); border-radius:3px; overflow:hidden; }
+.cmp-fill  { height:100%; border-radius:3px; transition: width 1.2s .2s cubic-bezier(.4,0,.2,1); }
+.cmp-val   { font-size: 9px; width: 32px; text-align: right; }
+
+/* tooltip */
+.viz-tooltip {
+  position: fixed; background: var(--surface);
+  border: 1px solid var(--border2); border-radius: 4px;
+  padding: 6px 10px; font-size: 10px; pointer-events: none;
+  z-index: 200; opacity: 0; transition: opacity .15s; white-space: nowrap;
+}
+</style>
+</head>
+<body>
+
+<!-- Loading -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">FETCHING STRATEGY PROFILE...</div>
+</div>
+
+<!-- Top bar -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo">Z-<span>ARMOR</span></div>
+    <div class="topbar-tag">Strategy Detail</div>
+  </div>
+  <div class="topbar-right">
+    <span class="live-dot"></span>
+    <span class="last-update" id="lastUpdate">--</span>
+  </div>
+</div>
+
+<!-- Main -->
+<div class="main">
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="profile-badge" id="profileBadge">CLOUD CONNECTED</div>
+      <div class="page-title">Strategy <span id="strategyIdTitle">--</span></div>
+      <div class="page-subtitle" id="profileNameSub">Loading profile...</div>
+    </div>
+    <a class="switch-btn" href="javascript:void(0)" onclick="scrollToSwitcher()">
+      <span class="icon">⇄</span> Switch Strategy
+    </a>
+  </div>
+
+  <!-- Profile Hero -->
+  <div class="profile-hero" id="profileHero">
+    <div class="hero-cell">
+      <div class="hero-label">Entry Mode</div>
+      <div class="hero-value blue" id="hEntry"><span class="skel"></span></div>
+      <div class="hero-sub" id="hEntryDir">--</div>
+    </div>
+    <div class="hero-cell">
+      <div class="hero-label">Min Score</div>
+      <div class="hero-value orange" id="hMinScore"><span class="skel"></span></div>
+      <div class="hero-sub" id="hScoreLive">live: --</div>
+    </div>
+    <div class="hero-cell">
+      <div class="hero-label">Risk/Reward</div>
+      <div class="hero-value white" id="hRR"><span class="skel"></span></div>
+      <div class="hero-sub" id="hRiskMode">--</div>
+    </div>
+    <div class="hero-cell">
+      <div class="hero-label">Session</div>
+      <div class="hero-value green" id="hSession"><span class="skel"></span></div>
+      <div class="hero-sub">optimal window</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       FLOW DIAGRAM
+  ═══════════════════════════════════════════ -->
+  <div class="card blue-accent">
+    <div class="card-header">
+      <div class="card-dot dot-blue"></div>
+      <div class="card-title">◈ Strategy Flow Model</div>
+    </div>
+    <div class="card-body">
+      <div class="flow-title">Signal processing pipeline — left to right</div>
+      <div class="flow-wrap" style="padding:12px 8px; margin:0;">
+        <div class="flow-diagram">
+          <!-- Row 1 -->
+          <div class="flow-row">
+            <div class="flow-node fn-cloud">ZCloud<br>Score</div>
+            <div class="flow-arrow">+</div>
+            <div class="flow-node fn-dir" id="fl_dir">Direction<br>Mode</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node fn-filter" id="fl_gate">Gate<br>Filter</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node fn-safety">Safety<br>Net</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node fn-size">Sizer</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node fn-exec">ORDER</div>
+          </div>
+          <!-- Row 2 -->
+          <div class="flow-row" style="padding-left:78px;">
+            <div class="flow-node fn-sess" id="fl_sess">Session<br>+ MinScore</div>
+            <div class="flow-arrow">↗</div>
+            <div style="flex:1; font-size:9px; color:var(--dimmer); padding-left:8px;">
+              profile.entry_type = <span id="fl_entry_type" style="color:var(--blue)">--</span>
+              &nbsp;·&nbsp; min_score = <span id="fl_min_score" style="color:var(--orange)">--</span>
+            </div>
+          </div>
+          <!-- Live strip -->
+          <div class="flow-strip" style="margin-top:8px;">
+            <div class="strip-cell">
+              <span class="strip-lbl">Gate</span>
+              <span class="strip-val" id="strip_gate" style="color:var(--green)">--</span>
+            </div>
+            <div class="strip-cell">
+              <span class="strip-lbl">Pos%</span>
+              <span class="strip-val" id="strip_pos" style="color:var(--cyan)">--</span>
+            </div>
+            <div class="strip-cell">
+              <span class="strip-lbl">SL mult</span>
+              <span class="strip-val" id="strip_sl" style="color:var(--text)">--</span>
+            </div>
+            <div class="strip-cell">
+              <span class="strip-lbl">RR</span>
+              <span class="strip-val" id="strip_rr" style="color:var(--text)">--</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       SECTION A — REGIME & ENTRY
+  ═══════════════════════════════════════════ -->
+  <div class="card green-accent">
+    <div class="card-header">
+      <div class="card-dot dot-green"></div>
+      <div class="card-title">A — Regime & Entry</div>
+    </div>
+    <div class="card-body">
+      <div class="data-rows">
+        <div class="data-row">
+          <div class="dr-label">Entry type</div>
+          <div class="dr-value blue"><span id="a_entry" class="badge b-blue">--</span></div>
+        </div>
+        <div class="data-row">
+          <div class="dr-label">Direction</div>
+          <div class="dr-value" id="a_dir">--</div>
+        </div>
+        <div class="data-row">
+          <div class="dr-label">Session</div>
+          <div class="dr-value" id="a_session">--</div>
+        </div>
+        <div class="data-row">
+          <div class="dr-label">Min score</div>
+          <div style="display:flex; align-items:center; gap:12px; flex:1;">
+            <span class="dr-value orange" id="a_min_score">--</span>
+            <span style="font-size:10px; color:var(--dim)">
+              current: <span id="a_live_score" style="color:var(--green); font-weight:700">--</span>
+              <span id="a_score_status"></span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       SECTION B — SIZING & RISK
+  ═══════════════════════════════════════════ -->
+  <div class="card blue-accent">
+    <div class="card-header">
+      <div class="card-dot dot-blue"></div>
+      <div class="card-title">B — Sizing & Risk</div>
+    </div>
+    <div class="card-body">
+      <div class="data-rows">
+        <div class="data-row">
+          <div class="dr-label">Risk mode</div>
+          <div><span id="b_risk_mode" class="badge b-orange">--</span></div>
+        </div>
+        <div class="data-row">
+          <div class="dr-label">Gate → Pos%</div>
+          <div style="flex:1; display:flex; flex-direction:column; gap:4px;">
+            <div class="pos-bar-wrap">
+              <div class="pos-bar">
+                <div class="pos-bar-fill fill-green" id="b_pos_bar" style="width:0%"></div>
+              </div>
+              <div class="pos-bar-val" id="b_pos_val" style="color:var(--green)">--%</div>
+            </div>
+            <div class="pos-bar-ticks">
+              <span>0</span>
+              <span style="margin:0 auto;">50%</span>
+              <span>SCALE 125%</span>
+            </div>
+          </div>
+        </div>
+        <div class="data-row">
+          <div class="dr-label">Eff. lot factor</div>
+          <div class="dr-value" style="color:var(--dim); font-size:10px;" id="b_eff_lot">pos × damping × exposure</div>
+        </div>
+        <div class="data-row">
+          <div class="dr-label">SL multiplier</div>
+          <div class="dr-value white" id="b_sl">-- × ATR</div>
+        </div>
+        <div class="data-row">
+          <div class="dr-label">RR ratio</div>
+          <div class="dr-value white" id="b_rr">1 : --</div>
+        </div>
+        <div class="data-row">
+          <div class="dr-label">Trailing SL</div>
+          <div class="dr-value" id="b_tsl">--</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       SECTION C — INPUT vs CLOUD CHECK
+  ═══════════════════════════════════════════ -->
+  <div class="card orange-accent">
+    <div class="card-header">
+      <div class="card-dot dot-orange"></div>
+      <div class="card-title">C — Input vs Cloud Check</div>
+    </div>
+    <div class="card-body">
+      <div style="display:grid; grid-template-columns:20px 1fr 70px 16px 1fr; gap:6px; padding:0 8px; margin-bottom:6px;">
+        <div></div>
+        <div style="font-size:9px; color:var(--dimmer);">param</div>
+        <div style="font-size:9px; color:var(--dimmer); text-align:right;">local</div>
+        <div></div>
+        <div style="font-size:9px; color:var(--dimmer);">advice</div>
+      </div>
+      <div class="check-rows" id="checkRows">
+        <!-- populated by JS -->
+      </div>
+      <div class="health-bar-row">
+        <span class="health-lbl">Config health</span>
+        <div class="health-bar"><div class="health-fill" id="healthFill" style="width:0%"></div></div>
+        <span class="health-val" id="healthVal">--</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       SECTION D — EXECUTION SCOPE
+  ═══════════════════════════════════════════ -->
+  <div class="card cyan-accent">
+    <div class="card-header">
+      <div class="card-dot dot-cyan"></div>
+      <div class="card-title">D — Execution Scope</div>
+    </div>
+    <div class="card-body">
+      <div class="scope-grid">
+        <div class="scope-cell">
+          <div class="scope-lbl">Symbols</div>
+          <div class="scope-val" id="d_symbols">--</div>
+          <div class="scope-note">from EA input</div>
+        </div>
+        <div class="scope-cell">
+          <div class="scope-lbl">Timeframe (local)</div>
+          <div class="scope-val" id="d_tf_local">--</div>
+          <div class="scope-note" id="d_tf_note">checking radar match...</div>
+        </div>
+        <div class="scope-cell">
+          <div class="scope-lbl">Radar TF</div>
+          <div class="scope-val" id="d_tf_radar">--</div>
+          <div class="scope-note">from cloud heartbeat</div>
+        </div>
+        <div class="scope-cell">
+          <div class="scope-lbl">Strategy ID</div>
+          <div class="scope-val" id="d_strat_id">--</div>
+          <div class="scope-note">bound to license</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       VISUAL MODEL SECTION
+  ═══════════════════════════════════════════ -->
+
+  <!-- 1. SIGNAL FLOW DEEP -->
+  <div class="visual-section">
+    <div class="visual-section-header">
+      <div class="vs-dot" style="background:var(--cyan)"></div>
+      <div class="vs-title" style="color:var(--cyan)">SIGNAL FLOW — LIVE STATE</div>
+    </div>
+    <div class="vs-body">
+      <div class="flow-nodes" id="vizFlowNodes">
+        <!-- score -->
+        <div class="fn-box fn-active" id="vfn-score" style="--fn-c:var(--cyan)">
+          <div class="fn-lbl">CLOUD SCORE</div>
+          <div class="fn-val" id="vfv-score">--</div>
+          <div class="fn-sub" id="vfs-score">from ZCloud radar</div>
+          <div class="fn-bar"><div class="fn-bar-fill" id="vfb-score" style="width:0%"></div></div>
+        </div>
+        <div class="fn-arrow" id="varr1">→</div>
+        <!-- gate -->
+        <div class="fn-box fn-active" id="vfn-gate" style="--fn-c:var(--green)">
+          <div class="fn-lbl">GATE FILTER</div>
+          <div class="fn-val" id="vfv-gate">--</div>
+          <div class="fn-sub" id="vfs-gate">score vs min</div>
+          <div class="fn-bar"><div class="fn-bar-fill" id="vfb-gate" style="width:0%"></div></div>
+        </div>
+        <div class="fn-arrow" id="varr2">→</div>
+        <!-- safety -->
+        <div class="fn-box fn-active" id="vfn-safety" style="--fn-c:var(--blue)">
+          <div class="fn-lbl">SAFETY NET</div>
+          <div class="fn-val" id="vfv-safety">--</div>
+          <div class="fn-sub" id="vfs-safety">circuit breaker</div>
+          <div class="fn-bar"><div class="fn-bar-fill" id="vfb-safety" style="width:0%"></div></div>
+        </div>
+        <div class="fn-arrow" id="varr3">→</div>
+        <!-- sizer -->
+        <div class="fn-box fn-active" id="vfn-sizer" style="--fn-c:var(--gold)">
+          <div class="fn-lbl">SIZER</div>
+          <div class="fn-val" id="vfv-sizer">--</div>
+          <div class="fn-sub" id="vfs-sizer">pos% × damping</div>
+          <div class="fn-bar"><div class="fn-bar-fill" id="vfb-sizer" style="width:0%"></div></div>
+        </div>
+        <div class="fn-arrow" id="varr4">→</div>
+        <!-- order -->
+        <div class="fn-box fn-active" id="vfn-order" style="--fn-c:var(--green)">
+          <div class="fn-lbl">ORDER</div>
+          <div class="fn-val" id="vfv-order">--</div>
+          <div class="fn-sub" id="vfs-order">direction · symbol</div>
+          <div class="fn-bar"><div class="fn-bar-fill" id="vfb-order" style="width:0%"></div></div>
+        </div>
+      </div>
+      <!-- sub row: session + min score -->
+      <div class="flow-sub-row">
+        <span>Session:</span> <span id="vizSession">--</span>
+        <span class="fsr-sep">·</span>
+        <span>Min Score:</span> <span id="vizMinScore">--</span>
+        <span class="fsr-sep">·</span>
+        <span>Pos%:</span> <span id="vizPosPct">--</span>
+        <span class="fsr-sep">·</span>
+        <span>SL:</span> <span id="vizSL">--</span>× ATR
+        <span class="fsr-sep">·</span>
+        <span>RR:</span> 1:<span id="vizRR">--</span>
+        <span class="fsr-sep">·</span>
+        <span>TSL:</span> <span id="vizTSL">--</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. ENTRY ZONE + RADAR + TIMELINE -->
+  <div class="visual-section">
+    <div class="visual-section-header">
+      <div class="vs-dot" style="background:var(--orange)"></div>
+      <div class="vs-title" style="color:var(--orange)">ENTRY MODEL · RADAR · REGIME TIMELINE</div>
+    </div>
+    <div class="vs-body">
+
+      <!-- Entry zone chart -->
+      <div class="entry-canvas-wrap" id="entryCanvas">
+        <svg id="entrySvg" viewBox="0 0 560 180" preserveAspectRatio="none"></svg>
+      </div>
+
+      <div class="visual-2col">
+        <!-- Radar -->
+        <div class="radar-wrap">
+          <svg class="radar-svg" id="radarSvg" width="240" height="200" viewBox="0 0 240 200"></svg>
+          <div class="radar-legend" id="radarLegend"></div>
+        </div>
+
+        <!-- Timeline + Compare -->
+        <div>
+          <div class="tl-title">LỆNH THEO REGIME — 14 NGÀY (mô phỏng)</div>
+          <div class="tl-bars" id="tlBars"></div>
+          <div class="tl-days" id="tlDays"></div>
+
+          <div class="cmp-section">
+            <div class="cmp-title">SO SÁNH PRESET</div>
+            <div id="cmpArea"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       SWITCHER
+  ═══════════════════════════════════════════ -->
+  <div class="switcher-section" id="switcherSection">
+    <div class="switcher-title">Switch Strategy</div>
+    <div class="strategy-cards" id="strategyCards">
+      <!-- populated by JS -->
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+<div class="viz-tooltip" id="vizTooltip"></div>
+
+<script>
+// ── URL params ──────────────────────────────────────────────────
+const params  = new URLSearchParams(location.search);
+const LICENSE = params.get('license') || '';
+const ACCOUNT = params.get('account') || '';
+const BASE    = params.get('base')    || (location.origin === 'null' ? 'http://47.129.243.206:8000' : location.origin);
+const API     = BASE;
+
+// ── State ───────────────────────────────────────────────────────
+let state = {
+  profile:    null,
+  presets:    [],
+  activeId:   'S1',
+  liveScore:  null,
+  radarTF:    'H1',
+  symbols:    ACCOUNT || '—',
+  tfLocal:    params.get('tf') || 'H1',
+};
+
+// ── Helpers ─────────────────────────────────────────────────────
+function toast(msg, error=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (error?' error':'');
+  clearTimeout(t._tid);
+  t._tid = setTimeout(()=>{ t.className='toast'; }, 3200);
+}
+
+function setEl(id, html, cls='') {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = html;
+  if (cls) el.className = cls;
+}
+
+function colorForScore(s) {
+  if (s >= 70) return 'var(--green)';
+  if (s >= 50) return 'var(--orange)';
+  return 'var(--red)';
+}
+
+function gateLabel(pos_pct) {
+  if (pos_pct >= 125) return 'SCALE';
+  if (pos_pct >= 100) return 'ALLOW';
+  if (pos_pct >= 60)  return 'CAUTION';
+  if (pos_pct >= 30)  return 'WARN';
+  return 'BLOCK';
+}
+
+function gateColor(pos_pct) {
+  if (pos_pct >= 100) return 'var(--green)';
+  if (pos_pct >= 60)  return 'var(--orange)';
+  return 'var(--red)';
+}
+
+// ── Fetch strategy presets ───────────────────────────────────────
+async function fetchPresets() {
+  try {
+    const r = await fetch(`${API}/strategy/presets`);
+    const d = await r.json();
+    return d.presets || d || [];
+  } catch { return []; }
+}
+
+// ── Fetch active strategy for license ───────────────────────────
+async function fetchActive() {
+  if (!LICENSE) return null;
+  try {
+    const r = await fetch(`${API}/strategy/active?license_key=${LICENSE}`);
+    const d = await r.json();
+    return d;
+  } catch { return null; }
+}
+
+// ── Fetch live radar score for scope context ─────────────────────
+async function fetchLiveScore() {
+  try {
+    const asset = params.get('asset') || 'GOLD';
+    const tf    = state.tfLocal || 'H1';
+    const r = await fetch(`${API}/radar/scan`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ asset, timeframe: tf, email: '', send_report: false })
+    });
+    const d = await r.json();
+    return d.score || null;
+  } catch { return null; }
+}
+
+// ── Render profile data ──────────────────────────────────────────
+function renderProfile(profile, activeId) {
+  if (!profile) return;
+
+  const sid = activeId || profile.strategy_id || 'S1';
+  document.title = `Z-ARMOR · Strategy ${sid}`;
+  setEl('strategyIdTitle', sid);
+  setEl('profileNameSub', `${profile.profile_name || 'Profile'} · EA đang chạy preset này`);
+
+  // Hero
+  setEl('hEntry', profile.entry_type || '--');
+  setEl('hEntryDir', profile.direction_bias || 'BOTH');
+  setEl('hMinScore', profile.min_score_entry ?? '--');
+  setEl('hRR', `1 : ${profile.rr_ratio ?? '--'}`);
+  setEl('hRiskMode', profile.risk_mode || '--');
+  const sessions = Array.isArray(profile.session_filter)
+    ? profile.session_filter.join(' + ')
+    : (profile.session_filter || '--');
+  setEl('hSession', sessions);
+
+  // Flow diagram
+  setEl('fl_dir', (profile.direction_bias || 'BOTH').replace('_ONLY','<br>ONLY'));
+  setEl('fl_entry_type', profile.entry_type || '--');
+  setEl('fl_min_score', profile.min_score_entry ?? '--');
+
+  const pos_pct = profile.position_pct || 100;
+  const gate = gateLabel(pos_pct);
+  const gc   = gateColor(pos_pct);
+  setEl('fl_gate', `${gate}<br>Gate`);
+  document.getElementById('fl_gate').style.borderColor = gc.replace('var(','').replace(')','') === 'var(--green)' ? 'rgba(0,200,117,0.4)' : 'rgba(255,165,0,0.3)';
+
+  // Strip
+  setEl('strip_gate', gate);
+  document.getElementById('strip_gate').style.color = gc;
+  setEl('strip_pos', `${pos_pct}%`);
+  setEl('strip_sl', `${profile.sl_multiplier ?? '--'}× ATR`);
+  setEl('strip_rr', `1:${profile.rr_ratio ?? '--'}`);
+
+  // Section A
+  setEl('a_entry', profile.entry_type || '--');
+  const dirColor = profile.direction_bias === 'BUY_ONLY' ? 'green' : profile.direction_bias === 'SELL_ONLY' ? 'red' : 'white';
+  const dirIcon  = profile.direction_bias === 'BUY_ONLY' ? '▲ ' : profile.direction_bias === 'SELL_ONLY' ? '▼ ' : '↕ ';
+  setEl('a_dir', `<span class="dr-value ${dirColor}">${dirIcon}${profile.direction_bias || 'BOTH'}</span>`);
+
+  const sessionBadges = (Array.isArray(profile.session_filter) ? profile.session_filter : ['LON','NY'])
+    .map(s => `<span class="badge b-dim">${s}</span>`).join(' ');
+  setEl('a_session', sessionBadges);
+
+  setEl('a_min_score', profile.min_score_entry ?? '--');
+
+  // Section B
+  const rmBadgeClass = profile.risk_mode === 'AGGRESSIVE' ? 'b-red' : profile.risk_mode === 'CONSERVATIVE' ? 'b-blue' : 'b-orange';
+  setEl('b_risk_mode', `<span class="badge ${rmBadgeClass}">${profile.risk_mode || '--'}  cap ${pos_pct}%</span>`);
+
+  const barPct = Math.min((pos_pct / 125) * 100, 100);
+  const barClass = pos_pct >= 100 ? 'fill-green' : pos_pct >= 60 ? 'fill-orange' : 'fill-red';
+  document.getElementById('b_pos_bar').style.width = barPct + '%';
+  document.getElementById('b_pos_bar').className = `pos-bar-fill ${barClass}`;
+  const posColor = pos_pct >= 100 ? 'var(--green)' : pos_pct >= 60 ? 'var(--orange)' : 'var(--red)';
+  setEl('b_pos_val', `${pos_pct}%`);
+  document.getElementById('b_pos_val').style.color = posColor;
+
+  setEl('b_eff_lot', `${pos_pct}% pos × damping × exposure_scale`);
+  setEl('b_sl', `${profile.sl_multiplier ?? '--'} × ATR`);
+  setEl('b_rr', `1 : ${profile.rr_ratio ?? '--'}`);
+  const tslColor = profile.trailing_sl ? 'var(--green)' : 'var(--dimmer)';
+  setEl('b_tsl', `<span style="color:${tslColor}">${profile.trailing_sl ? 'ON' : 'off'}</span>`);
+
+  // Section C — build check rows
+  const tf = state.tfLocal;
+  const tfMatch = (profile.radar_tf || tf) === tf;
+  const minScore = profile.min_score_entry || 65;
+  const score = state.liveScore;
+
+  const checks = [
+    { name:'Entry type', local: profile.entry_type||'--',   advice: 'cloud-controlled', status:'ok' },
+    { name:'Direction',  local: profile.direction_bias||'BOTH', advice: 'cloud-controlled', status:'ok' },
+    { name:'Min score',  local: `${minScore}`,   advice: score != null ? (score >= minScore ? `live ${score} ≥ min ✓` : `⚠ live ${score} < min`) : 'no live data', status: score != null ? (score >= minScore ? 'ok' : 'warn') : 'ok' },
+    { name:'Risk mode',  local: profile.risk_mode||'NORMAL', advice: 'from preset', status:'ok' },
+    { name:'TF match',   local: tf,     advice: tfMatch ? `= Radar TF ✓` : `mismatch → check EA input`, status: tfMatch ? 'ok' : 'warn' },
+    { name:'Pos%',       local: `${pos_pct}%`, advice: pos_pct >= 100 ? 'full size, regime OK' : 'scaled — regime caution', status: pos_pct >= 100 ? 'ok' : 'warn' },
+  ];
+
+  const icons = { ok:'✓', warn:'!', err:'✗' };
+  let okCount = 0;
+  const html = checks.map(c => {
+    if (c.status === 'ok') okCount++;
+    return `<div class="check-row cr-${c.status}">
+      <div class="cr-icon">${icons[c.status]}</div>
+      <div class="cr-name">${c.name}</div>
+      <div class="cr-local">${c.local}</div>
+      <div class="cr-arrow">›</div>
+      <div class="cr-advice">${c.advice}</div>
+    </div>`;
+  }).join('');
+  setEl('checkRows', html);
+
+  const healthPct = Math.round((okCount / checks.length) * 100);
+  document.getElementById('healthFill').style.width = healthPct + '%';
+  const healthColor = healthPct >= 80 ? 'var(--green)' : healthPct >= 60 ? 'var(--orange)' : 'var(--red)';
+  document.getElementById('healthFill').style.background =
+    healthPct >= 80 ? 'linear-gradient(90deg,#00A060,#00C875)'
+    : healthPct >= 60 ? 'linear-gradient(90deg,#CC8000,#FFA500)'
+    : 'linear-gradient(90deg,#AA1A1A,#E53935)';
+  setEl('healthVal', `<span style="color:${healthColor}">${okCount}/${checks.length}</span>`);
+
+  // Section D
+  setEl('d_symbols', params.get('symbols') || 'XAUUSD');
+  setEl('d_tf_local', tf);
+  const radarTF = profile.radar_tf || 'H1';
+  setEl('d_tf_radar', radarTF);
+  const tfOk = tf === radarTF;
+  document.getElementById('d_tf_local').className = 'scope-val ' + (tfOk ? 'ok' : 'mismatch');
+  setEl('d_tf_note', tfOk ? '✓ matches Radar TF' : `⚠ mismatch with Radar TF (${radarTF})`);
+  setEl('d_strat_id', sid);
+
+  // Live score display
+  if (score !== null) {
+    setEl('a_live_score', score.toString());
+    document.getElementById('a_live_score').style.color = colorForScore(score);
+    setEl('a_score_status', score >= minScore
+      ? `<span style="color:var(--green)"> ✓ gate open</span>`
+      : `<span style="color:var(--orange)"> ⚠ ${minScore-score} below min</span>`);
+    setEl('hScoreLive', `live: ${score}`);
+    document.getElementById('hScoreLive').style.color = colorForScore(score);
+  }
+
+  // Update strip gate color
+  document.getElementById('strip_gate').style.color = gc;
+}
+
+// ── Render strategy switcher cards ───────────────────────────────
+function renderSwitcherCards(presets, activeId) {
+  const COLORS = { S1:'s1-color', S2:'s2-color', S3:'s3-color' };
+  const html = presets.map(p => {
+    const isActive = p.strategy_id === activeId;
+    return `<div class="strategy-card ${isActive?'active':''}" data-id="${p.strategy_id}">
+      <div class="sc-id ${COLORS[p.strategy_id]||''}">${p.strategy_id}</div>
+      <div class="sc-name">${p.profile_name}</div>
+      <div class="sc-stats">
+        <div class="sc-stat">
+          <span class="sc-stat-k">Entry</span>
+          <span class="sc-stat-v" style="color:var(--blue)">${p.entry_type}</span>
+        </div>
+        <div class="sc-stat">
+          <span class="sc-stat-k">Min score</span>
+          <span class="sc-stat-v" style="color:var(--orange)">${p.min_score_entry}</span>
+        </div>
+        <div class="sc-stat">
+          <span class="sc-stat-k">RR</span>
+          <span class="sc-stat-v">1:${p.rr_ratio}</span>
+        </div>
+        <div class="sc-stat">
+          <span class="sc-stat-k">Risk</span>
+          <span class="sc-stat-v">${p.risk_mode}</span>
+        </div>
+      </div>
+      <button class="sc-btn" onclick="selectStrategy('${p.strategy_id}')">
+        ${isActive ? '✓ Active' : 'Select →'}
+      </button>
+    </div>`;
+  }).join('');
+  setEl('strategyCards', html);
+}
+
+// ── Select strategy ──────────────────────────────────────────────
+async function selectStrategy(sid) {
+  if (!LICENSE) {
+    toast('No license key — open from EA panel', true); return;
+  }
+  if (sid === state.activeId) {
+    toast(`Strategy ${sid} already active`); return;
+  }
+  try {
+    const r = await fetch(`${API}/strategy/select`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ license_key: LICENSE, strategy_id: sid })
+    });
+    const d = await r.json();
+    if (d.status === 'ok' || d.success) {
+      state.activeId = sid;
+      const preset = state.presets.find(p => p.strategy_id === sid);
+      if (preset) { state.profile = preset; renderProfile(preset, sid); }
+      renderSwitcherCards(state.presets, sid);
+      toast(`✓ Strategy ${sid} active — EA updates in ≤30s`);
+    } else {
+      toast('Switch failed: ' + (d.message||'unknown'), true);
+    }
+  } catch(e) {
+    toast('Network error: ' + e.message, true);
+  }
+}
+
+function scrollToSwitcher() {
+  document.getElementById('switcherSection').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+// ── Main init ────────────────────────────────────────────────────
+async function init() {
+  // Parallel fetch
+  const [presets, active, liveScore] = await Promise.all([
+    fetchPresets(),
+    fetchActive(),
+    fetchLiveScore(),
+  ]);
+
+  state.presets   = presets;
+  state.liveScore = liveScore;
+
+  // Determine active ID
+  let activeId = 'S1';
+  let profile  = null;
+
+  if (active && active.strategy_id) {
+    activeId = active.strategy_id;
+  }
+
+  // Find profile from presets
+  profile = presets.find(p => p.strategy_id === activeId) || presets[0] || null;
+
+  // Merge live radar_tf if available
+  if (active && active.radar_tf) {
+    state.radarTF = active.radar_tf;
+    if (profile) profile.radar_tf = active.radar_tf;
+  }
+
+  state.profile  = profile;
+  state.activeId = activeId;
+
+  if (profile) renderProfile(profile, activeId);
+  if (presets.length) renderSwitcherCards(presets, activeId);
+
+  // Update topbar
+  const now = new Date();
+  setEl('lastUpdate', now.toLocaleTimeString('vi-VN'));
+
+  // Hide loading
+  document.getElementById('loadingOverlay').style.opacity = '0';
+  setTimeout(()=>{ document.getElementById('loadingOverlay').style.display='none'; }, 300);
+
+  // Auto-refresh live score every 60s
+  setInterval(async () => {
+    const s = await fetchLiveScore();
+    if (s !== null) { state.liveScore = s; if (state.profile) renderProfile(state.profile, state.activeId); }
+    setEl('lastUpdate', new Date().toLocaleTimeString('vi-VN'));
+  }, 60000);
+}
+
+// Graceful fade for loading
+document.getElementById('loadingOverlay').style.transition = 'opacity 0.3s';
+
+// If no license in URL, show lighter badge
+if (!LICENSE) {
+  setEl('profileBadge', 'NO LICENSE — LIMITED VIEW');
+  document.getElementById('profileBadge').style.background = 'rgba(255,165,0,0.08)';
+  document.getElementById('profileBadge').style.color = 'var(--orange)';
+  document.getElementById('profileBadge').style.borderColor = 'rgba(255,165,0,0.25)';
+  document.querySelector('.profile-badge::before') && (document.querySelector('.profile-badge').style.background='var(--orange)');
+}
+
+// ══════════════════════════════════════════════════════════════
+// VISUAL MODEL — Signal Flow + Entry Zone + Radar + Timeline
+// ══════════════════════════════════════════════════════════════
+
+const VIZ = (() => {
+
+  // ── Radar axes ──────────────────────────────────────────────
+  const RADAR_AXES = ['Safety','Speed','Risk','Frequency','Profit','Consistency'];
+  // Preset radar fingerprints (normalized 0-1)
+  // Keyed by strategy_id — fallback to S1 defaults
+  const RADAR_DATA = {
+    S1: [0.90, 0.35, 0.30, 0.35, 0.75, 0.85],
+    S2: [0.60, 0.60, 0.60, 0.65, 0.60, 0.65],
+    S3: [0.30, 0.90, 0.90, 0.90, 0.50, 0.35],
+  };
+  // Timeline trade density per day (simulated — replace with real API data later)
+  const TIMELINE_DATA = {
+    S1: [2,0,1,3,2,1,0,2,1,3,2,0,1,2],
+    S2: [3,2,4,2,3,5,2,4,3,2,4,3,5,3],
+    S3: [5,4,6,5,7,4,6,5,8,4,6,5,7,6],
+  };
+  const DAYS = ['T2','T3','T4','T5','T6','T7','CN','T2','T3','T4','T5','T6','T7','CN'];
+
+  // Compare metrics [label, {S1,S2,S3}, max, suffix]
+  const COMPARE = [
+    { label:'Win Rate',    vals:{S1:64, S2:57, S3:51}, max:100, sfx:'%' },
+    { label:'Avg RR',      vals:{S1:2.5,S2:2.0,S3:1.5},max:3,  sfx:'×' },
+    { label:'Max DD',      vals:{S1:4.2,S2:7.1,S3:14}, max:18, sfx:'%' },
+    { label:'Trades/wk',   vals:{S1:8,  S2:15, S3:30}, max:35, sfx:''  },
+  ];
+
+  // ── Gate color helper ────────────────────────────────────────
+  function gcol(gate) {
+    if (!gate) return 'var(--dim)';
+    const g = gate.toUpperCase();
+    if (g==='SCALE'||g==='ALLOW')  return 'var(--green)';
+    if (g==='CAUTION')             return 'var(--orange)';
+    if (g==='WARN')                return 'var(--gold)';
+    return 'var(--red)';
+  }
+
+  // ── Signal Flow render ───────────────────────────────────────
+  function renderFlow(profile, liveScore) {
+    if (!profile) return;
+    const posPct  = profile.position_pct || 100;
+    const minSc   = profile.min_score_entry || 65;
+    const score   = liveScore ?? state.liveScore;
+    const gateStr = profile.gate_label || gateLabel(posPct);
+    const gateOk  = !['BLOCK','WARN'].includes((gateStr||'').toUpperCase());
+    const scoreOk = score != null ? score >= minSc : true;
+    const canTrade = gateOk && scoreOk;
+
+    const pColor = gcol(gateStr);
+    const arrowCls = cls => `fn-arrow ${cls}`;
+
+    // Score node
+    vnSet('score', score??'--', `min score ${minSc}`, score?score/100:0, 'var(--cyan)', scoreOk?'fn-active':canTrade?'fn-active':'fn-blocked');
+    // Gate
+    vnSet('gate', gateStr, `pos% ${posPct}%`, posPct/125, pColor, gateOk?'fn-active':'fn-blocked');
+    // Safety
+    const safetyOk = posPct > 0;
+    vnSet('safety', safetyOk?'PASS':'WARN', 'circuit breaker · streak', safetyOk?.85:.3, safetyOk?'var(--blue)':'var(--orange)', safetyOk?'fn-active':'fn-blocked');
+    // Sizer
+    const lotEst = ((posPct/100)*0.2).toFixed(2);
+    vnSet('sizer', `${posPct}%`, `est. ${lotEst} lot · 1× dmp`, posPct/125, 'var(--gold)', 'fn-active');
+    // Order
+    const dir = profile.direction_bias || 'BOTH';
+    const orderLabel = !canTrade ? '✖ BLOCK' : dir==='BUY_ONLY'?'▲ BUY':dir==='SELL_ONLY'?'▼ SELL':'↕ BOTH';
+    vnSet('order', orderLabel, `${params.get('symbols')||'XAUUSDm'} · ${state.tfLocal||'H1'}`, canTrade?1:0, canTrade?'var(--green)':'var(--red)', canTrade?'fn-active':'fn-blocked');
+
+    // Arrows
+    const ac = canTrade ? 'arr-ok' : gateOk ? 'arr-warn' : 'arr-block';
+    ['varr1','varr2','varr3','varr4'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.className = arrowCls(ac);
+    });
+
+    // Sub row
+    const sessions = Array.isArray(profile.session_filter)
+      ? profile.session_filter.join('+') : (profile.session_filter||'ALL');
+    textSet('vizSession', sessions);
+    textSet('vizMinScore', minSc);
+    textSet('vizPosPct', `${posPct}%`);
+    textSet('vizSL', profile.sl_multiplier ?? '--');
+    textSet('vizRR', profile.rr_ratio ?? '--');
+    textSet('vizTSL', profile.trailing_sl ? 'ON' : 'off');
+  }
+
+  function vnSet(id, val, sub, barPct, color, cls) {
+    const box = document.getElementById(`vfn-${id}`);
+    if (!box) return;
+    box.className = `fn-box ${cls}`;
+    box.style.setProperty('--fn-c', color);
+    const vEl = document.getElementById(`vfv-${id}`);
+    const sEl = document.getElementById(`vfs-${id}`);
+    const bEl = document.getElementById(`vfb-${id}`);
+    if (vEl) vEl.textContent = val;
+    if (sEl) sEl.textContent = sub;
+    if (bEl) { bEl.style.width = Math.round(Math.min(1,Math.max(0,barPct))*100)+'%'; bEl.style.background = color; }
+  }
+
+  function textSet(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+  }
+
+  // ── Entry Zone Candle Chart ──────────────────────────────────
+  function renderEntryZone(profile) {
+    const svg = document.getElementById('entrySvg');
+    if (!svg || !profile) return;
+
+    const W=560, H=180, n=24;
+    const slMult = profile.sl_multiplier || 1.5;
+    const rr = profile.rr_ratio || 2.0;
+    const dir = profile.direction_bias || 'BOTH';
+    const isBuy = dir !== 'SELL_ONLY';
+
+    // Generate candles
+    const candles = [];
+    let price = 100;
+    for (let i=0; i<n; i++) {
+      const o = price + (Math.random()-.48)*1.2;
+      const c = o + (Math.random()-.46)*1.8;
+      const h = Math.max(o,c) + Math.random()*.9;
+      const lo= Math.min(o,c) - Math.random()*.9;
+      price = c;
+      candles.push({o,c,h,l:lo});
+    }
+
+    const allH = candles.map(c=>c.h), allL = candles.map(c=>c.l);
+    const max = Math.max(...allH)+.5, min = Math.min(...allL)-.5;
+    const range = max - min;
+    const pad = 24;
+    const toY = v => pad + (1-(v-min)/range)*(H-pad*2);
+    const cw = (W-60)/n;
+    const cx = i => 30 + (i+.5)*cw;
+
+    const entry = candles[n-4].c;
+    const slPts = slMult * 2.2;
+    const tpPts = slPts * rr;
+    const entryY = toY(entry);
+    const slY    = isBuy ? toY(entry-slPts) : toY(entry+slPts);
+    const tpY    = isBuy ? toY(entry+tpPts) : toY(entry-tpPts);
+
+    let html = '';
+
+    // Zone backgrounds
+    html += `<defs>
+      <linearGradient id="gz-tp" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0" stop-color="#00C875" stop-opacity=".12"/>
+        <stop offset="1" stop-color="#00C875" stop-opacity=".03"/>
+      </linearGradient>
+      <linearGradient id="gz-sl" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0" stop-color="#E53935" stop-opacity=".03"/>
+        <stop offset="1" stop-color="#E53935" stop-opacity=".12"/>
+      </linearGradient>
+    </defs>`;
+    html += `<rect x="0" y="${Math.min(entryY,tpY)}" width="${W}" height="${Math.abs(tpY-entryY)}" fill="url(#gz-tp)"/>`;
+    html += `<rect x="0" y="${Math.min(entryY,slY)}" width="${W}" height="${Math.abs(slY-entryY)}" fill="url(#gz-sl)"/>`;
+
+    // Candles
+    candles.forEach((c,i) => {
+      const up = c.c >= c.o;
+      const col= up ? '#00C875' : '#E53935';
+      const top= toY(Math.max(c.o,c.c));
+      const bh = Math.max(1.5, Math.abs(toY(c.o)-toY(c.c)));
+      const x  = cx(i);
+      html += `<line x1="${x}" y1="${toY(c.h)}" x2="${x}" y2="${toY(c.l)}" stroke="${col}" stroke-width="1" opacity=".5"/>`;
+      html += `<rect x="${x-cw*.32}" y="${top}" width="${cw*.64}" height="${bh}" fill="${col}" rx="1"/>`;
+    });
+
+    // Price lines
+    const dashLine = (y, color, labelR, labelL='') => {
+      html += `<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="${color}" stroke-width="1" stroke-dasharray="5,4" opacity=".85"/>`;
+      if (labelR) html += `<text x="${W-3}" y="${y-3}" fill="${color}" font-family="JetBrains Mono,monospace" font-size="8" text-anchor="end">${labelR}</text>`;
+      if (labelL) html += `<text x="3" y="${y-3}" fill="${color}" font-family="JetBrains Mono,monospace" font-size="8">${labelL}</text>`;
+    };
+    dashLine(tpY,    '#00C875', `TP  +${tpPts.toFixed(1)} pts  (RR ${rr}×)`);
+    dashLine(entryY, '#00B4D8', 'ENTRY', '');
+    dashLine(slY,    '#E53935', `SL  −${slPts.toFixed(1)} pts  (${slMult}×ATR)`);
+
+    // Entry arrow
+    const ax = cx(n-4);
+    const arrowDir = isBuy ? 1 : -1;
+    const ay = entryY + arrowDir*28;
+    html += `<polygon points="${ax},${entryY+arrowDir*2} ${ax-7},${ay} ${ax+7},${ay}" fill="#00B4D8" opacity=".9"/>`;
+    html += `<circle cx="${ax}" cy="${entryY}" r="3" fill="#00B4D8"/>`;
+
+    // RR label in zone center
+    const rrLabelY = (entryY + tpY) / 2 + 4;
+    html += `<text x="${W*.5}" y="${rrLabelY}" fill="#00C87566" font-family="JetBrains Mono,monospace" font-size="11" text-anchor="middle" font-weight="700">PROFIT ZONE  1:${rr}</text>`;
+    const slLabelY = (entryY + slY) / 2 + 4;
+    html += `<text x="${W*.5}" y="${slLabelY}" fill="#E5393566" font-family="JetBrains Mono,monospace" font-size="11" text-anchor="middle" font-weight="700">STOP ZONE  SL×${slMult}</text>`;
+
+    svg.innerHTML = html;
+  }
+
+  // ── Radar Chart ──────────────────────────────────────────────
+  function renderRadar(profile) {
+    const svg = document.getElementById('radarSvg');
+    const legend = document.getElementById('radarLegend');
+    if (!svg || !profile) return;
+
+    const sid = profile.strategy_id || 'S1';
+    const W=240, H=200, cx=120, cy=105, r=72, n=6;
+    const angles = Array.from({length:n}, (_,i) => (i/n)*Math.PI*2 - Math.PI/2);
+    const polar = (v, i) => [cx + v*r*Math.cos(angles[i]), cy + v*r*Math.sin(angles[i])];
+
+    // Color from profile
+    const PCOL = { S1:'#00C875', S2:'#00B4D8', S3:'#FFA500' };
+    const col = PCOL[sid] || '#00B4D8';
+    const data = RADAR_DATA[sid] || RADAR_DATA.S1;
+
+    let html = '';
+    // Grid
+    [.25,.5,.75,1].forEach(s => {
+      const pts = angles.map((_,i) => polar(s,i).join(',')).join(' ');
+      const alpha = s===1 ? '30' : '15';
+      html += `<polygon points="${pts}" fill="none" stroke="#1C2B3A" stroke-width="${s===1?1.5:1}"/>`;
+    });
+    // Axes
+    angles.forEach((_,i) => {
+      const [x2,y2] = polar(1,i);
+      html += `<line x1="${cx}" y1="${cy}" x2="${x2}" y2="${y2}" stroke="#1C2B3A" stroke-width="1"/>`;
+    });
+    // Data shape
+    const pts = data.map((v,i) => polar(v,i).join(',')).join(' ');
+    html += `<polygon points="${pts}" fill="${col}18" stroke="${col}" stroke-width="1.5"/>`;
+    data.forEach((v,i) => {
+      const [x,y] = polar(v,i);
+      html += `<circle cx="${x}" cy="${y}" r="3" fill="${col}" stroke="var(--bg)" stroke-width="1.5"/>`;
+    });
+    // Labels
+    RADAR_AXES.forEach((lbl,i) => {
+      const [x,y] = polar(1.22,i);
+      const anchor = x < cx-5 ? 'end' : x > cx+5 ? 'start' : 'middle';
+      html += `<text x="${x}" y="${y+3}" fill="#4A6070" font-family="JetBrains Mono,monospace" font-size="8" text-anchor="${anchor}">${lbl.toUpperCase()}</text>`;
+    });
+    // Center ID
+    html += `<text x="${cx}" y="${cy+4}" fill="${col}" font-family="JetBrains Mono,monospace" font-size="13" text-anchor="middle" font-weight="700">${sid}</text>`;
+    svg.innerHTML = html;
+
+    // Legend
+    if (legend) {
+      legend.innerHTML = RADAR_AXES.map((l,i) =>
+        `<div class="rl-item"><div class="rl-dot" style="background:${col};opacity:${.4+data[i]*.6}"></div>${l}</div>`
+      ).join('');
+    }
+  }
+
+  // ── Timeline ─────────────────────────────────────────────────
+  function renderTimeline(profile) {
+    const bars = document.getElementById('tlBars');
+    const days = document.getElementById('tlDays');
+    const tip  = document.getElementById('vizTooltip');
+    if (!bars || !profile) return;
+
+    const sid   = profile.strategy_id || 'S1';
+    const PCOL  = { S1:'#00C875', S2:'#00B4D8', S3:'#FFA500' };
+    const col   = PCOL[sid] || '#00B4D8';
+    const data  = TIMELINE_DATA[sid] || TIMELINE_DATA.S1;
+    const max   = Math.max(...data);
+    const regimes = ['Bearish','No Signal','Weak Bull','Moderate','Strong','Strong','Very Strong'];
+
+    bars.innerHTML = data.map((v,i) => {
+      const h = v===0 ? 4 : Math.max(12, (v/max)*86);
+      const alpha = v===0 ? '22' : v>=max*.8 ? 'FF' : v>=max*.5 ? 'AA' : '55';
+      const regime = regimes[Math.min(v, regimes.length-1)];
+      return `<div class="tl-bar" style="height:${h}px;background:${col}${alpha}"
+        onmouseenter="VIZ.tip(event,'${DAYS[i]} · ${v} lệnh · ${regime}')"
+        onmouseleave="VIZ.untip()"></div>`;
+    }).join('');
+
+    days.innerHTML = DAYS.map(d => `<div class="tl-day">${d}</div>`).join('');
+  }
+
+  // ── Compare bars ─────────────────────────────────────────────
+  function renderCompare(profile) {
+    const area = document.getElementById('cmpArea');
+    if (!area || !profile) return;
+
+    const sid   = profile.strategy_id || 'S1';
+    const PCOL  = { S1:'#00C875', S2:'#00B4D8', S3:'#FFA500' };
+
+    area.innerHTML = COMPARE.map(m => `
+      <div class="cmp-metric">
+        <div class="cmp-mlbl">${m.label.toUpperCase()}</div>
+        ${['S1','S2','S3'].map(s => {
+          const v = m.vals[s];
+          const pct = Math.min(100, (v/m.max)*100);
+          const active = s === sid;
+          const col = active ? PCOL[s] : '#2A3A4A';
+          return `<div class="cmp-row">
+            <div class="cmp-id" style="color:${col}">${s}</div>
+            <div class="cmp-track">
+              <div class="cmp-fill" style="width:${pct}%;background:${col}"></div>
+            </div>
+            <div class="cmp-val" style="color:${col}">${v}${m.sfx}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    `).join('');
+
+    // Animate in
+    requestAnimationFrame(() => {
+      area.querySelectorAll('.cmp-fill').forEach(el => {
+        const w = el.style.width; el.style.width='0';
+        setTimeout(() => el.style.width = w, 80);
+      });
+    });
+  }
+
+  // ── Tooltip ─────────────────────────────────────────────────
+  function tip(e, text) {
+    const t = document.getElementById('vizTooltip');
+    if (!t) return;
+    t.textContent = text;
+    t.style.left = e.clientX+14+'px';
+    t.style.top  = e.clientY-32+'px';
+    t.style.opacity = '1';
+  }
+  function untip() {
+    const t = document.getElementById('vizTooltip');
+    if (t) t.style.opacity = '0';
+  }
+
+  // ── Public: render all visuals ───────────────────────────────
+  function render(profile, liveScore) {
+    if (!profile) return;
+    renderFlow(profile, liveScore);
+    renderEntryZone(profile);
+    renderRadar(profile);
+    renderTimeline(profile);
+    renderCompare(profile);
+  }
+
+  return { render, tip, untip };
+})();
+
+// Hook into existing renderProfile — call VIZ.render after profile loads
+const _origRenderProfile = renderProfile;
+window.renderProfile = function(profile, activeId) {
+  _origRenderProfile(profile, activeId);
+  VIZ.render(profile, state.liveScore);
+};
+
+// Also re-render when live score updates
+const _origInit = init;
+window.init = async function() {
+  await _origInit();
+};
+
+// Expose for timeline tooltip
+window.VIZ = VIZ;
+
+init();
+</script>
+</body>
+</html>

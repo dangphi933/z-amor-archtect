@@ -1,0 +1,20 @@
+services:
+  zarmor-engine:
+    build: .
+    container_name: zarmor-cloud-core
+    ports:
+      - "8000:8000" # Mở cổng 8000 ra Internet
+    restart: always # BẤT TỬ: Tự động khởi động lại nếu VPS sập nguồn hoặc App lỗi
+    volumes:
+      # Lôi Két sắt Kế toán ra ngoài VPS gốc
+      - ./Z-Armor.db:/app/Z-Armor.db 
+      
+      # Lôi Hồ sơ Hành vi AI ra ngoài VPS gốc (CỰC KỲ QUAN TRỌNG)
+      - ./Z-Armor_behavior.json:/app/Z-Armor_behavior.json 
+      
+      # (Tùy chọn) Lôi thư mục Log ra ngoài để dễ theo dõi
+      - ./logs:/app/logs 
+    environment:
+      - TZ=Asia/Ho_Chi_Minh # Đồng bộ múi giờ Việt Nam
+      # Sếp có thể truyền các biến môi trường bảo mật vào đây (ví dụ Token)
+      # - META_API_TOKEN=your_token_here

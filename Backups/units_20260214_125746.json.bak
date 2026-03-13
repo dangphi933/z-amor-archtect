@@ -1,0 +1,39 @@
+{
+    "WeMasterTrade": {
+        "account_id": 1085205,
+        "server": "Demo",
+        "alias": "WeMasterTrade Ltd.",
+        "path": "",
+        "is_locked": true,
+        "risk_params": {
+            "daily_remaining": 75.0,
+            "max_dd": 4.0,
+            "consistency": 20.0,
+            "is_trailing": true
+        }
+    },
+    "ScalpingBot": {
+        "account_id": 888888,
+        "alias": "Scalper Alpha",
+        "is_locked": false,
+        "server": "Real"
+    },
+    "Holdings": {
+        "account_id": 999999,
+        "alias": "Holdings",
+        "is_locked": true,
+        "server": "Real"
+    },
+{
+{
+    "MainUnit": {
+        "alias": "Main Unit",
+        "account_id": "123456",
+        "risk_params": {
+            "daily_remaining": 500,
+            "max_dd": 10,
+            "consistency": 80
+        },
+        "is_locked": true
+    }
+}

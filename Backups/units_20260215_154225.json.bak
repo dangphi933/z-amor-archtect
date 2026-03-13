@@ -1,0 +1,21 @@
+{
+    "MainUnit": {
+        "alias": "12223434",
+        "account_id": "102038417",
+        "server": "MetaQuotes-Demo",
+        "risk_params": {
+            "daily_remaining": 200.0,
+            "daily_dd": 5.0,
+            "max_dd": 6.0,
+            "dd_type": "TRAILING",
+            "consistency": 20.0
+        },
+        "is_locked": false,
+        "telegram_config": {
+            "token": "8586677836:AAF0ay119cOmsNTJjKGuOvTHe4rl4KoEOxU",
+            "chat_id": "7976137362",
+            "enabled": true
+        },
+        "last_reset_date": "2026-02-15"
+    }
+}

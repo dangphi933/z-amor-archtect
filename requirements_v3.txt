@@ -1,0 +1,28 @@
+# Existing (giữ nguyên)
+fastapi
+uvicorn[standard]
+sqlalchemy
+psycopg2-binary
+python-dotenv
+httpx
+redis
+pydantic
+alembic
+
+# Sprint 1 — JWT Auth
+PyJWT>=2.8.0
+python-multipart
+
+# Sprint 2 — Password hashing
+bcrypt>=4.0.0
+
+# Phase 3 (đã có)
+xgboost
+scikit-learn
+numpy
+
+# Phase 4 (đã có)
+# SMTP dùng stdlib smtplib — không cần package thêm
+
+# PM2 process manager (install riêng)
+# npm install -g pm2

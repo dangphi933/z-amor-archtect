@@ -1,0 +1,41 @@
+# =====================================================================
+# Z-ARMOR V7.0: TACTICAL ADVISOR & JUDICIARY OPERATIONS
+# =====================================================================
+meta:
+  version: "7.0.0_SaaS"
+  description: "Giao tiếp UI, Cảnh báo Telegram và Tòa án Phạt Lot (Judiciary)."
+
+# 1. HỆ THỐNG THUẾ TƯ PHÁP (JUDICIARY LOT TAXES)
+judiciary_budget:
+  base_daily_lot_limit: 10.0     # Ngân sách mặc định: 10 Lots / ngày
+  tax_brackets:
+    LAMINAR: 0.0                 # Phạt 0%
+    EROSION: 0.20                # Cảnh cáo: Tịch thu 20% đặc quyền Lot
+    TURBULENT: 0.50              # Trừng phạt: Tịch thu 50% đặc quyền Lot
+    CRITICAL_BREACH: 1.00        # Tử hình: Tịch thu 100% đặc quyền Lot (Khóa tài khoản)
+
+# 2. BỘ TỪ ĐIỂN UI & TELEGRAM (MESSAGING DICTIONARY)
+tactical_alerts:
+  OPTIMAL:
+    icon: "🟢"
+    title: "LAMINAR FLOW - OPTIMAL STATE"
+    ui_desc: "Sufficient capacity. Safe to engage standard tactical positions."
+    tele_msg: "✅ Ngân sách dồi dào. Được phép giao dịch Full Volume (Damping 1.0x). Có thể nhồi lệnh thuận xu hướng."
+    
+  ELEVATED:
+    icon: "🟡"
+    title: "EROSION - ELEVATED RISK"
+    ui_desc: "Capacity eroding. Recommend scaling down position exposure."
+    tele_msg: "⚠️ Ma sát cấu trúc! Cắt giảm 50% Volume cho lệnh mới (Damping 0.5x). Kéo SL về Entry cho các lệnh xanh."
+    
+  CRITICAL:
+    icon: "🔴"
+    title: "TURBULENT - CRITICAL PRESSURE"
+    ui_desc: "Severe risk of drawdown. Restrict to micro-allocations only."
+    tele_msg: "🚨 Áp suất CỰC HẠN! Lệnh mới CHỈ dùng Micro-lots (Damping 0.1x). Rời khỏi biểu đồ 30 phút để ổn định tâm lý."
+    
+  LOCKED:
+    icon: "💀"
+    title: "CRITICAL BREACH - SYSTEM LOCKED"
+    ui_desc: "Zero capacity remaining. All trading operations suspended."
+    tele_msg: "☠️ VỠ CẤU TRÚC (ROOM = 0%). Yêu cầu ĐÓNG toàn bộ các lệnh đang âm. HỆ THỐNG ĐÓNG BĂNG!"

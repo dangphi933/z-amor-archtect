@@ -1,0 +1,795 @@
+"""
+main.py — Z-ARMOR CLOUD (Unified Single Server)
+=================================================
+Giai đoạn 3: Gộp dashboard (port 8001) + backend mới (port 8000) thành 1
+Port duy nhất: 8000
+DB duy nhất:   PostgreSQL
+
+Routes đầy đủ:
+  GET  /                      → landing page (salemain.html)
+  GET  /health                → health check
+  GET  /web/*                 → dashboard React SPA
+  GET  /heartbeat             → EA heartbeat (GET)
+  POST /heartbeat             → EA heartbeat (POST)
+  GET  /api/health
+  GET  /api/init-data
+  POST /api/checkout          → tạo key (new backend)
+  POST /api/lark-webhook      → webhook từ Lark khi có đơn paid
+  POST /api/webhook/heartbeat → EA webhook legacy
+  POST /api/webhook/positions
+  POST /api/webhook/trade-event
+  POST /api/update-unit-config
+  POST /api/unlock-unit
+  POST /api/panic-kill
+  POST /api/test-telegram
+  POST /api/send-telegram
+  POST /api/bind-license
+  GET  /api/verify-license/{account_id}
+  POST /api/verify-license
+  POST /api/log-trade
+  POST /api/close-session
+  POST /api/log-audit
+  GET  /api/trade-history/{account_id}
+  GET  /api/session-history/{account_id}
+  GET  /api/sync-history/{account_id}
+  GET  /api/ai-analysis/{account_id}
+  POST /api/validate-key      → validate key (new backend)
+  POST /admin/licenses
+  GET  /admin/licenses
+  POST /admin/licenses/{key}/revoke
+  POST /admin/licenses/{key}/activate
+  POST /admin/licenses/{key}/reset-machines
+  GET  /admin/stats
+"""
+
+import sys
+sys.stdout.reconfigure(encoding="utf-8", line_buffering=True)
+sys.stderr.reconfigure(encoding="utf-8", line_buffering=True)
+
+import os, json, uuid, asyncio, logging
+from datetime import datetime, timedelta
+from typing import Optional
+from contextlib import asynccontextmanager
+
+from fastapi import FastAPI, Request, Depends, HTTPException, Query
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
+from dotenv import load_dotenv
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+import uvicorn
+
+# ── Load env ─────────────────────────────────────────────────────
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+load_dotenv(os.path.join(BASE_DIR, ".env"))
+
+# ── DB (dùng database.py giai đoạn 2 — đã có License, LicenseActivation...) ──
+from database import engine, Base, SessionLocal, get_db, License, LicenseActivation
+
+# ── Dashboard services (từ port 8001) ────────────────────────────
+from api.dashboard_service import (
+    fetch_dashboard_state, update_webhook_heartbeat, update_webhook_positions,
+    safe_telegram_send, api_log_trade, api_close_session, api_log_audit,
+    api_get_trade_history, api_get_session_history, api_send_telegram,
+    api_sync_history, invalidate_units_cache,
+)
+from api.config_manager import get_all_units, update_unit_from_payload, set_lock_status
+from api.ai_guard_logic import api_get_ai_analysis
+from telegram_engine import push_to_telegram, send_trade_opened, send_trade_closed
+
+# ── New backend services ──────────────────────────────────────────
+from keygen import generate_license_key, compute_expiry
+from email_service import send_license_email
+from lark_service import push_order_to_lark, update_order_status
+from telegram_notify import (
+    notify_new_lead, notify_email_sent, notify_lark_error,
+    notify_trial_abuse, notify_system_error,
+)
+from config import settings
+
+# ── EA Router ────────────────────────────────────────────────────
+from api.ea_router import router as ea_router
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s  %(levelname)-8s  %(name)s — %(message)s",
+)
+logger = logging.getLogger("zarmor")
+
+# ══════════════════════════════════════════════════════════════════
+# CONFIG
+# ══════════════════════════════════════════════════════════════════
+LARK_APP_ID       = os.environ.get("LARK_APP_ID",        "cli_a92af9524c789e1a")
+LARK_APP_SECRET   = os.environ.get("LARK_APP_SECRET",    "")
+LARK_BASE_TOKEN   = os.environ.get("LARK_BASE_APP_TOKEN", os.environ.get("LARK_BASE_TOKEN", ""))
+LARK_TABLE_ID     = os.environ.get("LARK_ORDERS_TABLE_ID", os.environ.get("LARK_TABLE_ID", ""))
+LARK_LOG_TABLE_ID = os.environ.get("LARK_LOG_TABLE_ID",  "")
+LICENSE_ADMIN_TOKEN = os.environ.get("LICENSE_ADMIN_TOKEN",
+                      os.environ.get("ADMIN_SECRET_KEY",  "CHANGE_ME"))
+
+VALID_TIERS = {"STARTER","PRO","ELITE","STARTER_TRIAL","PRO_TRIAL","ELITE_TRIAL"}
+
+# ══════════════════════════════════════════════════════════════════
+# LIFESPAN
+# ══════════════════════════════════════════════════════════════════
+async def _rollover_loop():
+    from api.config_manager import perform_daily_rollover
+    from api.dashboard_service import reset_daily_cache, _mt5_cache
+    while True:
+        try:
+            if perform_daily_rollover():
+                for acc_id in list(_mt5_cache.keys()):
+                    try: reset_daily_cache(acc_id)
+                    except Exception as ce: logger.warning(f"[ROLLOVER] {acc_id}: {ce}")
+        except Exception as e:
+            logger.error(f"[ROLLOVER ERROR] {e}")
+        await asyncio.sleep(60)
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    logger.info("Z-ARMOR CLOUD — Unified Server starting...")
+    Base.metadata.create_all(bind=engine)
+    logger.info("Database tables ready.")
+    rollover = asyncio.create_task(_rollover_loop())
+    logger.info("Server ready.")
+    yield
+    rollover.cancel()
+    logger.info("Server shutdown.")
+
+# ══════════════════════════════════════════════════════════════════
+# APP
+# ══════════════════════════════════════════════════════════════════
+limiter = Limiter(key_func=get_remote_address, default_limits=["200/hour"])
+
+app = FastAPI(
+    title="Z-ARMOR CLOUD",
+    version="9.0.0",
+    docs_url="/api/docs" if os.environ.get("DEBUG","").lower() == "true" else None,
+    redoc_url=None,
+    lifespan=lifespan,
+)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_middleware(
+    CORSMiddleware, allow_origins=["*"],
+    allow_credentials=True, allow_methods=["*"], allow_headers=["*"],
+)
+app.include_router(ea_router)
+
+# ══════════════════════════════════════════════════════════════════
+# PYDANTIC MODELS
+# ══════════════════════════════════════════════════════════════════
+class CheckoutPayload(BaseModel):
+    buyer_name:  str
+    buyer_email: str
+    tier:        str
+    amount:      float
+    method:      str = "trial"
+
+class BindLicensePayload(BaseModel):
+    license_key: str
+    account_id:  str
+
+class TradeEventPayload(BaseModel):
+    account_id: str; event_type: str; ticket: str; symbol: str
+    trade_type: str; volume: float; price: float
+    pnl: Optional[float] = 0.0; rr_ratio: Optional[float] = 0.0
+
+class LogTradeRequest(BaseModel):
+    account_id: str; trade_data: dict
+
+class CloseSessionRequest(BaseModel):
+    account_id: str; session_summary: dict
+
+class LogAuditRequest(BaseModel):
+    account_id: str; action: str; message: str
+    severity: Optional[str] = "INFO"; extra: Optional[dict] = None
+
+class SendTelegramRequest(BaseModel):
+    account_id: str; chat_id: str; message: str
+
+class LarkEventModel(BaseModel):
+    order_id: Optional[str] = "UNKNOWN"; purchased_tier: str; payment_status: str
+    buyer_name: Optional[str] = ""; buyer_email: Optional[str] = ""; amount_paid: Optional[float] = 0.0
+
+class LarkWebhookBody(BaseModel):
+    event: LarkEventModel
+
+class ValidateKeyPayload(BaseModel):
+    license_key: str; account_id: Optional[str] = ""
+
+# ══════════════════════════════════════════════════════════════════
+# HELPERS
+# ══════════════════════════════════════════════════════════════════
+_machine_registry: dict = {}
+
+def _check_admin(request: Request):
+    if request.headers.get("X-Admin-Token","") != LICENSE_ADMIN_TOKEN:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+def _get_machines(db, license_key: str) -> set:
+    if license_key in _machine_registry:
+        return _machine_registry[license_key]
+    try:
+        rows = db.query(LicenseActivation).filter(LicenseActivation.license_key == license_key).all()
+        accts = {r.account_id for r in rows}
+    except Exception:
+        accts = set()
+    _machine_registry[license_key] = accts
+    return accts
+
+def _add_machine(db, license_key: str, account_id: str, magic: str = "") -> bool:
+    accts = _machine_registry.setdefault(license_key, set())
+    try:
+        row = db.query(LicenseActivation).filter(
+            LicenseActivation.license_key == license_key,
+            LicenseActivation.account_id  == account_id
+        ).first()
+        if row:
+            row.last_seen = datetime.utcnow(); db.commit()
+            accts.add(account_id); return False
+        db.add(LicenseActivation(
+            license_key=license_key, account_id=account_id,
+            magic=magic, first_seen=datetime.utcnow(), last_seen=datetime.utcnow()
+        ))
+        db.commit()
+    except Exception:
+        db.rollback()
+    accts.add(account_id)
+    return True
+
+def _run_async(coro):
+    try:
+        loop = asyncio.get_event_loop()
+        if loop.is_running():
+            asyncio.ensure_future(coro)
+        else:
+            loop.run_until_complete(coro)
+    except Exception:
+        pass
+
+# ══════════════════════════════════════════════════════════════════
+# HEALTH
+# ══════════════════════════════════════════════════════════════════
+@app.get("/health")
+@app.get("/api/health")
+def health():
+    return {"status": "online", "version": "9.0.0", "service": "Z-ARMOR CLOUD"}
+
+# ══════════════════════════════════════════════════════════════════
+# LANDING PAGE
+# ══════════════════════════════════════════════════════════════════
+@app.get("/")
+def landing():
+    p = os.path.join(BASE_DIR, "salemain.html")
+    if os.path.exists(p):
+        return FileResponse(p, media_type="text/html")
+    return HTMLResponse("<h1>Z-ARMOR CLOUD</h1><p>salemain.html not found</p>")
+
+# ══════════════════════════════════════════════════════════════════
+# DASHBOARD DATA
+# ══════════════════════════════════════════════════════════════════
+@app.get("/api/init-data")
+async def get_init_data(account_id: str = "MainUnit"):
+    try:
+        return await fetch_dashboard_state(account_id)
+    except Exception as e:
+        return {
+            "global_status": {
+                "balance":0,"equity":0,"total_pnl":0,"total_stl":0,
+                "open_trades":[],"license_active":True,
+                "physics":{"state":"DISCONNECTED","z_pressure":0,"damping_factor":1.0,"is_hibernating":False,"velocity":0},
+                "chart_data":{"labels":[],"equity":[],"z_pressure":[]}
+            },
+            "units_config":{}, "error": str(e)
+        }
+
+# ══════════════════════════════════════════════════════════════════
+# CHECKOUT — New backend logic (tạo key ngay, gửi email, Lark, Telegram)
+# ══════════════════════════════════════════════════════════════════
+@app.post("/api/checkout")
+def process_checkout(req: CheckoutPayload, request: Request, db=Depends(get_db)):
+    tier = req.tier.upper().strip()
+    if tier not in VALID_TIERS:
+        raise HTTPException(400, detail=f"Tier khong hop le: {tier}")
+
+    is_trial = "TRIAL" in tier
+    ip       = request.headers.get("X-Forwarded-For", request.client.host if request.client else "unknown")
+
+    # Giới hạn trial
+    if is_trial:
+        from sqlalchemy import func as sqlfunc
+        count = (
+            db.query(License)
+            .filter(License.buyer_email == req.buyer_email.lower(), License.is_trial == True)
+            .count()
+        )
+        max_trial = int(os.environ.get("TRIAL_MAX_PER_EMAIL", 1))
+        if count >= max_trial:
+            _run_async(notify_trial_abuse(req.buyer_email, count))
+            raise HTTPException(429, detail=f"Email nay da dung thu {count} lan. Vui long mua ban quyen.")
+
+    # Tạo key
+    key      = generate_license_key(tier)
+    days     = int(os.environ.get("TRIAL_DURATION_DAYS", 7)) if is_trial else None
+    exp      = compute_expiry(days) if days else None
+    status   = "ACTIVE" if is_trial else "PENDING"
+
+    lic = License(
+        license_key    = key,
+        tier           = tier,
+        status         = status,
+        buyer_name     = req.buyer_name,
+        buyer_email    = req.buyer_email.lower(),
+        is_trial       = is_trial,
+        amount_usd     = req.amount,
+        payment_method = req.method,
+        activated_at   = datetime.utcnow() if is_trial else None,
+        expires_at     = exp,
+        ip_address     = ip,
+    )
+    db.add(lic); db.commit(); db.refresh(lic)
+    logger.info(f"Key created: {key} | {tier} | {req.buyer_email}")
+
+    # Notify admin
+    _run_async(notify_new_lead(
+        name=req.buyer_name, email=req.buyer_email,
+        tier=tier, amount=req.amount, ip=ip, key=key,
+    ))
+
+    # Push Lark
+    lark_ok = False
+    try:
+        import asyncio as _aio
+        lark_ok = _aio.get_event_loop().run_until_complete(
+            push_order_to_lark(
+                key_id=lic.id, buyer_name=req.buyer_name,
+                buyer_email=req.buyer_email, tier=tier,
+                amount=req.amount, key=key, status=status, method=req.method,
+            )
+        )
+    except Exception as e:
+        logger.error(f"Lark push failed: {e}")
+        _run_async(notify_lark_error(key, str(e)))
+
+    # Gửi email (chỉ trial)
+    email_ok = False
+    if is_trial:
+        try:
+            import asyncio as _aio
+            email_ok = _aio.get_event_loop().run_until_complete(
+                send_license_email(
+                    to_email=req.buyer_email, buyer_name=req.buyer_name,
+                    tier=tier, license_key=key,
+                    expires_at=exp.strftime("%d/%m/%Y") if exp else "7 ngay",
+                )
+            )
+        except Exception as e:
+            logger.error(f"Email failed: {e}")
+        _run_async(notify_email_sent(req.buyer_email, key, email_ok))
+
+    # Audit log
+    db.add(type("AuditLog", (), {})())  # placeholder — dùng nếu có AuditLog model
+    try:
+        from database import AuditLog
+        db.add(AuditLog(
+            account_id=None, action="CHECKOUT",
+            message=f"key={key} tier={tier} lark={lark_ok} email={email_ok}",
+            ip_address=ip, email=req.buyer_email,
+        ))
+        db.commit()
+    except Exception:
+        pass
+
+    msg = "Key dung thu da gui qua email!" if is_trial else "Don hang da ghi nhan. Admin se kich hoat trong 1-24h."
+    return {"status":"success","message":msg,"key":key if is_trial else None}
+
+# ══════════════════════════════════════════════════════════════════
+# LARK WEBHOOK — Nhận đơn paid từ Lark
+# ══════════════════════════════════════════════════════════════════
+@app.post("/api/lark-webhook")
+async def receive_lark_order(payload: LarkWebhookBody, db=Depends(get_db)):
+    try:
+        order = payload.event
+        if order.payment_status.upper() != "PAID":
+            return {"status":"error","message":"Don hang chua thanh toan."}
+        tier    = order.purchased_tier.upper()
+        new_key = generate_license_key(tier)
+        lic = License(
+            license_key=new_key, tier=tier, status="UNUSED",
+            buyer_email=order.buyer_email, buyer_name=order.buyer_name,
+        )
+        db.add(lic); db.commit()
+        admin_chat = os.environ.get("TELEGRAM_ADMIN_CHAT_ID","")
+        if admin_chat:
+            await push_to_telegram(
+                chat_id=admin_chat,
+                text=f"DON HANG TU LARK!\nKhach: {order.buyer_name}\nGoi: {tier}\nKey: {new_key}",
+                disable_notification=False
+            )
+        return {"status":"success","data":{"license_key":new_key}}
+    except Exception as e:
+        db.rollback()
+        return {"status":"error","message":str(e)}
+
+# ══════════════════════════════════════════════════════════════════
+# EA HEARTBEAT
+# ══════════════════════════════════════════════════════════════════
+async def _heartbeat_handler(account, magic, license, equity, balance, ts, db):
+    if not license:
+        return {"valid":False,"lock":False,"emergency":False,"reason":"NO_LICENSE_KEY"}
+
+    lic = db.query(License).filter(License.license_key == license).first()
+    if not lic:
+        logger.warning(f"[HEARTBEAT] INVALID_KEY | account={account} key={license[:12]}...")
+        return {"valid":False,"lock":False,"emergency":False,"reason":"INVALID_KEY"}
+
+    if lic.status == "REVOKED":
+        return {"valid":False,"lock":True,"emergency":False,"reason":"LICENSE_REVOKED"}
+
+    if lic.status == "EXPIRED" or (lic.expires_at and lic.expires_at < datetime.utcnow()):
+        if lic.status != "EXPIRED":
+            lic.status = "EXPIRED"; db.commit()
+        return {"valid":False,"lock":True,"emergency":False,"reason":"LICENSE_EXPIRED"}
+
+    if lic.status not in ("ACTIVE","UNUSED"):
+        return {"valid":False,"lock":True,"emergency":False,"reason":"LICENSE_INACTIVE"}
+
+    max_m = getattr(lic,"max_machines",1) or 1
+    known = _get_machines(db, license)
+    if account and account not in known:
+        if len(known) >= max_m:
+            return {"valid":False,"lock":True,"emergency":False,"reason":"MACHINE_LIMIT_REACHED",
+                    "detail":f"Toi da {max_m} may. Lien he admin."}
+        _add_machine(db, license, account, magic)
+
+    if account:
+        lic.bound_mt5_id = lic.bound_mt5_id or account
+    db.commit()
+    logger.info(f"[HEARTBEAT] OK | key={license[:12]}... account={account} equity={equity:.2f}")
+    return {
+        "valid":True,"lock":False,"emergency":False,
+        "status":lic.status,
+        "expires_at": lic.expires_at.isoformat() if lic.expires_at else "lifetime",
+        "reason":"OK",
+    }
+
+@app.get("/heartbeat")
+async def ea_heartbeat_get(
+    account:str=None, magic:str="", license:str="",
+    equity:float=0, balance:float=0, ts:str="", db=Depends(get_db)
+):
+    return await _heartbeat_handler(account, magic, license, equity, balance, ts, db)
+
+@app.post("/heartbeat")
+async def ea_heartbeat_post(request: Request, db=Depends(get_db)):
+    account=magic=license=ts=""
+    equity=balance=0.0
+    try:
+        body    = await request.json()
+        account = str(body.get("account", body.get("account_id","")) or "")
+        magic   = str(body.get("magic","") or "")
+        license = str(body.get("license", body.get("license_key","")) or "")
+        equity  = float(body.get("equity",0) or 0)
+        balance = float(body.get("balance",0) or 0)
+        ts      = str(body.get("ts","") or "")
+    except Exception: pass
+    qp = request.query_params
+    if not account: account  = qp.get("account", qp.get("account_id",""))
+    if not license: license  = qp.get("license", qp.get("license_key",""))
+    if not equity:  equity   = float(qp.get("equity",0) or 0)
+    if not balance: balance  = float(qp.get("balance",0) or 0)
+    return await _heartbeat_handler(account, magic, license, equity, balance, ts, db)
+
+# ══════════════════════════════════════════════════════════════════
+# VALIDATE KEY (new backend endpoint)
+# ══════════════════════════════════════════════════════════════════
+@app.post("/api/validate-key")
+def validate_key(req: ValidateKeyPayload, db=Depends(get_db)):
+    lic = db.query(License).filter(License.license_key == req.license_key).first()
+    if not lic:
+        return {"valid":False,"reason":"INVALID_KEY","tier":None}
+    if lic.status == "REVOKED":
+        return {"valid":False,"reason":"LICENSE_REVOKED","tier":lic.tier}
+    if lic.expires_at and lic.expires_at < datetime.utcnow():
+        return {"valid":False,"reason":"LICENSE_EXPIRED","tier":lic.tier,
+                "expires_at":lic.expires_at.isoformat()}
+    if lic.status not in ("ACTIVE","UNUSED"):
+        return {"valid":False,"reason":"LICENSE_INACTIVE","tier":lic.tier}
+    return {
+        "valid":True,"tier":lic.tier,"status":lic.status,
+        "expires_at": lic.expires_at.isoformat() if lic.expires_at else "lifetime",
+        "bound_mt5_id": lic.bound_mt5_id,
+    }
+
+# ══════════════════════════════════════════════════════════════════
+# MT5 WEBHOOKS (legacy)
+# ══════════════════════════════════════════════════════════════════
+@app.post("/api/webhook/heartbeat")
+async def webhook_heartbeat(request: Request):
+    raw  = await request.body()
+    data = json.loads(raw.decode("utf-8").strip("\x00").strip())
+    update_webhook_heartbeat(data)
+    return {"status":"ok"}
+
+@app.post("/api/webhook/positions")
+async def webhook_positions(request: Request):
+    raw  = await request.body()
+    data = json.loads(raw.decode("utf-8").strip("\x00").strip())
+    update_webhook_positions(str(data.get("account_id")), data.get("positions",[]))
+    return {"status":"ok"}
+
+@app.post("/api/webhook/trade-event")
+async def webhook_trade_event(payload: TradeEventPayload):
+    try:
+        units  = get_all_units()
+        ucfg   = units.get(payload.account_id, {})
+        chat   = ucfg.get("telegram_config",{}).get("chat_id","")
+        active = ucfg.get("telegram_config",{}).get("is_active", True)
+        name   = ucfg.get("alias", f"Trader {payload.account_id}")
+        if not chat or not active:
+            return {"status":"ignored"}
+        if payload.event_type.upper() == "OPEN":
+            await send_trade_opened(chat_id=chat, trader_name=name,
+                ticket=payload.ticket, symbol=payload.symbol,
+                trade_type=payload.trade_type, volume=payload.volume, price=payload.price)
+        elif payload.event_type.upper() == "CLOSE":
+            await send_trade_closed(chat_id=chat, trader_name=name,
+                ticket=payload.ticket, symbol=payload.symbol,
+                trade_type=payload.trade_type, pnl=payload.pnl, rr_ratio=payload.rr_ratio)
+        return {"status":"success"}
+    except Exception as e:
+        return {"status":"error","message":str(e)}
+
+# ══════════════════════════════════════════════════════════════════
+# CONFIG / CONTROL
+# ══════════════════════════════════════════════════════════════════
+@app.post("/api/update-unit-config")
+async def update_config(request: Request):
+    try:
+        data       = await request.json()
+        account_id = str(data.get("mt5_login") or data.get("unit_key") or "")
+        if not account_id or account_id == "None":
+            return {"status":"error","message":"Thieu mt5_login"}
+        if "neural_profile" not in data:
+            existing = get_all_units().get(account_id,{}).get("neural_profile")
+            if existing: data["neural_profile"] = existing
+        update_unit_from_payload(account_id, data)
+        invalidate_units_cache()
+        return {"status":"success"}
+    except Exception as e:
+        return {"status":"error","message":str(e)}
+
+@app.post("/api/unlock-unit")
+async def unlock_unit(request: Request):
+    data = await request.json()
+    set_lock_status(data.get("account_id"), False)
+    return {"status":"unlocked"}
+
+@app.post("/api/panic-kill")
+async def panic_kill(request: Request):
+    data = await request.json()
+    set_lock_status(data.get("account_id"), True)
+    return {"status":"locked"}
+
+# ══════════════════════════════════════════════════════════════════
+# TELEGRAM
+# ══════════════════════════════════════════════════════════════════
+@app.post("/api/test-telegram")
+async def test_telegram(request: Request):
+    data    = await request.json()
+    chat_id = str(data.get("chat_id",""))
+    if not chat_id: return {"status":"error","message":"Thieu chat_id"}
+    await push_to_telegram(chat_id=chat_id,
+        text="<b>[Z-ARMOR] Test ket noi thanh cong!</b>", disable_notification=False)
+    return {"status":"ok"}
+
+@app.post("/api/send-telegram")
+async def route_send_telegram(req: SendTelegramRequest):
+    return await api_send_telegram(req.account_id, req.chat_id, req.message)
+
+# ══════════════════════════════════════════════════════════════════
+# LICENSE — bind / verify
+# ══════════════════════════════════════════════════════════════════
+@app.post("/api/bind-license")
+async def bind_license(req: BindLicensePayload, db=Depends(get_db)):
+    lic = db.query(License).filter(License.license_key == req.license_key).first()
+    if not lic: return {"status":"error","message":"Ma Ban quyen khong ton tai!"}
+    if lic.status == "ACTIVE":
+        if lic.bound_mt5_id == req.account_id:
+            return {"status":"success","message":"Ban quyen nay da lien ket voi MT5 cua ban."}
+        return {"status":"error","message":"Ma nay da bi su dung cho ID khac!"}
+    if lic.status != "UNUSED":
+        return {"status":"error","message":"Ma nay da bi khoa."}
+    lic.status       = "ACTIVE"
+    lic.bound_mt5_id = req.account_id
+    lic.expires_at   = datetime.utcnow() + timedelta(days=30)
+    lic.activated_at = datetime.utcnow()
+    db.commit()
+    init_payload = {
+        "mt5_login": req.account_id, "alias": f"Trader {req.account_id}",
+        "arm": False,
+        "telegram_config": {"is_active":True},
+        "risk_params": {"daily_limit_money":150,"max_dd":10.0,"dd_type":"STATIC","consistency":97},
+        "neural_profile": {"trader_archetype":"SNIPER","historical_win_rate":40.0,
+                           "historical_rr":1.5,"optimization_bias":"HALF_KELLY"}
+    }
+    update_unit_from_payload(req.account_id, init_payload)
+    return {"status":"success","message":"Kich hoat thanh cong. Da cap phep 30 ngay!"}
+
+@app.get("/api/verify-license/{account_id}")
+async def verify_license_get(account_id: str, db=Depends(get_db)):
+    lic = db.query(License).filter(
+        License.bound_mt5_id == str(account_id), License.status == "ACTIVE"
+    ).first()
+    if not lic: return {"status":"error","is_valid":False,"message":"ID nay chua co Ban quyen."}
+    if lic.expires_at and lic.expires_at < datetime.utcnow():
+        lic.status = "EXPIRED"; db.commit()
+        return {"status":"error","is_valid":False,"message":"Ban quyen DA HET HAN."}
+    return {"status":"success","is_valid":True,"message":"Ban quyen Hop le",
+            "tier":lic.tier,"expires_at":lic.expires_at.isoformat() if lic.expires_at else "lifetime"}
+
+@app.post("/api/verify-license")
+async def verify_license_post(request: Request, db=Depends(get_db)):
+    data = await request.json()
+    return await verify_license_get(str(data.get("account_id","")), db)
+
+# ══════════════════════════════════════════════════════════════════
+# TRADING DATA
+# ══════════════════════════════════════════════════════════════════
+@app.post("/api/log-trade")
+async def route_log_trade(req: LogTradeRequest):
+    result = api_log_trade(req.account_id, req.trade_data)
+    if result.get("status") == "error": raise HTTPException(500, detail=result["detail"])
+    return result
+
+@app.post("/api/close-session")
+async def route_close_session(req: CloseSessionRequest):
+    result = api_close_session(req.account_id, req.session_summary)
+    if result.get("status") == "error": raise HTTPException(500, detail=result["detail"])
+    return result
+
+@app.post("/api/log-audit")
+async def route_log_audit(req: LogAuditRequest):
+    return api_log_audit(req.account_id, req.action, req.message, req.severity or "INFO", req.extra)
+
+@app.get("/api/trade-history/{account_id}")
+async def route_trade_history(account_id: str, limit: int = 500):
+    return api_get_trade_history(account_id, limit=limit)
+
+@app.get("/api/session-history/{account_id}")
+async def route_session_history(account_id: str, limit: int = 90):
+    return api_get_session_history(account_id, limit=limit)
+
+@app.get("/api/sync-history/{account_id}")
+async def route_sync_history(account_id: str, db=Depends(get_db)):
+    try:
+        from database import TradeHistory, SessionHistory
+        import json as _j
+        raw_trades   = db.query(TradeHistory).filter(TradeHistory.account_id == account_id).order_by(TradeHistory.created_at.desc()).limit(500).all()
+        raw_sessions = db.query(SessionHistory).filter(SessionHistory.account_id == account_id).order_by(SessionHistory.created_at.desc()).limit(90).all()
+        trades = [
+            {"id":t.id,"account_id":t.account_id,"session_id":t.session_id,
+             "symbol":t.symbol,"trade_type":t.trade_type,"volume":t.volume,
+             "open_price":t.open_price,"close_price":t.close_price,
+             "pnl":t.pnl,"rr_ratio":t.rr_ratio,"risk_amount":t.risk_amount,
+             "actual_rr":t.actual_rr,"opened_at":t.opened_at,"closed_at":t.closed_at}
+            for t in raw_trades
+        ]
+        sessions = [
+            {"session_id":s.session_id,"account_id":s.account_id,"date":s.date,
+             "opening_balance":s.opening_balance,"closing_balance":s.closing_balance,
+             "pnl":s.pnl,"max_dd":s.max_dd,"trade_count":s.trade_count,
+             "win_count":s.win_count,"loss_count":s.loss_count,
+             "summary":_j.loads(s.summary or "{}")}
+            for s in raw_sessions
+        ]
+        return {"status":"ok","trades":trades,"sessions":sessions,
+                "meta":{"account_id":account_id,"trade_count":len(trades),"session_count":len(sessions),
+                        "synced_at":datetime.utcnow().isoformat()+"Z"}}
+    except Exception as e:
+        return {"status":"ok","trades":[],"sessions":[],
+                "meta":{"account_id":account_id,"trade_count":0,"session_count":0,
+                        "warning":str(e)[:100],"synced_at":datetime.utcnow().isoformat()+"Z"}}
+
+@app.get("/api/ai-analysis/{account_id}")
+async def route_ai_analysis(account_id: str):
+    return api_get_ai_analysis(account_id)
+
+# ══════════════════════════════════════════════════════════════════
+# ADMIN
+# ══════════════════════════════════════════════════════════════════
+@app.post("/admin/licenses")
+async def admin_create_license(
+    request: Request,
+    owner_name:   str = Query(""),
+    owner_email:  str = Query(""),
+    plan:         str = Query("standard"),
+    max_machines: int = Query(1),
+    expires_at:   str = Query(""),
+    note:         str = Query(""),
+    db=Depends(get_db)
+):
+    _check_admin(request)
+    key = generate_license_key(plan.upper())
+    exp = None
+    if expires_at:
+        try: exp = datetime.fromisoformat(expires_at)
+        except: pass
+    lic = License(
+        license_key=key, tier=plan, status="ACTIVE",
+        buyer_email=owner_email or "admin@zarmor.com",
+        buyer_name=owner_name, bound_mt5_id=None,
+        expires_at=exp, max_machines=max_machines, notes=note,
+    )
+    db.add(lic); db.commit()
+    logger.info(f"[ADMIN] LICENSE CREATED | key={key} owner={owner_name} plan={plan}")
+    return {"status":"created","key":key,"owner":owner_name,"plan":plan,
+            "max_machines":max_machines,"expires_at":expires_at or "lifetime"}
+
+@app.get("/admin/licenses")
+async def admin_list_licenses(request: Request, db=Depends(get_db)):
+    _check_admin(request)
+    rows = db.query(License).order_by(License.id.desc()).all()
+    return [{
+        "id":r.id,"license_key":r.license_key,"tier":r.tier,"status":r.status,
+        "bound_mt5_id":r.bound_mt5_id,"buyer_email":r.buyer_email,
+        "buyer_name":r.buyer_name,"is_trial":r.is_trial,
+        "expires_at":r.expires_at.isoformat() if r.expires_at else None,
+        "max_machines":getattr(r,"max_machines",1),
+        "machines":list(_get_machines(db, r.license_key)),
+        "created_at":r.created_at.isoformat() if r.created_at else None,
+    } for r in rows]
+
+@app.post("/admin/licenses/{key}/revoke")
+async def admin_revoke(key: str, request: Request, db=Depends(get_db)):
+    _check_admin(request)
+    lic = db.query(License).filter(License.license_key == key).first()
+    if not lic: raise HTTPException(404,"License not found")
+    lic.status = "REVOKED"; db.commit()
+    return {"status":"revoked","key":key}
+
+@app.post("/admin/licenses/{key}/activate")
+async def admin_activate(key: str, request: Request, db=Depends(get_db)):
+    _check_admin(request)
+    lic = db.query(License).filter(License.license_key == key).first()
+    if not lic: raise HTTPException(404,"License not found")
+    lic.status = "ACTIVE"; db.commit()
+    return {"status":"activated","key":key}
+
+@app.post("/admin/licenses/{key}/reset-machines")
+async def admin_reset_machines(key: str, request: Request, db=Depends(get_db)):
+    _check_admin(request)
+    _machine_registry.pop(key, None)
+    try:
+        db.query(LicenseActivation).filter(LicenseActivation.license_key == key).delete()
+        db.commit()
+    except Exception: db.rollback()
+    return {"status":"machines_reset","key":key}
+
+@app.get("/admin/stats")
+async def admin_stats(request: Request, db=Depends(get_db)):
+    _check_admin(request)
+    return {
+        "total":   db.query(License).count(),
+        "active":  db.query(License).filter(License.status == "ACTIVE").count(),
+        "trial":   db.query(License).filter(License.is_trial == True).count(),
+        "unused":  db.query(License).filter(License.status == "UNUSED").count(),
+        "pending": db.query(License).filter(License.status == "PENDING").count(),
+        "revoked": db.query(License).filter(License.status == "REVOKED").count(),
+        "expired": db.query(License).filter(License.status == "EXPIRED").count(),
+    }
+
+# ══════════════════════════════════════════════════════════════════
+# STATIC FILES — Dashboard React SPA tại /web/
+# ══════════════════════════════════════════════════════════════════
+web_path = os.path.join(BASE_DIR, "web")
+if os.path.exists(web_path):
+    app.mount("/web", StaticFiles(directory=web_path, html=True), name="web")
+    logger.info(f"Dashboard mounted at /web/ from {web_path}")
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, workers=1, reload=False)

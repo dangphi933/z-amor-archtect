@@ -1,0 +1,964 @@
+import { h } from 'preact';
+import { useState, useEffect, useRef } from 'preact/hooks';
+import htm from 'htm';
+import LeftColumn from './LeftColumn.js';
+import RightColumn from './RightColumn.js';
+import SetupModal from './SetupModal.js';
+import MacroModal from './MacroModal.js';
+import AiGuardCenter from './AiGuardCenter.js';
+
+// 💡 IMPORT CÁC MODULE LÕI TỪ AI AGENT VÀ PATCHES
+import { logTrade, updateTradeResult, checkCompliance, closeSession, generateDebrief } from './aiAgentEngine.js';
+import { ComplianceAlertBanner, DebriefingPanel, writeAuditLog } from './CockpitPatches.js';
+
+const html = htm.bind(h);
+
+const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+    ? 'http://127.0.0.1:8000' 
+    : `http://${window.location.hostname}:8000`;
+
+const COLORS = { 
+    bg: '#05070a', panelBg: '#0b0e14', cyan: '#00e5ff', green: '#00ff9d', 
+    red: '#ff2a6d', yellow: '#f5d300', textMuted: '#555', border: '#222', orange: '#ff8800', purple: '#b565ff'
+};
+
+const REGIME_DISPLAY = {
+    "ABSOLUTE_ZERO":       { color: "#00bfff", label: "ABSOLUTE ZERO (IDLE)",          icon: "🔵", pulse: false },
+    "OPTIMAL_FLOW":        { color: COLORS.green, label: "OPTIMAL FLOW (GOLDILOCKS)",  icon: "🟢", pulse: false },
+    "KINETIC_EROSION":     { color: COLORS.yellow, label: "KINETIC EROSION (WARNING)", icon: "🟡", pulse: true  },
+    "TURBULENT_FORCE":     { color: COLORS.red, label: "TURBULENT FORCE (CRITICAL)",  icon: "🔴", pulse: true  },
+    "CRITICAL_BREACH":     { color: "#ff0000", label: "CRITICAL BREACH (SCRAM)",      icon: "🚨", pulse: true  },
+    "ACCOUNT_LIQUIDATION": { color: "#ff0000", label: "ACCOUNT FLOOR BREACHED ☢️",   icon: "💀", pulse: true  },
+    "POSITIVE_LOCK":       { color: COLORS.green, label: "POSITIVE LOCK (SECURED)",   icon: "🛡️", pulse: true  },
+    "HIBERNATING":         { color: COLORS.cyan, label: "SYSTEM HIBERNATING",         icon: "⏸️", pulse: false },
+    "DISCONNECTED":        { color: "#555", label: "SYSTEM DISCONNECTED",             icon: "🔌", pulse: false }
+};
+
+export default function Cockpit() {
+    const [unitsConfig, setUnitsConfig] = useState({});
+    const [globalStatus, setGlobalStatus] = useState({ 
+        license_active: true, balance: 0, total_pnl: 0, total_stl: 0, open_trades: [],
+        physics: { state: "SCANNING", z_pressure: 0, velocity: 0, damping_factor: 1.0, is_hibernating: false, mur_pct: 0 },
+        chart_data: { labels: [], equity: [], z_pressure: [] },
+        daily_pnl_money: 0
+    });
+    
+    const [currentAccountId, setCurrentAccountId] = useState(localStorage.getItem('zarmor_id') || 'MainUnit');
+    const [accountList, setAccountList] = useState(() => {
+        try { return JSON.parse(localStorage.getItem('zarmor_accounts') || '[]'); } catch { return []; }
+    });
+    const [showAccountMenu, setShowAccountMenu] = useState(false);
+    const accountMenuRef = useRef(null);
+
+    // Nếu URL có ?key=xxx → tự mở NEW mode để bind key mới
+    const _urlKey = new URLSearchParams(window.location.search).get('key') || '';
+    const [activeSetup, setActiveSetup] = useState(_urlKey ? '__NEW__' : null);
+    const [showMacro, setShowMacro] = useState(false); 
+    const [showAiBudget, setShowAiBudget] = useState(false); 
+
+    // 💡 STATE MỚI CHO AI AGENT
+    const prevTradesRef = useRef([]);
+    const lastWarnLevelRef = useRef(0);
+    const rolloverFiredRef = useRef(false);
+    const [complianceAlerts, setComplianceAlerts] = useState([]);
+    const [showDebrief, setShowDebrief] = useState(null);
+
+    const radarCanvasRef = useRef(null);
+    const animState = useRef({ p: 0, e: 0, vp: 0, ve: 0, lastTime: performance.now() });
+
+    // ref để fetchData closure luôn đọc được currentAccountId mới nhất
+    const currentAccountIdRef = useRef(localStorage.getItem('zarmor_id') || 'MainUnit');
+    const fetchRetryRef = useRef(0);  // đếm số lần fetch fail liên tiếp
+
+    const fetchData = async () => {
+        try {
+            const activeId = currentAccountIdRef.current;
+            const targetParam = activeId !== 'MainUnit' ? `?account_id=${activeId}` : '';
+            const res = await fetch(`${API_BASE}/api/init-data${targetParam}`, {
+                signal: AbortSignal.timeout(4000)
+            });
+            const data = await res.json();
+            fetchRetryRef.current = 0; // reset khi thành công
+            if (data.units_config) { setUnitsConfig(data.units_config); }
+            if (data.global_status) setGlobalStatus(data.global_status);
+        } catch (e) {
+            fetchRetryRef.current += 1;
+            // Sau 3 lần fail liên tiếp → đánh dấu DISCONNECTED trong UI
+            if (fetchRetryRef.current >= 3) {
+                setGlobalStatus(prev => ({
+                    ...prev,
+                    physics: { ...(prev.physics || {}), state: 'DISCONNECTED', z_pressure: 0 }
+                }));
+            }
+        }
+    };
+
+    // 💡 1. ĐỒNG BỘ AI MEMORY KHI KHỞI ĐỘNG TERMINAL (Option A — server-side sync)
+    const [syncStatus, setSyncStatus] = useState(null); // null | 'syncing' | 'ok' | 'error' | 'unavailable'
+
+    useEffect(() => {
+        const accountId = localStorage.getItem("zarmor_id");
+        if (!accountId) return;
+
+        const syncData = async (attempt = 1) => {
+            setSyncStatus('syncing');
+            try {
+                const res = await fetch(`${API_BASE}/api/sync-history/${accountId}`, {
+                    signal: AbortSignal.timeout(5000)
+                });
+
+                // Endpoint chưa tồn tại trên server → bỏ qua, không crash
+                if (res.status === 404) {
+                    console.warn(`⚠️ /api/sync-history/${accountId} trả về 404 — endpoint chưa được triển khai trên server.`);
+                    setSyncStatus('unavailable');
+                    return;
+                }
+
+                // Lỗi server khác (500, 503...)
+                if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}`);
+                }
+
+                const data = await res.json();
+
+                if (data.status !== "ok") {
+                    console.warn("⚠️ sync-history trả về status không hợp lệ:", data);
+                    setSyncStatus('error');
+                    return;
+                }
+
+                // Chỉ ghi vào localStorage nếu chưa có dữ liệu local (tránh overwrite dữ liệu mới hơn)
+                const existingTrades = localStorage.getItem(`zarmor_trades_${accountId}`);
+                const existingSessions = localStorage.getItem(`zarmor_sessions_${accountId}`);
+
+                if (!existingTrades || JSON.parse(existingTrades).length === 0) {
+                    localStorage.setItem(`zarmor_trades_${accountId}`, JSON.stringify(data.trades || []));
+                    console.log(`✅ Khôi phục ${data.meta?.trade_count ?? (data.trades?.length ?? 0)} lệnh từ Cloud`);
+                }
+                if (!existingSessions || JSON.parse(existingSessions).length === 0) {
+                    localStorage.setItem(`zarmor_sessions_${accountId}`, JSON.stringify(data.sessions || []));
+                    console.log(`✅ Khôi phục ${data.meta?.session_count ?? (data.sessions?.length ?? 0)} phiên từ Cloud`);
+                }
+
+                setSyncStatus('ok');
+                writeAuditLog(accountId, 'CLOUD_SYNC', `☁️ Đồng bộ AI memory thành công | ${data.meta?.trade_count ?? 0} lệnh, ${data.meta?.session_count ?? 0} phiên`);
+
+            } catch (err) {
+                console.warn(`⚠️ Không thể đồng bộ AI memory từ Cloud (lần ${attempt}):`, err);
+
+                // Tự động retry tối đa 3 lần với delay tăng dần
+                if (attempt < 3) {
+                    const delay = attempt * 3000; // 3s, 6s
+                    console.log(`🔄 Thử lại sync sau ${delay / 1000}s...`);
+                    setTimeout(() => syncData(attempt + 1), delay);
+                } else {
+                    setSyncStatus('error');
+                    console.error("❌ Sync thất bại sau 3 lần thử. Dùng dữ liệu local.");
+                }
+            }
+        };
+
+        syncData();
+    }, []);
+
+    // ── ACCOUNT SWITCHER ──────────────────────────────────────────────────
+    const switchAccount = (id) => {
+        currentAccountIdRef.current = id;
+        localStorage.setItem('zarmor_id', id);
+        setCurrentAccountId(id);
+        setShowAccountMenu(false);
+        fetchRetryRef.current = 0;
+        fetchData();
+    };
+
+    // Sync accountList từ unitsConfig mỗi khi server trả về danh sách mới
+    useEffect(() => {
+        const ids = Object.keys(unitsConfig || {});
+        if (ids.length === 0) return;
+        setAccountList(prev => {
+            const merged = [...new Set([...prev, ...ids])];
+            localStorage.setItem('zarmor_accounts', JSON.stringify(merged));
+            return merged;
+        });
+    }, [unitsConfig]);
+
+    // Đóng dropdown khi click ra ngoài
+    useEffect(() => {
+        if (!showAccountMenu) return;
+        const handler = (e) => {
+            if (accountMenuRef.current && !accountMenuRef.current.contains(e.target))
+                setShowAccountMenu(false);
+        };
+        document.addEventListener('mousedown', handler);
+        return () => document.removeEventListener('mousedown', handler);
+    }, [showAccountMenu]);
+
+    useEffect(() => {
+        fetchData();
+        // Polling thích nghi: 1s khi connected, 5s khi DISCONNECTED (tránh spam server)
+        let interval = 1000;
+        let timer = setInterval(() => {
+            const isDisconnected = fetchRetryRef.current >= 3;
+            const newInterval = isDisconnected ? 5000 : 1000;
+            if (newInterval !== interval) {
+                interval = newInterval;
+                clearInterval(timer);
+                timer = setInterval(fetchData, interval);
+            }
+            fetchData();
+        }, interval);
+        return () => clearInterval(timer);
+    }, [currentAccountId]);
+
+    // Lắng nghe sự kiện Đóng Session để bật Modal Tóm tắt
+    useEffect(() => {
+        const handler = (e) => setShowDebrief(e.detail);
+        window.addEventListener('zarmor_session_closed', handler);
+        return () => window.removeEventListener('zarmor_session_closed', handler);
+    }, []);
+
+    const myUnitConfig = unitsConfig[currentAccountId] || unitsConfig['MainUnit'] || {};
+    const riskParams = myUnitConfig.risk_params || {};
+    const neural = myUnitConfig.neural_profile || {};
+    const isLocked = myUnitConfig.is_locked === true;
+    
+    const balance = globalStatus.balance || 0;
+    const startBalance = globalStatus?.start_balance || balance;
+    const currentEquity = globalStatus.equity || balance;
+    
+    const activeTrades = globalStatus.open_trades || [];
+    
+    const sumProjectedYield = activeTrades.reduce((sum, t) => sum + (parseFloat(t.tp_money) || 0), 0);
+    const sumFloatingRisk = activeTrades.reduce((sum, t) => sum + Math.abs(parseFloat(t.stl_money) || 0), 0);
+
+    const physics = globalStatus.physics || {};
+    const physicsRegime = physics.state || "OPTIMAL_FLOW"; 
+    const isHibernating = physicsRegime === "HIBERNATING";
+    const finalZPressure = physics.z_pressure || 0.0;
+    const frePct = physics.fre_pct || 0.0; 
+    
+    const rawDailyLoss = physics.budget_capacity || parseFloat(riskParams.tactical_daily_money) || 150;
+    const closedLoss = Math.max(0, startBalance - balance);
+    const deployedBudget = closedLoss + sumFloatingRisk;
+
+    // ── TẦNG 1: Account DD fields ────────────────────────────────────
+    const ddType            = riskParams.dd_type || physics.dd_type || 'STATIC';
+    const maxDdPct          = parseFloat(riskParams.max_dd || physics.max_dd_pct) || 10;
+    const accountHardFloor  = physics.account_hard_floor || 0;
+    const accountPeak       = physics.account_peak || balance;
+    const distToAccFloor    = physics.dist_to_account_floor || 0;
+    const accountDdPct      = physics.account_dd_pct || 0;
+    const accountBufferPct  = physics.account_buffer_pct || 100;  // % buffer còn lại trước floor
+
+    // ── TẦNG 2: Daily DD fields ──────────────────────────────────────
+    const dailyPeak         = physics.daily_peak || physics.peak_equity || startBalance;
+    const dailyGivebackPct  = physics.daily_giveback_pct || 0;    // % giveback so với allowed
+
+    // 💡 2. MÁY QUÉT LỆNH AI AGENT (TRADE LOGGER)
+    useEffect(() => {
+        if (!activeTrades || !currentAccountId) return;
+
+        const prev = prevTradesRef.current;
+        const prevTickets = new Set(prev.map(t => String(t.ticket)));
+        const currTickets = new Set(activeTrades.map(t => String(t.ticket)));
+
+        // Lệnh MỚI MỞ
+        const newTrades = activeTrades.filter(t => !prevTickets.has(String(t.ticket)));
+        newTrades.forEach(t => {
+            const plannedRR = neural?.historical_rr || 2.0;
+            const riskAmount = parseFloat(t.risk_amount) || Math.abs(parseFloat(t.open_price || 0) - parseFloat(t.sl || 0)) * parseFloat(t.volume || 0.01) * 10 || 0;
+
+            const entry = logTrade(currentAccountId, {
+                symbol: t.symbol, direction: t.side || t.type, risk_amount: riskAmount,
+                planned_rr: plannedRR, hour_of_day: new Date().getHours(),
+                day_of_week: new Date().getDay(), ticket: t.ticket
+            });
+            t._agent_id = entry?.id;
+
+            // KIỂM TRA ĐẠO ĐỨC LỆNH (COMPLIANCE)
+            const check = checkCompliance(currentAccountId,
+                { risk_amount: riskAmount, planned_rr: plannedRR },
+                { daily_used: deployedBudget, current_dd_pct: frePct }
+            );
+
+            if (check && check.violations && check.violations.length > 0) {
+                check.violations.forEach(v => {
+                    writeAuditLog(currentAccountId, 'COMPLIANCE_VIOL', v.detail, { severity: v.severity });
+                });
+                setComplianceAlerts(check.violations);
+            }
+
+            writeAuditLog(currentAccountId, 'TRADE_OPEN', `[${t.ticket}] ${t.symbol} ${t.side || t.type} | Risk $${riskAmount.toFixed(0)} | Planned R:R 1:${plannedRR}`);
+        });
+
+        // LỆNH VỪA ĐÓNG
+        const closedTrades = prev.filter(t => !currTickets.has(String(t.ticket)));
+        closedTrades.forEach(t => {
+            const profit = parseFloat(t.profit || t.pnl || 0);
+            const result = profit > 0 ? 'WIN' : profit < 0 ? 'LOSS' : 'BE';
+            const riskAmt = parseFloat(t.risk_amount || Math.abs(parseFloat(t.open_price || 0) - parseFloat(t.sl || 0)) * parseFloat(t.volume || 0.01) * 10 || 1);
+            const actualRR = riskAmt > 0 ? Math.abs(profit) / riskAmt : 0;
+
+            updateTradeResult(currentAccountId, t._agent_id, result, actualRR);
+
+            const resultIcon = result === 'WIN' ? '✅' : result === 'LOSS' ? '❌' : '⚡';
+            writeAuditLog(currentAccountId,
+                result === 'WIN' ? 'TRADE_WIN' : result === 'LOSS' ? 'TRADE_LOSS' : 'INFO',
+                `${resultIcon} [${t.ticket}] ${t.symbol} ĐÓNG | ${result} | P&L: ${profit >= 0 ? '+' : ''}$${profit.toFixed(2)} | R:R thực: ${actualRR.toFixed(2)}`,
+                { profit, actualRR }
+            );
+        });
+
+        prevTradesRef.current = activeTrades;
+    }, [activeTrades, currentAccountId, neural, deployedBudget, frePct]);
+
+    // 💡 3. CẢNH BÁO DRAWDOWN — DUAL LAYER
+    useEffect(() => {
+        // --- Tầng 2: Daily floating risk DD ---
+        const pct = (frePct / maxDdPct) * 100;
+        if (pct >= 90 && lastWarnLevelRef.current < 90) {
+            writeAuditLog(currentAccountId, 'DD_WARNING', `☢️ CRITICAL: Floating risk ${frePct.toFixed(1)}% chạm ${pct.toFixed(0)}% capacity (Max ${maxDdPct}%). Xem xét đóng lệnh!`, { severity: 'CRITICAL' });
+            lastWarnLevelRef.current = 90;
+        } else if (pct >= 75 && pct < 90 && lastWarnLevelRef.current < 75) {
+            writeAuditLog(currentAccountId, 'DD_WARNING', `⚠️ WARNING: Floating risk ${frePct.toFixed(1)}% đang tiến đến Max DD ${maxDdPct}%`, { severity: 'HIGH' });
+            lastWarnLevelRef.current = 75;
+        } else if (pct < 50) {
+            lastWarnLevelRef.current = 0;
+        }
+
+        // --- Tầng 1: Account floor proximity ---
+        if (accountHardFloor > 0) {
+            if (accountBufferPct <= 0) {
+                writeAuditLog(currentAccountId, 'ACCOUNT_FLOOR_BREACH', `💀 TẦNG 1 BỊ XUYÊN THỦNG: Equity đã xuyên ${ddType} Floor $${accountHardFloor.toFixed(0)}!`, { severity: 'CRITICAL' });
+            } else if (accountBufferPct <= 20) {
+                writeAuditLog(currentAccountId, 'ACCOUNT_FLOOR_WARN', `🔴 CẢNH BÁO TẦNG 1: Chỉ còn ${accountBufferPct.toFixed(0)}% buffer trước ${ddType} Floor $${accountHardFloor.toFixed(0)}`, { severity: 'HIGH' });
+            }
+        }
+    }, [frePct, maxDdPct, accountBufferPct, accountHardFloor, currentAccountId, ddType]);
+
+    // 💡 4. NHẬN DIỆN GIỜ ROLLOVER & TỔNG KẾT PHIÊN
+    useEffect(() => {
+        const rolloverHour = Number(riskParams?.rollover_hour) || 0;
+        const tgChatId = myUnitConfig.telegram_config?.chat_id;
+
+        const check = () => {
+            const now = new Date();
+            if (now.getHours() === rolloverHour && now.getMinutes() === 0) {
+                if (rolloverFiredRef.current) return;
+                rolloverFiredRef.current = true;
+
+                const session = (() => {
+                    try { return JSON.parse(localStorage.getItem(`zarmor_current_session_${currentAccountId}`) || 'null'); } catch { return null; }
+                })();
+
+                if (session && session.status === 'ACTIVE') {
+                    const finalPnL = globalStatus?.total_pnl || 0;
+                    const closed = closeSession(currentAccountId, finalPnL, frePct);
+
+                    if (closed) {
+                        writeAuditLog(currentAccountId, 'SESSION_CLOSE', `📊 SESSION CLOSED | PnL: ${finalPnL >= 0 ? '+' : ''}$${finalPnL.toFixed(2)} | Compliance: ${closed.compliance_score}% | DD hit: ${frePct.toFixed(1)}%`, { pnl: finalPnL, compliance: closed.compliance_score });
+
+                        if (tgChatId) {
+                            const debrief = generateDebrief(closed);
+                            fetch(`${API_BASE}/api/send-telegram`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ account_id: currentAccountId, chat_id: tgChatId, message: debrief })
+                            }).catch(() => {});
+                        }
+
+                        window.dispatchEvent(new CustomEvent('zarmor_session_closed', { detail: closed }));
+                        setTimeout(() => { rolloverFiredRef.current = false; }, 60000);
+                    }
+                }
+            }
+        };
+
+        const intv = setInterval(check, 30000); // Quét mỗi 30s
+        return () => clearInterval(intv);
+    }, [riskParams?.rollover_hour, currentAccountId, globalStatus, frePct, myUnitConfig]);
+
+    let kineticRatio = 0;
+    if (sumFloatingRisk > 0) kineticRatio = sumProjectedYield / sumFloatingRisk;
+    else if (sumProjectedYield > 0) kineticRatio = 99.9;
+
+    const targetRR = parseFloat(neural.historical_rr) || 1.5;
+    let disciplineStatus = "AWAITING TRADES";
+    let disciplineColor = "#555";
+    
+    if (activeTrades.length > 0) {
+        if (sumFloatingRisk === 0) {
+            disciplineStatus = "NO STOPLOSS DETECTED (FATAL)";
+            disciplineColor = COLORS.red;
+        } else if (kineticRatio >= targetRR) {
+            disciplineStatus = "EDGE ALIGNED (TUÂN THỦ LỜI THỀ)";
+            disciplineColor = COLORS.green;
+        } else if (kineticRatio >= 1.0) {
+            disciplineStatus = "SUB-OPTIMAL (R:R THẤP HƠN CAM KẾT)";
+            disciplineColor = COLORS.yellow;
+        } else {
+            disciplineStatus = "THERMODYNAMIC VIOLATION (R:R ÂM)";
+            disciplineColor = COLORS.red;
+        }
+    }
+
+    const configuredTarget = parseFloat(riskParams.target_profit) || 0;
+    const netDailyPnL = currentEquity - startBalance;
+    let saturationPct = configuredTarget > 0 ? (Math.max(0, netDailyPnL) / configuredTarget) * 100 : 0;
+    saturationPct = Math.min(100, Math.max(0, saturationPct));
+
+    const maxBarVal = Math.max(sumFloatingRisk, sumProjectedYield) * 1.1 || 100;
+    const riskBarPct = (sumFloatingRisk / maxBarVal) * 100;
+    const rewardBarPct = (sumProjectedYield / maxBarVal) * 100;
+
+    let statusStyle = REGIME_DISPLAY[physicsRegime] || REGIME_DISPLAY["OPTIMAL_FLOW"];
+    if (physicsRegime.includes("ACCOUNT_LIQUIDATION")) statusStyle = REGIME_DISPLAY["ACCOUNT_LIQUIDATION"];
+    else if (physicsRegime.includes("POSITIVE_LOCK") || physicsRegime.includes("PROFIT")) statusStyle = REGIME_DISPLAY["POSITIVE_LOCK"];
+    else if (physicsRegime.includes("ABSOLUTE_ZERO") || physicsRegime.includes("IDLE") || physicsRegime.includes("ZERO")) statusStyle = REGIME_DISPLAY["ABSOLUTE_ZERO"];
+    else if (physicsRegime.includes("OPTIMAL_FLOW") || physicsRegime.includes("FLOW") || physicsRegime.includes("OPTIMAL")) statusStyle = REGIME_DISPLAY["OPTIMAL_FLOW"];
+    else if (physicsRegime.includes("KINETIC_EROSION") || physicsRegime.includes("EROSION") || physicsRegime.includes("ELEVATED")) statusStyle = REGIME_DISPLAY["KINETIC_EROSION"];
+    else if (physicsRegime.includes("TURBULENT_FORCE") || physicsRegime.includes("TURBULENT") || physicsRegime.includes("CRITICAL")) statusStyle = REGIME_DISPLAY["TURBULENT_FORCE"];
+    else if (physicsRegime.includes("CRITICAL_BREACH") || physicsRegime.includes("BREACH") || physicsRegime.includes("LOCKED")) statusStyle = REGIME_DISPLAY["CRITICAL_BREACH"];
+    else if (physicsRegime.includes("DISCONNECT")) statusStyle = REGIME_DISPLAY["DISCONNECTED"];
+
+    const dbuPct = rawDailyLoss > 0 ? (deployedBudget / rawDailyLoss) * 100 : 0.0;
+    const finalDamping = physics.damping_factor !== undefined ? physics.damping_factor : 1.0;
+
+    let finalZColor = "#00bfff";
+    if (finalZPressure < 0.15) finalZColor = "#00bfff";
+    else if (finalZPressure <= 0.60) finalZColor = COLORS.green;
+    else if (finalZPressure <= 0.85) finalZColor = COLORS.yellow;
+    else if (finalZPressure < 1.0) finalZColor = COLORS.red;
+    else finalZColor = "#ff0000";
+
+    const basePressure = physics.base_pressure || 0;
+    const trailingPressure = physics.daily_trailing_pressure || physics.trailing_pressure || 0;
+    const basePct = Math.min(basePressure * 100, 100);
+    const trailPct = Math.min(trailingPressure * 100, 100);
+
+    const p_hat = Math.min(finalZPressure, 1.5); 
+    const e_hat = Math.min(frePct / 5.0, 1.5); 
+
+    useEffect(() => {
+        const canvas = radarCanvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let animationId;
+
+        const resize = () => {
+            const parent = canvas.parentElement;
+            canvas.width = parent.clientWidth;
+            canvas.height = parent.clientHeight;
+        };
+        window.addEventListener('resize', resize);
+        resize();
+
+        const drawArrow = (fromX, fromY, toX, toY, color) => {
+            const headlen = 10; const dx = toX - fromX; const dy = toY - fromY; const angle = Math.atan2(dy, dx);
+            ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(fromX, fromY); ctx.lineTo(toX, toY);
+            ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 6), toY - headlen * Math.sin(angle - Math.PI / 6)); ctx.moveTo(toX, toY);
+            ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI / 6), toY - headlen * Math.sin(angle + Math.PI / 6)); ctx.stroke();
+        };
+
+        const loop = (time) => {
+            const dt = Math.min((time - animState.current.lastTime) / 1000, 0.1); 
+            animState.current.lastTime = time;
+
+            let { p, e, vp, ve } = animState.current;
+            const newP = p + (p_hat - p) * 3 * dt; const newE = e + (e_hat - e) * 3 * dt;
+            const newVp = (newP - p) / dt; const newVe = (newE - e) / dt;
+            const accP = (newVp - vp) / dt; const accE = (newVe - ve) / dt;
+            const accMag = Math.sqrt(accP * accP + accE * accE);
+
+            animState.current = { p: newP, e: newE, vp: newVp, ve: newVe, lastTime: time };
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const padX = 60, padY = 50; const w = canvas.width - padX * 2; const h = canvas.height - padY * 2;
+            const scaleX = w / 1.5; const scaleY = h / 1.5;
+            const getX = (val) => padX + val * scaleX; const getY = (val) => canvas.height - padY - val * scaleY;
+
+            ctx.fillStyle = COLORS.red + '1A';
+            ctx.fillRect(getX(1.0), getY(1.5), scaleX * 0.5, scaleY * 1.5); 
+            ctx.fillRect(getX(0), getY(1.5), scaleX * 1.0, scaleY * 0.5);   
+            ctx.strokeStyle = COLORS.red; ctx.lineWidth = 1.5; ctx.setLineDash([5, 5]);
+            ctx.beginPath(); ctx.moveTo(getX(1.0), getY(0)); ctx.lineTo(getX(1.0), getY(1.5)); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(getX(0), getY(1.0)); ctx.lineTo(getX(1.5), getY(1.0)); ctx.stroke(); ctx.setLineDash([]);
+
+            ctx.fillStyle = COLORS.red + '11'; 
+            ctx.fillRect(getX(0.85), getY(1.0), scaleX * 0.15, scaleY * 1.0);
+
+            ctx.fillStyle = COLORS.yellow + '11'; 
+            ctx.fillRect(getX(0.60), getY(1.0), scaleX * 0.25, scaleY * 1.0);
+
+            ctx.save(); ctx.beginPath(); ctx.ellipse(getX(0), getY(0), scaleX * 0.6, scaleY * 0.6, 0, 0, Math.PI * 2); ctx.clip();
+            ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = COLORS.green + '1A'; ctx.fill(); ctx.restore();
+            ctx.beginPath(); ctx.ellipse(getX(0), getY(0), scaleX * 0.6, scaleY * 0.6, 0, 0, Math.PI * 2); ctx.strokeStyle = COLORS.green + '88'; ctx.lineWidth = 1; ctx.stroke();
+
+            ctx.strokeStyle = '#333'; ctx.lineWidth = 1; ctx.beginPath();
+            ctx.moveTo(getX(0), getY(0)); ctx.lineTo(getX(1.5), getY(0)); 
+            ctx.moveTo(getX(0), getY(0)); ctx.lineTo(getX(0), getY(1.5)); ctx.stroke();
+
+            ctx.fillStyle = '#888'; ctx.font = '10px monospace';
+            ctx.fillText('P̂ (CAP. PRESSURE)', getX(1.5) - 100, getY(0) + 18); 
+            ctx.save(); ctx.translate(getX(0) - 35, getY(1.5) + 60); ctx.rotate(-Math.PI / 2); ctx.fillText('Ê (RISK EXP.)', 0, 0); ctx.restore();
+
+            ctx.textAlign = 'center';
+            [0.15, 0.60, 0.85, 1.0].forEach(v => {
+                ctx.beginPath(); ctx.moveTo(getX(v), getY(0)); ctx.lineTo(getX(v), getY(0)+4); ctx.strokeStyle='#555'; ctx.stroke();
+                ctx.fillText(v.toFixed(2), getX(v), getY(0) + 15);
+            });
+            ctx.textAlign = 'left';
+
+            let pointColor = "#00bfff"; 
+            if (newP < 0.15) pointColor = "#00bfff";
+            else if (newP <= 0.60) pointColor = COLORS.green;
+            else if (newP <= 0.85) pointColor = COLORS.yellow;
+            else if (newP < 1.0) pointColor = COLORS.red;
+            else pointColor = "#ff0000";
+            
+            if (dbuPct >= 80.0) pointColor = COLORS.purple; 
+
+            let vibX = 0, vibY = 0;
+            if (accMag > 1.0 || dbuPct >= 80.0) { 
+                vibX = (Math.random() - 0.5) * 3; 
+                vibY = (Math.random() - 0.5) * 3; 
+            }
+            const px = getX(newP) + vibX; const py = getY(newE) + vibY;
+
+            const w_rect = px - getX(0);
+            const h_rect = getY(0) - py;
+            if (w_rect > 0 && h_rect > 0) {
+                const grad = ctx.createLinearGradient(getX(0), getY(0), px, py);
+                grad.addColorStop(0, 'transparent');
+                grad.addColorStop(1, pointColor + '44'); 
+
+                ctx.fillStyle = grad; 
+                ctx.fillRect(getX(0), py, w_rect, h_rect);
+                
+                ctx.setLineDash([3, 5]);
+                ctx.strokeStyle = pointColor + '88';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(px, py); ctx.lineTo(getX(0), py); 
+                ctx.moveTo(px, py); ctx.lineTo(px, getY(0)); 
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            ctx.fillStyle = COLORS.panelBg + 'CC';
+            ctx.fillRect(canvas.width - 150, 10, 140, 60);
+            ctx.strokeStyle = '#333'; ctx.strokeRect(canvas.width - 150, 10, 140, 60);
+            
+            ctx.font = 'bold 10px monospace';
+            ctx.fillStyle = COLORS.cyan; ctx.fillText(`B̂ (USED): ${dbuPct.toFixed(1)}%`, canvas.width - 140, 25);
+            ctx.fillStyle = COLORS.purple; ctx.fillText(`Ê (EXP.) : ${frePct.toFixed(1)}%`, canvas.width - 140, 42); 
+            ctx.fillStyle = pointColor; ctx.fillText(`P̂ (CAP.) : ${(finalZPressure*100).toFixed(1)}%`, canvas.width - 140, 59);
+
+            const baseRadius = 4;
+            const massRadius = baseRadius + (Math.min(dbuPct, 100.0) / 100.0) * 6; 
+
+            const speed = Math.sqrt(newVp*newVp + newVe*newVe);
+            const damp = finalDamping;
+            const arrowX = newVp * damp * scaleX * 2.0; const arrowY = newVe * damp * scaleY * 2.0;
+            let arrColor = COLORS.cyan; if (speed > 0.05 && (newP > 0.8 || newE > 0.8)) arrColor = COLORS.orange; if (accMag > 1.5) arrColor = COLORS.red;
+            if (speed > 0.01) drawArrow(px, py, px + arrowX, py - arrowY, arrColor);
+
+            ctx.shadowBlur = 10; ctx.shadowColor = pointColor; ctx.fillStyle = pointColor; ctx.beginPath(); 
+            ctx.arc(px, py, massRadius, 0, Math.PI * 2); ctx.fill();
+            
+            if (accMag > 1.0 || pointColor === COLORS.red || pointColor === "#ff0000" || pointColor === COLORS.purple) {
+                const pulseSize = massRadius + Math.abs(Math.sin(time/200)) * 6; 
+                ctx.beginPath(); ctx.arc(px, py, pulseSize, 0, Math.PI * 2); ctx.fillStyle = pointColor + '44'; ctx.fill();
+            }
+            ctx.shadowBlur = 0; animationId = requestAnimationFrame(loop);
+        };
+
+        animationId = requestAnimationFrame(loop);
+        
+        return () => { window.removeEventListener('resize', resize); cancelAnimationFrame(animationId); };
+    }, [p_hat, e_hat, finalDamping, dbuPct, finalZPressure, frePct]);
+
+    const handlePanicKill = async () => {
+        if (!window.confirm("☢️ INITIATE SCRAM: Đóng toàn bộ lệnh và NGỦ ĐÔNG hệ thống ngay lập tức?")) return;
+        try { await fetch(`${API_BASE}/api/panic-kill`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ account_id: currentAccountId }) }); fetchData(); } catch (e) {}
+    };
+
+    const handleReboot = async () => {
+        if (!window.confirm("⚡ REBOOT: Bạn muốn đánh thức hệ thống trở lại?")) return;
+        try { await fetch(`${API_BASE}/api/unlock-unit`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ account_id: currentAccountId }) }); fetchData(); } catch (e) {}
+    };
+
+    const formatMoney = (val) => {
+        const num = parseFloat(val) || 0;
+        return (num >= 0 ? '+' : '') + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' $';
+    };
+
+    return html`
+        <div class="responsive-cockpit">
+            
+            <style>
+                @keyframes pulseEffect { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.15); opacity: 0.7; } 100% { transform: scale(1); opacity: 1; } }
+                .pulse-icon { animation: pulseEffect 1s infinite cubic-bezier(0.25, 0.8, 0.25, 1); }
+                .blink-text { animation: blinker 1.5s linear infinite; } @keyframes blinker { 50% { opacity: 0.3; } }
+                .scanline-bg { background: linear-gradient(rgba(0, 229, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 229, 255, 0.03) 1px, transparent 1px); background-size: 20px 20px; }
+                
+                .responsive-cockpit { background: ${COLORS.bg}; color: #fff; height: 100vh; display: grid; grid-template-columns: 340px minmax(0, 1fr) 340px; gap: 12px; padding: 12px; font-family: monospace; overflow: hidden; box-sizing: border-box; width: 100vw; }
+                .main-panel { display: flex; flex-direction: column; gap: 12px; overflow-y: auto; overflow-x: hidden; width: 100%; padding-right: 4px; }
+                .top-alert-banner { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-radius: 4px; flex-shrink: 0; transition: 0.5s; }
+                .financial-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); background: #000; border-bottom: 1px solid #222; padding: 10px 0; }
+                .trade-table-container { flex: 1; overflow-y: auto; overflow-x: hidden; width: 100%; }
+                
+                .trade-row { display: grid; grid-template-columns: 0.8fr 1.2fr 0.6fr 0.8fr 1.0fr 1.0fr 0.8fr 1.2fr; gap: 6px; align-items: center; width: 100%; }
+                .trade-row > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: clamp(8px, 0.8vw, 11px); }
+                
+                @media (max-width: 1100px) { body, html, #root { height: auto !important; overflow-y: auto !important; overflow-x: hidden !important; background: ${COLORS.bg}; } .responsive-cockpit { display: flex !important; flex-direction: column !important; height: auto !important; min-height: 100vh; overflow: visible !important; padding: 10px !important; } aside, .main-panel { width: 100% !important; max-width: 100vw !important; box-sizing: border-box !important; overflow: visible !important; height: auto !important; max-height: none !important; flex: none !important; } aside > div, aside > div > div { height: auto !important; overflow: visible !important; max-height: none !important; } aside > div > div > div { height: auto !important; min-height: 0 !important; max-height: none !important; overflow: visible !important; } .top-alert-banner { flex-direction: column; gap: 15px; text-align: center; } .top-alert-banner > div { width: 100% !important; border: none !important; padding: 0 !important; } .financial-stats { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; row-gap: 15px; } .financial-stats > div { border-right: none !important; border-bottom: 1px solid #111; padding-bottom: 5px; } .scanline-bg { min-height: 250px !important; height: auto !important; } .trade-table-container { overflow-x: auto !important; overflow-y: visible !important; height: auto !important; } .trade-row { min-width: 650px; } aside:last-of-type { scroll-margin-top: 0 !important; } }
+            </style>
+
+            <aside style="display: flex; flex-direction: column; overflow: hidden; gap: 10px;">
+                <${LeftColumn} global_status=${globalStatus} units_config=${unitsConfig} COLORS=${COLORS} onOpenMacro=${() => setShowMacro(true)} />
+            </aside>
+
+            <main class="main-panel">
+                <!-- ── HEADER BAR + ACCOUNT SWITCHER ── -->
+                <div style="display: flex; justify-content: space-between; align-items: center; background: #0b0e14; border: 1px solid #222; padding: 5px 15px; border-radius: 4px; flex-shrink: 0; position: relative; z-index: 100;">
+                    <div style="color: ${COLORS.cyan}; font-size: 12px; font-weight: bold; letter-spacing: 1px;">Z-ARMOR CLOUD TERMINAL</div>
+
+                    <div style="display: flex; align-items: center; gap: 10px;">
+
+                        <!-- SYNC BADGES -->
+                        ${syncStatus === 'syncing' && html`<div style="font-size: 9px; color: ${COLORS.cyan}; background: ${COLORS.cyan}11; border: 1px solid ${COLORS.cyan}44; padding: 3px 8px; border-radius: 2px; animation: blinker 1.5s linear infinite;">☁️ SYNCING...</div>`}
+                        ${syncStatus === 'ok' && html`<div style="font-size: 9px; color: ${COLORS.green}; background: ${COLORS.green}11; border: 1px solid ${COLORS.green}44; padding: 3px 8px; border-radius: 2px;">✅ SYNCED</div>`}
+                        ${syncStatus === 'error' && html`<div style="font-size: 9px; color: ${COLORS.yellow}; background: ${COLORS.yellow}11; border: 1px solid ${COLORS.yellow}44; padding: 3px 8px; border-radius: 2px;">⚠️ LOCAL</div>`}
+                        ${syncStatus === 'unavailable' && html`<div style="font-size: 9px; color: #444; background: #111; border: 1px solid #333; padding: 3px 8px; border-radius: 2px;">🔌 OFFLINE</div>`}
+
+                        <!-- CONNECTION STATUS -->
+                        <div style="color: ${physicsRegime === 'DISCONNECTED' ? '#ff0000' : '#00ffcc'}; font-size: 9px; font-weight: bold; background: #05070a; padding: 3px 8px; border-radius: 2px; border: 1px solid ${physicsRegime === 'DISCONNECTED' ? '#ff000055' : '#00ffcc44'};">
+                            ${physicsRegime === 'DISCONNECTED' ? '⚠️ MẤT KẾT NỐI' : '📡 LIVE'}
+                        </div>
+
+                        <!-- ── ACCOUNT SWITCHER DROPDOWN ── -->
+                        <div ref=${accountMenuRef} style="position: relative;">
+                            <button
+                                onClick=${() => setShowAccountMenu(v => !v)}
+                                style="display: flex; align-items: center; gap: 8px; background: ${showAccountMenu ? COLORS.cyan + '18' : '#05070a'}; border: 1px solid ${showAccountMenu ? COLORS.cyan + '88' : '#333'}; color: #fff; padding: 4px 10px; border-radius: 3px; cursor: pointer; font-family: monospace; font-size: 10px; font-weight: bold; transition: 0.2s; white-space: nowrap;">
+                                <span style="color: ${COLORS.cyan};">▣</span>
+                                <span style="color: ${COLORS.cyan};">${myUnitConfig.alias || currentAccountId}</span>
+                                ${myUnitConfig.alias ? html`<span style="color: #333; font-size: 8px;">· ${currentAccountId}</span>` : ''}
+                                <span style="color: #444; font-size: 8px; margin-left: 2px;">${showAccountMenu ? '▲' : '▼'}</span>
+                            </button>
+
+                            ${showAccountMenu && html`
+                                <div style="position: absolute; top: calc(100% + 6px); right: 0; z-index: 9999; background: #070910; border: 1px solid #222; border-radius: 4px; min-width: 320px; box-shadow: 0 12px 40px rgba(0,0,0,0.9); overflow: hidden;">
+
+                                    <!-- Dropdown header -->
+                                    <div style="padding: 8px 14px; background: #020305; border-bottom: 1px solid #1a1a1a; display: flex; justify-content: space-between; align-items: center;">
+                                        <span style="font-size: 9px; color: #444; letter-spacing: 1px; font-weight: bold;">⚡ FLEET OVERVIEW</span>
+                                        <span style="font-size: 8px; color: #222;">${accountList.length} tài khoản</span>
+                                    </div>
+
+                                    <!-- Account rows -->
+                                    ${accountList.length === 0 ? html`
+                                        <div style="padding: 12px 14px; font-size: 9px; color: #333; text-align: center; font-style: italic;">
+                                            Chưa có tài khoản — ARM tài khoản đầu tiên bên dưới
+                                        </div>
+                                    ` : accountList.map(id => {
+                                        const cfg    = unitsConfig[id] || {};
+                                        const isAct  = id === currentAccountId;
+                                        const isLk   = cfg.is_locked === true;
+                                        const alias  = cfg.alias || id;
+                                        const maxDd  = cfg.risk_params?.max_dd || 10;
+                                        const ddNow  = (isAct ? (globalStatus?.physics?.account_dd_pct || 0) : 0);
+                                        const hasCfg = !!cfg.risk_params;
+                                        return html`
+                                            <div
+                                                onClick=${() => switchAccount(id)}
+                                                style="padding: 9px 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: ${isAct ? COLORS.cyan + '0d' : 'transparent'}; border-left: 2px solid ${isAct ? COLORS.cyan : 'transparent'}; border-bottom: 1px solid #0f0f0f; transition: background 0.15s;"
+                                                onMouseEnter=${e => { if (!isAct) e.currentTarget.style.background = '#ffffff08'; }}
+                                                onMouseLeave=${e => { if (!isAct) e.currentTarget.style.background = 'transparent'; }}>
+
+                                                <div style="display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0;">
+                                                    <div style="font-size: 10px; color: ${isAct ? COLORS.cyan : '#aaa'}; font-weight: ${isAct ? 'bold' : 'normal'}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                        ${alias}
+                                                    </div>
+                                                    <div style="font-size: 8px; color: #333; font-family: monospace;">ID: ${id}</div>
+                                                </div>
+
+                                                <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0; margin-left: 12px;">
+                                                    ${hasCfg ? html`
+                                                        <div style="font-size: 8px; color: #444; font-family: monospace; text-align: right;">
+                                                            ${isAct && ddNow > 0 ? html`<span style="color: ${ddNow >= maxDd * 0.8 ? COLORS.red : COLORS.yellow};">DD ${ddNow.toFixed(1)}%/${maxDd}%</span>` : html`<span>Max ${maxDd}%</span>`}
+                                                        </div>
+                                                    ` : ''}
+                                                    <div style="font-size: 9px; padding: 2px 7px; border-radius: 10px; background: ${isLk ? COLORS.green + '18' : '#1a0a0a'}; border: 1px solid ${isLk ? COLORS.green + '44' : COLORS.red + '33'}; color: ${isLk ? COLORS.green : COLORS.red}; white-space: nowrap;">
+                                                        ${isLk ? '🔒 ARMED' : '🔓 SETUP'}
+                                                    </div>
+                                                    <button
+                                                        onClick=${e => { e.stopPropagation(); setShowAccountMenu(false); setActiveSetup(id); }}
+                                                        style="background: #0a0c10; border: 1px solid #222; color: #555; width: 24px; height: 24px; border-radius: 3px; cursor: pointer; font-size: 11px; display: flex; align-items: center; justify-content: center;"
+                                                        title="Cấu hình tài khoản ${id}">⚙</button>
+                                                </div>
+                                            </div>
+                                        `;
+                                    })}
+
+                                    <!-- Add account button -->
+                                    <div
+                                        onClick=${() => { setShowAccountMenu(false); setActiveSetup('__NEW__'); }}
+                                        style="padding: 10px 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; border-top: 1px solid #1a1a1a; color: ${COLORS.yellow}; font-size: 9px; font-weight: bold; letter-spacing: 1px;"
+                                        onMouseEnter=${e => e.currentTarget.style.background = COLORS.yellow + '0a'}
+                                        onMouseLeave=${e => e.currentTarget.style.background = 'transparent'}>
+                                        ＋ THÊM TÀI KHOẢN MỚI
+                                    </div>
+                                </div>
+                            `}
+                        </div>
+                        <!-- ── END ACCOUNT SWITCHER ── -->
+
+                    </div>
+                </div>
+
+
+                <div class="top-alert-banner" style="background: ${statusStyle.color + '15'}; border: 1px solid ${statusStyle.color + '55'}; box-shadow: inset 0 0 20px ${statusStyle.color + '11'}; flex-shrink: 0;">
+                    
+                    <!-- KHU VỰC TRÁI: Regime label -->
+                    <div style="display: flex; align-items: center; gap: 15px; width: 30%; justify-content: center;">
+                        <div class=${statusStyle.pulse ? "pulse-icon" : ""} style="font-size: 28px;">${statusStyle.icon}</div>
+                        <div style="text-align: left;">
+                            <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 2px;">
+                                <div style="font-size: 8px; color: ${statusStyle.color}; font-weight: bold; letter-spacing: 2px;">QUANTITATIVE REGIME</div>
+                                ${isHibernating ? html`<span class="blink-text" style="background: ${COLORS.yellow}; color: #000; font-size: 8px; font-weight: bold; padding: 2px 5px; border-radius: 2px;">⏸ HIBERNATING</span>` : ''}
+                                ${physicsRegime === 'ACCOUNT_LIQUIDATION' ? html`<span class="blink-text" style="background: #ff0000; color: #fff; font-size: 8px; font-weight: bold; padding: 2px 5px; border-radius: 2px;">💀 FLOOR BREACH</span>` : ''}
+                            </div>
+                            <div style="font-size: 14px; font-weight: 900; color: #fff; text-shadow: 0 0 10px ${statusStyle.color + '88'};">${statusStyle.label}</div>
+                        </div>
+                    </div>
+
+                    <!-- KHU VỰC GIỮA: Z-Pressure + 3 bars -->
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; border-left: 1px solid #333; border-right: 1px solid #333; padding: 0 20px; width: 40%;">
+                        <div style="font-size: 8px; color: #888; letter-spacing: 1px;">MASTER Z-PRESSURE (P̂)</div>
+                        <div style="font-size: 22px; font-weight: bold; color: ${finalZColor}; font-family: 'Courier New', monospace; line-height: 1.2;">
+                            ${finalZPressure.toFixed(4)}
+                        </div>
+                        <!-- Weighted contribution: L/G/A = đóng góp thực vào Z (weighted), không phải raw % -->
+                        ${(() => {
+                            const aw = physics.adaptive_weights || {};
+                            const lc = Math.min(1.0, physics.base_pressure || 0);
+                            const gc = Math.min(1.0, physics.daily_trailing_pressure || physics.trailing_pressure || 0);
+                            const ac = Math.min(1.0, (physics.account_proximity_pressure || 0) / 0.15);
+                            const contribL = (aw.daily_loss || 0.4) * lc;
+                            const contribG = (aw.giveback || 0.2) * gc;
+                            const contribA = (aw.account || 0.3) * ac;
+                            const total = contribL + contribG + contribA;
+                            if (total < 0.005) return '';
+                            return html`
+                                <div style="font-size:7px; color:#333; margin-top:1px; display:flex; gap:5px; letter-spacing:0.5px;" title="Đóng góp có trọng số vào Z (L=Loss G=Giveback A=Account)">
+                                    ${contribL>0.005 ? html`<span style="color:${COLORS.cyan}55;">L:${(contribL*100).toFixed(0)}%</span>` : ''}
+                                    ${contribG>0.005 ? html`<span style="color:${COLORS.yellow}66;">G:${(contribG*100).toFixed(0)}%</span>` : ''}
+                                    ${contribA>0.005 ? html`<span style="color:${COLORS.red}66;">A:${(contribA*100).toFixed(0)}%</span>` : ''}
+                                </div>
+                            `;
+                        })()}
+                        <div style="width: 100%; margin-top: 6px; display: flex; flex-direction: column; gap: 5px;">
+
+                            <!-- Bar 1: BASE — áp suất budget ngày -->
+                            <div style="display: flex; align-items: center; gap: 5px;" title="BASE: Floating SL / Remaining Daily Budget">
+                                <span style="font-size: 7px; color: #888; width: 42px; text-align: right; letter-spacing: 0.5px;">BASE</span>
+                                <div style="flex: 1; height: 4px; background: #111; border-radius: 2px; overflow: hidden; border: 1px solid #222;">
+                                    <div style="width: ${Math.min(basePct, 100)}%; height: 100%; background: ${basePct >= 80 ? COLORS.red : COLORS.cyan}; transition: width 0.3s;"></div>
+                                </div>
+                                <span style="font-size: 7px; color: #555; width: 26px; text-align: left; font-family: monospace;">${Math.min(basePct, 100).toFixed(0)}%</span>
+                            </div>
+
+                            <!-- Bar 2: D.TRAIL — daily trailing profit giveback -->
+                            <div style="display: flex; align-items: center; gap: 5px;" title="DAILY TRAIL: Giveback lợi nhuận ngày / Allowed giveback (profit_lock_pct)">
+                                <span style="font-size: 7px; color: ${COLORS.yellow}; width: 42px; text-align: right; letter-spacing: 0.5px;">D.TRAIL</span>
+                                <div style="flex: 1; height: 4px; background: #111; border-radius: 2px; overflow: hidden; border: 1px solid #222;">
+                                    <div style="width: ${Math.min(dailyGivebackPct, 100)}%; height: 100%; background: ${dailyGivebackPct >= 80 ? COLORS.red : COLORS.yellow}; transition: width 0.3s;"></div>
+                                </div>
+                                <span style="font-size: 7px; color: ${COLORS.yellow}; width: 26px; text-align: left; font-family: monospace;">${Math.min(dailyGivebackPct, 100).toFixed(0)}%</span>
+                            </div>
+
+                            <!-- Bar 3: A.WALL — khoảng cách đến Account Floor (inverted: đầy = gần sàn) -->
+                            <!-- NOTE: T.WALL/S.WALL là CẢNH BÁO proximity, KHÔNG phải Z input trực tiếp -->
+                            <!-- account_component trong Z chỉ active khi buffer < 30% warn zone -->
+                            ${(() => {
+                                const consumed = Math.max(0, Math.min(100, 100 - accountBufferPct));
+                                const wallColor = consumed >= 90 ? '#ff0000'
+                                    : consumed >= 70 ? COLORS.red
+                                    : consumed >= 40 ? COLORS.yellow : '#333';
+                                const wallLabel = ddType === 'TRAILING' ? 'T.WALL' : 'S.WALL';
+                                // account_component trong Z chỉ active khi consumed > 70% (buffer < 30%)
+                                const isZActive = consumed > 70;
+                                const wallTitle = `${ddType} ACCOUNT FLOOR: $${accountHardFloor > 0 ? accountHardFloor.toFixed(0) : '?'} | Buffer: ${accountBufferPct.toFixed(0)}% còn lại${isZActive ? ' ⚠ ĐANG ĐÓ VÀO Z' : ' (chưa ảnh hưởng Z)'}`;
+                                return html`
+                                    <div style="display: flex; align-items: center; gap: 5px;" title="${wallTitle}">
+                                        <span style="font-size: 7px; color: ${isZActive ? COLORS.red : '#444'}; width: 42px; text-align: right; letter-spacing: 0.5px;">${wallLabel}</span>
+                                        <div style="flex: 1; height: 4px; background: #111; border-radius: 2px; overflow: hidden; border: 1px solid ${consumed >= 40 ? COLORS.red + '44' : '#1a1a1a'};">
+                                            <div style="width: ${consumed}%; height: 100%; background: ${isZActive ? wallColor : '#2a2a2a'}; transition: width 0.3s;"></div>
+                                        </div>
+                                        <span style="font-size: 7px; color: ${isZActive ? COLORS.red : '#333'}; width: 26px; text-align: left; font-family: monospace;">${consumed > 0 ? consumed.toFixed(0)+'%' : '—'}</span>
+                                    </div>
+                                `;
+                            })()}
+                        </div>
+                    </div>
+
+                    <!-- KHU VỰC PHẢI: Damping + DD badges -->
+                    <div style="text-align: right; width: 30%; padding-right: 5px;">
+                        <div style="font-size: 8px; color: #888; letter-spacing: 1px;">DAMPING THROTTLE</div>
+                        <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-top: 4px;">
+                            <div style="font-size: 20px; font-weight: 900; color: ${finalDamping < 1.0 ? COLORS.yellow : COLORS.green};">${finalDamping.toFixed(1)}x</div>
+                            <div style="width: 70px; height: 8px; background: #111; border: 1px solid #333; position: relative; border-radius: 2px; overflow: hidden;">
+                                <div style="width: ${finalDamping * 100}%; height: 100%; background: ${finalDamping === 1.0 ? COLORS.green : (finalDamping === 0.0 ? COLORS.red : COLORS.yellow)}; transition: 0.3s;"></div>
+                            </div>
+                        </div>
+
+                        <!-- DD MODE BADGES -->
+                        <div style="display: flex; justify-content: flex-end; gap: 4px; margin-top: 8px; flex-wrap: wrap;">
+                            <!-- Account Floor Badge (Tầng 1) -->
+                            <div style="font-size: 8px; padding: 3px 7px; border-radius: 2px; cursor: default;
+                                background: ${ddType === 'TRAILING' ? COLORS.red + '18' : '#0a0a0a'};
+                                border: 1px solid ${accountBufferPct <= 30 ? COLORS.red : (ddType === 'TRAILING' ? COLORS.red + '66' : '#2a2a2a')};
+                                color: ${accountBufferPct <= 30 ? COLORS.red : (ddType === 'TRAILING' ? COLORS.red + 'cc' : '#444')};"
+                                title="${ddType} Account Floor (Tầng 1 — Bức tường Thép)">
+                                ${ddType === 'TRAILING' ? '📉' : '🔒'} ${ddType}
+                                ${accountHardFloor > 0 ? html`<span style="font-family:monospace; margin-left:3px;">$${accountHardFloor.toLocaleString('en-US',{maximumFractionDigits:0})}</span>` : ''}
+                            </div>
+
+                            <!-- Daily Peak Badge (Tầng 2) -->
+                            ${(() => {
+                                const dailyProfit = dailyPeak - startBalance;
+                                if (dailyProfit > 0) return html`
+                                    <div style="font-size: 8px; padding: 3px 7px; border-radius: 2px; cursor: default;
+                                        background: ${COLORS.yellow}12;
+                                        border: 1px solid ${dailyGivebackPct >= 60 ? COLORS.yellow : COLORS.yellow + '44'};
+                                        color: ${dailyGivebackPct >= 60 ? COLORS.yellow : COLORS.yellow + '88'};"
+                                        title="Daily Peak Equity (Tầng 2 — Van điều áp lợi nhuận ngày)">
+                                        🏔️ PEAK +$${dailyProfit.toLocaleString('en-US',{maximumFractionDigits:0})}
+                                    </div>
+                                `;
+                                return '';
+                            })()}
+                        </div>
+
+                        <!-- Account DD % nhỏ hiển thị phụ -->
+                        ${accountHardFloor > 0 && accountDdPct > 0 ? html`
+                            <div style="font-size: 8px; color: ${accountDdPct >= maxDdPct * 0.7 ? COLORS.red : '#444'}; text-align: right; margin-top: 5px; font-family: monospace;">
+                                ACC.DD: ${accountDdPct.toFixed(1)}% / ${maxDdPct}%
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+
+                <div class="scanline-bg" style="background-color:${COLORS.panelBg}; border:1px solid ${COLORS.border}; flex:1; position: relative; min-height: 250px; flex-shrink: 0; display: flex; flex-direction: column;">
+                    <canvas ref=${radarCanvasRef} style="width: 100%; flex: 1; display: block;"></canvas>
+                </div>
+
+                <div style="background: ${COLORS.panelBg}; border: 1px solid ${COLORS.border}; display: flex; flex-direction: column; flex: 1; min-height: 220px; flex-shrink: 0;">
+                    
+                    <div style="padding: 12px 15px; border-bottom: 1px solid #1a1a1a; display: flex; justify-content: space-between; align-items: center; background:#080a0f;">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <span style="font-size: 11px; color: ${COLORS.cyan}; font-weight: bold; letter-spacing: 1px;">[ TÒA ÁN KỶ LUẬT ĐỘNG NĂNG ]</span>
+                            <span style="font-size: 9px; color: ${disciplineColor}; border: 1px solid ${disciplineColor}55; padding: 2px 8px; border-radius: 10px; background: ${disciplineColor}11;">
+                                ${disciplineStatus}
+                            </span>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            ${isHibernating && html`<button onClick=${handleReboot} style="background: ${COLORS.green}22; border: 1px solid ${COLORS.green}; color: ${COLORS.green}; font-weight: 900; font-size: 10px; padding: 6px 15px; cursor: pointer; border-radius: 2px; animation: pulse 2s infinite;">⚡ REBOOT</button>`}
+                            <button onClick=${handlePanicKill} style="background: repeating-linear-gradient(45deg, #cc0000, #cc0000 10px, #aa0000 10px, #aa0000 20px); border: 1px solid #ff0000; color: #fff; font-weight: 900; font-size: 10px; padding: 6px 15px; cursor: pointer; border-radius: 2px; box-shadow: 0 0 10px rgba(255,0,0,0.5);">☢️ SCRAM</button>
+                        </div>
+                    </div>
+
+                    <div class="financial-stats">
+                        <div style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 10px;">
+                            <div style="font-size: 8px; color: #555; letter-spacing:1px; margin-bottom: 2px;">MỤC TIÊU ĐÃ CHỐT & TIẾN ĐỘ 🎯</div>
+                            <div style="font-size: 13px; color: ${COLORS.cyan}; font-weight: bold;">
+                                $${formatMoney(configuredTarget)} <span style="color:${saturationPct >= 100 ? COLORS.green : '#aaa'}; font-size:10px;">(${saturationPct.toFixed(1)}%)</span>
+                            </div>
+                            <div style="width: 80%; height: 3px; background: #111; margin-top: 5px; border-radius: 2px; overflow: hidden; border: 1px solid #222;">
+                                <div style="width: ${saturationPct}%; height: 100%; background: ${saturationPct >= 100 ? COLORS.green : COLORS.cyan}; transition: width 0.5s;"></div>
+                            </div>
+                        </div>
+                        <div style="text-align: center; display: flex; flex-direction: column; justify-content: center;"><div style="font-size: 8px; color: ${COLORS.red}; letter-spacing:1px;">FLOATING RISK (SL)</div><div style="font-size: 13px; color: ${COLORS.red}; font-weight: bold;">${formatMoney(sumFloatingRisk)}</div></div>
+                        <div style="text-align: center; display: flex; flex-direction: column; justify-content: center;"><div style="font-size: 8px; color: #b565ff; letter-spacing:1px;">PROJECTED YIELD (TP)</div><div style="font-size: 13px; color: #b565ff; font-weight: bold;">${formatMoney(sumProjectedYield)}</div></div>
+                        <div style="text-align: center; display: flex; flex-direction: column; justify-content: center;"><div style="font-size: 8px; color: ${disciplineColor}; letter-spacing:1px;">LIVE EDGE (THỰC TẾ)</div><div style="font-size: 13px; color: ${disciplineColor}; font-weight: bold;">R:R 1 : ${kineticRatio.toFixed(2)}</div></div>
+                    </div>
+
+                    <div style="padding: 8px 15px; background: #05070a; border-bottom: 1px solid #1a1a1a; display: flex; align-items: center; gap: 10px;">
+                        <div style="font-size: 9px; font-weight: bold; color: ${disciplineColor}; letter-spacing: 1px; min-width: 100px;">
+                            ⚡ THẨM ĐỊNH LỆNH
+                        </div>
+                        <div style="flex: 1; height: 6px; background: #111; border-radius: 3px; display: flex; overflow: hidden;">
+                            <div style="width: ${riskBarPct}%; background: ${COLORS.red}; height: 100%;"></div>
+                            <div style="width: ${rewardBarPct}%; background: ${COLORS.purple}; height: 100%;"></div>
+                        </div>
+                        <div style="font-size: 9px; font-family: monospace; display: flex; gap: 10px;">
+                            <span style="color:${COLORS.red}">-$${(sumFloatingRisk).toLocaleString('en-US',{minimumFractionDigits:0})}</span>
+                            <span style="color:#555">vs</span>
+                            <span style="color:${COLORS.purple}">+$${(sumProjectedYield).toLocaleString('en-US',{minimumFractionDigits:0})}</span>
+                        </div>
+                    </div>
+
+                    <div class="trade-table-container scanline-bg">
+                        <${ComplianceAlertBanner} alerts=${complianceAlerts} onDismiss=${() => setComplianceAlerts([])} COLORS=${COLORS} />
+
+                        <div class="trade-row" style="padding: 10px 15px; font-size: 9px; color: #555; border-bottom: 1px solid #111; font-weight:bold; letter-spacing:1px; background:#030406;">
+                            <span>TICKET</span><span>ASSET</span><span>ACT</span><span style="color:${COLORS.red}">RISK (SL)</span><span style="color:#b565ff">YIELD (TP)</span><span style="color:${COLORS.yellow}">EDGE (R:R)</span><span style="text-align:right">NET_PNL</span>
+                        </div>
+                        ${(globalStatus.open_trades || []).map(t => {
+                            const rRisk = Math.abs(parseFloat(t.stl_money) || 0);
+                            const rReward = parseFloat(t.tp_money) || 0;
+                            let tradeRR = 0;
+                            let edgeDisplay = "0.0";
+                            let edgeColor = COLORS.red;
+
+                            if (rRisk === 0 && rReward === 0) {
+                                edgeDisplay = "NO SL/TP";
+                                edgeColor = COLORS.red;
+                            } else if (rRisk === 0) {
+                                edgeDisplay = "NO SL !";
+                                edgeColor = "#ff0000"; 
+                            } else {
+                                tradeRR = rReward / rRisk;
+                                edgeDisplay = `1 : ${tradeRR.toFixed(1)}`;
+                                if (tradeRR >= targetRR) edgeColor = COLORS.green; 
+                                else if (tradeRR >= 1.0) edgeColor = COLORS.yellow; 
+                            }
+
+                            const bgStyle = rRisk === 0 ? `repeating-linear-gradient(45deg, #330000, #330000 10px, rgba(0,0,0,0.8) 10px, rgba(0,0,0,0.8) 20px)` : `rgba(0,0,0,0.4)`;
+
+                            return html`
+                                <div class="trade-row" style="padding: 8px 15px; font-size: 10px; border-bottom: 1px solid #111; background:${bgStyle};">
+                                    <span style="color: #555; font-size: 9px;">[${t.ticket}]</span>
+                                    <span style="color:${COLORS.cyan}; font-weight: bold;">${t.symbol}</span>
+                                    <span style="color:${t.type && t.type.includes('BUY') ? COLORS.green : COLORS.red}">${t.type || t.side}</span>
+                                    <span style="color:${COLORS.red}; font-weight:${rRisk===0?'bold':'normal'};">${rRisk===0 ? 'VÔ CỰC' : formatMoney(t.stl_money)}</span>
+                                    <span style="color:#b565ff;">${t.tp_money ? formatMoney(t.tp_money) : '0.00 $'}</span>
+                                    <span style="color:${edgeColor}; font-weight: bold; background: ${edgeColor}22; padding: 2px 6px; border-radius: 2px; display: inline-block;">${edgeDisplay}</span>
+                                    <span style="text-align:right; font-weight: bold; color:${t.profit >= 0 ? COLORS.green : COLORS.red}">${formatMoney(t.profit)}</span>
+                                </div>
+                            `;
+                        })}
+                    </div>
+                </div>
+            </main>
+
+            <aside style="display: flex; flex-direction: column; overflow: hidden; height: 100%;">
+                <${RightColumn} 
+                    globalStatus=${globalStatus} 
+                    unitsConfig=${unitsConfig}
+                    activeTrades=${globalStatus.open_trades} 
+                    onOpenSetup=${() => setActiveSetup(currentAccountId)} 
+                    onOpenAiBudget=${() => setShowAiBudget(true)} 
+                    COLORS=${COLORS} 
+                />
+            </aside>
+
+            ${activeSetup && html`<${SetupModal} activeSetup=${activeSetup} isLocked=${isLocked} unitsConfig=${unitsConfig} globalStatus=${globalStatus} fetchData=${fetchData} onClose=${() => setActiveSetup(null)} COLORS=${COLORS} />`}
+            ${showMacro && html`<${MacroModal} activeSetup=${currentAccountId} globalStatus=${globalStatus} unitsConfig=${unitsConfig} myUnitConfig=${myUnitConfig} COLORS=${COLORS} fetchData=${fetchData} onClose=${() => setShowMacro(false)} />`}
+            ${showAiBudget && html`<${AiGuardCenter} activeSetup=${currentAccountId} isLocked=${isLocked} unitsConfig=${unitsConfig} globalStatus=${globalStatus} fetchData=${fetchData} onClose=${() => setShowAiBudget(false)} COLORS=${COLORS} />`}
+            
+            <${DebriefingPanel} session=${showDebrief} onClose=${() => setShowDebrief(null)} COLORS=${COLORS} />
+        </div>
+    `;
+}

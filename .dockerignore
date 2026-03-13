@@ -1,0 +1,19 @@
+# Bỏ qua rác của Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+env/
+venv/
+.venv/
+
+# TUYỆT ĐỐI KHÔNG COPY DATABASE VÀ HỒ SƠ AI VÀO TRONG THÙNG
+# (Vì chúng ta đã thiết lập Volume ở docker-compose để lưu ở VPS gốc)
+Z-Armor.db
+Z-Armor_behavior.json
+
+# Bỏ qua rác của Hệ điều hành và PM2
+.pm2/
+logs/
+*.log
+.DS_Store

@@ -1,0 +1,98 @@
+# 📜 Z-ARMOR CLOUD: THE SOVEREIGN WHITEPAPER
+**Phiên bản:** 7.5 (Quantum Performance & Global SaaS Edition)
+**Tài liệu:** Nền tảng Lý thuyết & Lõi Toán học (Core Philosophy & Mathematics)
+
+> *"Giao dịch tài chính không phải là trò chơi cảm xúc, hay sự phòng thủ tiêu cực. Đó là nghệ thuật chuyển hóa năng lượng hỗn loạn (Entropy) thành động năng sinh lời (Profit) trong một trạng thái Cân bằng động."*
+
+---
+
+## CHƯƠNG 1: NỀN TẢNG NHIỆT ĐỘNG LỰC HỌC (THERMODYNAMIC FOUNDATION)
+
+Hệ thống Z-ARMOR Cloud từ bỏ khái niệm "Rủi ro Tĩnh" (Static Risk) truyền thống vốn coi rủi ro là thứ cần phải bị tiêu diệt hoàn toàn. Thay vào đó, chúng tôi ánh xạ thị trường tài chính sang các định luật Vật lý và Nhiệt động lực học để quản trị sự sống còn và tối ưu hóa hiệu suất vốn.
+
+### 1.1. Hệ quy chiếu Vật lý - Tài chính
+Hệ thống coi Vốn là Năng lượng và Sụt giảm (Drawdown) là Entropy. 
+
+| Đại lượng Vật lý | Đại lượng Trading | Ký hiệu | Ý nghĩa trong Z-ARMOR |
+| :--- | :--- | :--- | :--- |
+| **Năng lượng tự do Gibbs** | Equity (Vốn thực) | $G$ | Năng lượng hữu ích có thể chuyển hóa thành lợi nhuận (Công có ích). |
+| **Entropy** | Drawdown (Sụt giảm) | $S_{sys}$ | Sự hỗn loạn, ma sát và sự rò rỉ năng lượng tất yếu khi vận hành hệ thống. |
+| **Lưu lượng Entropy** | Vận tốc DD | $v$ | Tốc độ rò rỉ năng lượng ($dDD/dt$). |
+| **Nhiệt độ Hệ thống** | Stress Index | $T$ | Áp suất và mức độ kích động của thị trường/tài khoản. |
+| **Công (Work)** | Lệnh (Orders) | $W$ | Quá trình đốt nhiên liệu (Rủi ro) để sinh ra lợi nhuận. |
+
+### 1.2. Tuân thủ Nguyên lý II Nhiệt động lực học & Định lý Khí Lý Tưởng
+Theo Nguyên lý II, trong quá trình giao dịch, Entropy (Sụt giảm) chắc chắn sẽ sinh ra. Nếu không có Entropy, hệ thống ở trạng thái Không tuyệt đối (0 Kelvin) - vốn bị đóng băng và lãng phí. 
+
+Z-ARMOR hoạt động như một **Máy bơm nhiệt (Heat Pump)** và một **Hộp số thông minh (Transmission System)**. Nó không cố ép Entropy về 0, mà duy trì sự gia tăng Entropy ở mức kiểm soát được, đồng thời áp dụng Định luật Khí lý tưởng:
+$$P \cdot V = \mu \cdot T$$
+
+* **$P$ (Áp suất):** Mức sử dụng Margin (%).
+* **$V$ (Thể tích):** Tổng khối lượng giao dịch (Lots).
+* **$\mu$ (Thanh khoản):** Hằng số độ sâu thị trường.
+* **$T$ (Nhiệt độ):** Biến động thị trường (Volatility).
+
+**Định lý Z-ARMOR:** Khi Nhiệt độ/Biến động thị trường ($T$) tăng cao làm sinh ra quá nhiều Entropy, để giữ cho Áp suất ($P$) không làm vỡ cấu trúc tài khoản, Thể tích lệnh ($V$) **BẮT BUỘC phải bị AI ép giảm (Damping)**.
+
+---
+
+## CHƯƠNG 2: MA TRẬN TRẠNG THÁI 3D (AI STATE MATRIX)
+
+AI Cockpit định vị "sức khỏe" của tài khoản trong một không gian 3 chiều (3D) theo thời gian thực (1 giây/lần):
+
+1. **Trục X - Momentum (Động lượng):** Đo lường sức mạnh của xu hướng lợi nhuận. Momentum dương lớn cho phép AI nới lỏng biên độ.
+2. **Trục Y - Stress (Áp suất Margin):** Mức độ căng thẳng của ký quỹ so với năng lực hiện tại.
+3. **Trục Z - Velocity (Vận tốc Entropy):** Đạo hàm bậc nhất của Drawdown ($v = \Delta DD / \Delta t$). Đây là biến số sống còn để phát hiện "Sốc nhiệt" (Flash Risk) và đứt gãy cấu trúc.
+
+---
+
+## CHƯƠNG 3: NĂNG LỰC ĐỘNG TÍNH & ÁP SUẤT TẢI TRỌNG
+
+Hệ thống xoay quanh 2 biến số toán học cốt lõi để cấp phép mức năng lượng giao dịch:
+
+### 3.1. Năng lực Sinh tồn Động ($C_d$ - Dynamic Capacity)
+Đo lường "Ngân sách nhiên liệu" thực tế của bạn trong ngày. Lợi nhuận sinh ra sẽ mở rộng bình nhiên liệu, thua lỗ sẽ bào mòn trực tiếp ngân sách này.
+$$C_d = \text{Daily Loss Limit} + \text{Total PnL}$$
+*Chốt chặn:* Nếu $C_d \le 0$, hệ thống cạn kiệt nhiên liệu và rơi vào Dead Zone.
+
+### 3.2. Áp suất Tải trọng ($Z_{Load}$)
+Đo lường tỷ lệ "Xăng đang bị đốt" bởi các lệnh đang mở (Drawdown hiện tại) so với tổng ngân sách nhiên liệu ($C_d$).
+$$Z_{Load} = \frac{|\text{Total Floating Loss}|}{\max(C_d, 0.01)}$$
+
+---
+
+## CHƯƠNG 4: QUANTITATIVE REGIME V7.5 (MA TRẬN LƯỢNG TỬ 5 CẤP ĐỘ)
+
+Dựa trên triết lý Cân bằng Động (Dynamic Equilibrium), Z-ARMOR đánh giá $Z_{Load}$ không phải như một mối đe dọa thuần túy, mà là mức nhiên liệu đang được đốt để tạo ra động năng. AI tự động "sang số" qua 5 trạng thái:
+
+| Cấp độ | Trạng thái Nhiệt động lực (Regime) | Áp suất $Z_{Load}$ | Hệ số Giảm chấn (Damping) | Chẩn đoán & Hành động của AI Cockpit |
+| :---: | :--- | :--- | :--- | :--- |
+| 🔵 | **ABSOLUTE ZERO (Ngủ đông)** | `< 0.15` | **1.0x** | **Cảnh báo Lãng phí Vốn.** Hệ thống thiếu động năng (Ma sát nghỉ lớn). Lượng Entropy sinh ra quá thấp, không đủ tạo công có ích. Khuyến nghị Operator tăng cường hoạt động. |
+| 🟢 | **OPTIMAL FLOW (Vùng Vàng)** | `0.15 - 0.60` | **1.0x** | **Dòng chảy Tầng lý tưởng.** Động cơ hoạt động 100% công suất. Tỷ lệ chuyển hóa Năng lượng thành Lợi nhuận đạt đỉnh cao nhất. Entropy dao động hoàn hảo. |
+| 🟡 | **KINETIC EROSION (Xói mòn)** | `0.60 - 0.85` | **0.8x - 0.4x** | **Cảnh báo Sinh nhiệt.** Bắt đầu có rò rỉ Entropy do thị trường nhiễu loạn. Cỗ máy hãm phanh mềm (bóp 20%-60% Volume) để tản nhiệt, bảo toàn Năng lượng tự do Gibbs. |
+| 🔴 | **TURBULENT FORCE (Dòng Xoáy)** | `0.85 - 0.99` | **0.3x - 0.1x** | **Nguy cơ Sốc nhiệt.** Nhiễu loạn cực đoan. Áp suất sát ngưỡng đứt gãy. Trạm Radar bóp nghẹt Volume xuống còn 10%-30%. Cấm mở thêm vị thế rủi ro mới. |
+| 🚨 | **CRITICAL BREACH (Vỡ Cấu Trúc)**| `>= 1.0` | **0.0x (Hard Kill)**| **SCRAM Protocol!** Áp suất vượt ngưỡng Năng lực sinh tồn ($C_d$). Cắt toàn bộ cầu dao, đóng băng hệ thống để dập tắt chuỗi phản ứng dây chuyền. |
+
+---
+
+## CHƯƠNG 5: LÝ THUYẾT ĐIỂM BÃO HÒA & HOẠCH ĐỊNH MỤC TIÊU LỢI NHUẬN
+
+Trong Z-ARMOR, Mục tiêu lợi nhuận không phải là một con số cảm tính sinh ra từ lòng tham, mà là **Điểm Bão Hòa Nhiệt Động (Thermodynamic Saturation Point)** – mốc mà hệ thống đạt hiệu suất động năng lớn nhất trước khi ma sát (Entropy) bắt đầu triệt tiêu công có ích.
+
+### 5.1. Phương trình Tối ưu hóa Ràng buộc (The Z-Armor Target Equation)
+Mục tiêu lợi nhuận lý tưởng (Optimal Target) được nội suy chặt chẽ từ năng lượng hệ thống:
+
+**`Optimal Target = (Daily Limit × Historical R:R) × Entropy Discount Factor`**
+
+* **Daily Limit:** Ngân sách nhiên liệu/rủi ro tối đa trong ngày.
+* **Historical R:R (Mặc định 1.5):** Hiệu suất buồng đốt của Động cơ EA (Tỷ lệ Risk:Reward).
+* **Entropy Discount Factor (Mặc định 0.85):** Trừ hao 15% năng lượng tiêu tán tự phát do trượt giá (Slippage), phí (Com/Swap) và nhiễu loạn thị trường.
+
+### 5.2. Rủi ro của Mục tiêu Ảo tưởng (Fat-Tail Risk)
+Việc đặt Target vượt quá Điểm Bão Hòa sẽ đẩy hệ thống vào vùng rủi ro phi lý trí. Theo tiêu chuẩn Kelly, Xác suất phá sản (PoR - Probability of Ruin) lúc này sẽ tăng vọt theo hàm mũ:
+$$PoR \approx \left(\frac{1 - \text{Edge}}{1 + \text{Edge}}\right)^{\frac{\text{Capital}}{\text{Risk Per Trade}}}$$
+
+### 5.3. Chỉ số Hiệu suất Động năng & Giao thức Khóa Tích cực (Positive Lock)
+Hệ thống giám sát xem Nhiên liệu (Entropy) bị đốt có thực sự tạo ra Công có ích (Win trades) hay không. Ngay khi lợi nhuận đạt đến Điểm Bão Hòa (Optimal Target), Năng lượng tự do Gibbs ($G$) đạt đỉnh. 
+
+Lúc này, Z-ARMOR kích hoạt giao thức **Positive Lock (Khóa Lợi Nhuận)**, tự động đưa Damping Factor về 0.0x. Cơ chế này cắt đứt toàn bộ rủi ro "đuôi béo" (Fat-tail distribution), ép xác suất sụt giảm ngược về mức gần như 0% để bảo vệ tuyệt đối thành quả của Operator.

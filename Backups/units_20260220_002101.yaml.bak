@@ -1,0 +1,19 @@
+MainUnit:
+  alias: Đặng Phi - Virtual
+  mt5_login: '1085205'
+  mt5_password: ''
+  mt5_server: WeMasterTrade-Virtual
+  risk_params:
+    daily_remaining: 200
+    target_profit: 240
+    daily_dd: 2
+    max_dd: 4
+    dd_type: TRAILING
+    consistency: 97
+    rollover_hour: 6
+    broker_timezone: 7
+  telegram_config:
+    chat_id: '7976137362'
+    is_active: true
+  is_locked: true
+  is_hibernating: false

@@ -1,0 +1,51 @@
+# =====================================================================
+# Z-ARMOR V7.5: QUANTUM PHYSICS & THERMODYNAMICS CONFIGURATION
+# =====================================================================
+meta:
+  version: "7.5.0_SaaS"
+  description: "Trái tim Nhiệt động lực học: Quản lý Capacity, Z-Load và 5 Cấp độ Damping."
+
+# 1. HẰNG SỐ SINH TỒN (CONSTITUTIONAL LIMITS)
+survival_limits:
+  z_armor_retention_pct: 97.0
+  max_system_drawdown_pct: 12.0
+  optimal_rr_ratio: 1.5
+  entropy_discount_factor: 0.85
+
+# 2. CÔNG THỨC TOÁN HỌC (MATHEMATICAL ENGINE)
+formulas:
+  dynamic_capacity_cd: "daily_limit + total_pnl"
+  z_load_pressure: "abs(total_stl) / max(dynamic_capacity_cd, 0.01)"
+  optimal_target_profit: "(daily_limit * optimal_rr_ratio) * entropy_discount_factor"
+
+# 3. MA TRẬN TRẠNG THÁI & LƯU CHẤT (5 FLOW REGIMES)
+flow_regimes:
+  ABSOLUTE_ZERO:
+    z_load_range: [0.0, 0.15]
+    damping_factor: 1.0
+    action: "IDLE_WARNING"
+    color_hex: "#00bfff"  # Xanh lam (Lạnh/Đóng băng)
+
+  OPTIMAL_FLOW:
+    z_load_range: [0.15, 0.60]
+    damping_factor: 1.0
+    action: "MAX_EFFICIENCY"
+    color_hex: "#00ff9d"  # Xanh lá Neon (Vùng Vàng)
+
+  KINETIC_EROSION:
+    z_load_range: [0.60, 0.85]
+    damping_factor: 0.6
+    action: "SOFT_CHOKE"
+    color_hex: "#f5d300"  # Vàng (Bắt đầu nóng)
+
+  TURBULENT_FORCE:
+    z_load_range: [0.85, 0.99]
+    damping_factor: 0.2
+    action: "HARD_CHOKE"
+    color_hex: "#ff2a6d"  # Đỏ (Sốc nhiệt)
+
+  CRITICAL_BREACH:
+    z_load_range: [0.99, 99.9]
+    damping_factor: 0.0
+    action: "SCRAM_PROTOCOL"
+    color_hex: "#ff0000"  # Đỏ sẫm (Vỡ cấu trúc)

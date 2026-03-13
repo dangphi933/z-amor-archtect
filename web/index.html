@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#05070a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Capital OS">
+    <link rel="apple-touch-icon" href="/icon-192.png">
+
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').then(registration => {
+            console.log('App đã sẵn sàng hoạt động độc lập:', registration.scope);
+          }).catch(err => {
+            console.log('Lỗi đăng ký App:', err);
+          });
+        });
+      }
+    </script>
+<head>
+    <link rel="icon" href="data:,">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Z-ARMOR CLOUD INTERFACE</title>
+    
+    <style>
+        /* 1. THIẾT QUÂN LUẬT (CSS RESET): Ép mọi phần tử thu gọn padding vào trong kích thước thật */
+        *, *::before, *::after { 
+            box-sizing: border-box !important; 
+        }
+        
+        /* 2. KHÓA CHẶT TRỤC X: Cấm cuộn ngang và tràn lề tuyệt đối */
+        html, body { 
+            margin: 0; padding: 0; 
+            background-color: #05070a; color: white; 
+            font-family: 'Segoe UI', 'Courier New', monospace; 
+            width: 100%; max-width: 100vw;
+            height: 100vh; 
+            overflow-x: hidden !important; /* Lệnh cấm tràn lề */
+        }
+        
+        #app { 
+            height: 100%; width: 100%; 
+            overflow-x: hidden !important; 
+            overflow-y: auto; 
+        }
+
+        /* 3. BẢO VỆ CÁC KHỐI BÊN TRONG (Ngăn LeftColumn/RightColumn phình to) */
+        aside, main, div {
+            max-width: 100% !important;
+        }
+
+        /* 4. CHỈNH TRANG THANH CUỘN (SCROLLBAR) CHO MƯỢT MÀ */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: #0a0e14; }
+        ::-webkit-scrollbar-thumb { background: #00e5ff55; border-radius: 2px; }
+        ::-webkit-scrollbar-thumb:hover { background: #00e5ff; }
+    </style>
+    
+    <script type="importmap">
+    {
+        "imports": {
+            "preact": "https://esm.sh/preact@10.19.3",
+            "preact/hooks": "https://esm.sh/preact@10.19.3/hooks",
+            "htm": "https://esm.sh/htm@3.1.1"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div id="app">
+        <div style="display:flex; height:100vh; align-items:center; justify-content:center; flex-direction:column; gap:20px;">
+            <div style="color:#00e5ff; font-size:20px; font-weight:bold; letter-spacing:2px;">CONNECTING TO NEXUS CLOUD...</div>
+        </div>
+    </div>
+    
+    <script type="module">
+        import { h, render } from 'preact';
+        import Cockpit from './Cockpit.js';
+        
+        render(h(Cockpit), document.getElementById('app'));
+    </script>
+</body>
+</html>

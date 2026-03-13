@@ -1,0 +1,27 @@
+{
+  "name": "Z-Armor Cloud",
+  "short_name": "Z-Armor",
+  "description": "Risk Management SaaS for MT5",
+  "start_url": "/web/",
+  "display": "standalone",
+  "background_color": "#05070a",
+  "theme_color": "#00ff9d",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/web/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/web/logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/web/logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}

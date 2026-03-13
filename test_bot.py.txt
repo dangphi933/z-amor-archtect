@@ -1,0 +1,22 @@
+import asyncio
+from telegram_engine import push_to_telegram
+
+async def main():
+    print("🚀 BẮT ĐẦU TEST ĐỘNG CƠ TELEGRAM...")
+    
+    # 💡 Sếp thay lại đúng Chat ID của Sếp vào đây nhé (ID hiện tại tôi đang để theo ảnh màn hình của Sếp)
+    test_chat_id = "7976137362" 
+    test_message = "🔧 ĐÂY LÀ TIN NHẮN TEST TỪ HỆ THỐNG Z-ARMOR!"
+    
+    print(f"Đang gửi tín hiệu đến ID: {test_chat_id}")
+    
+    # Gọi trực tiếp hàm gửi tin nhắn
+    result = await push_to_telegram(chat_id=test_chat_id, text=test_message, disable_notification=False)
+    
+    if result:
+        print("✅ GỬI THÀNH CÔNG! Sếp check điện thoại nhé.")
+    else:
+        print("❌ GỬI THẤT BẠI! Sếp mở ngay file telegram_debug.log ra để xem Telegram chửi gì.")
+
+if __name__ == "__main__":
+    asyncio.run(main())

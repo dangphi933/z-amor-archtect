@@ -1,0 +1,42 @@
+Z-ARMOR-CLOUD/
+│
+├── ⚙️ [CẤU HÌNH HẠ TẦNG & DOCKER]
+│   ├── docker-compose.yml       # Bảng điều khiển bốc dỡ Container
+│   ├── Dockerfile               # Công thức đúc Thùng máy chủ Python 3.11
+│   ├── .dockerignore            # Bộ lọc rác không cho vào Docker
+│   ├── requirements.txt         # Danh sách thư viện Python (FastAPI, SQLAlchemy, Uvicorn...)
+│   └── .env                     # (Tùy chọn) Chứa các biến bảo mật như META_API_TOKEN
+│
+├── 🧠 [LÕI ĐỘNG CƠ FASTAPI - THƯ MỤC GỐC]
+│   ├── main.py                  # Trái tim Server (Mở cổng 8000, Webhook, Thanh toán)
+│   └── database.py              # Khởi tạo SQLAlchemy và cấu trúc các Bảng DB
+│
+├── 📁 api/                      # [CÁC MODULE XỬ LÝ LOGIC - BACKEND]
+│   ├── schemas.py               # "Hải quan" Pydantic: Kiểm duyệt Form dữ liệu (V7.0)
+│   ├── config_manager.py        # Quản lý Đọc Database & Load file YAML
+│   ├── dashboard_service.py     # Động cơ tính toán Vật lý & Gửi Telegram Alert
+│   ├── bridge_manager.py        # Móc nối MetaApi tìm tên Sàn (Đã nâng cấp Async)
+│   ├── ai_guard_logic.py        # Luật sư AI phán xử hành vi Trader
+│   ├── ai_tensor_engine.py      # Lõi chạy Model Deep Learning (ONNX)
+│   └── quant_briefing.py        # Hệ thống phát thanh viên Telegram báo cáo ngày
+│
+├── 📁 config/                   # [TRINITY CONFIG - BỘ 3 HIẾN PHÁP YAML]
+│   ├── zarmor_physics_core.yaml # Công thức Vật lý, Sàn Z-Armor, Damping Factor
+│   ├── zarmor_ai_neural.yaml    # Cấu hình Tensors đầu vào & AI Học máy
+│   └── zarmor_tactical_ops.yaml # Từ điển UI, Câu thông báo Telegram, Thuế Lot
+│
+├── 📁 models/                   # [TẠ ĐÀO TẠO TRÍ TUỆ NHÂN TẠO]
+│   └── z_armor_agent.onnx       # File tạ (Weights) của AI (Sinh ra từ PyTorch/TF)
+│
+├── 📁 web/                      # [GIAO DIỆN HIỂN THỊ - FRONTEND]
+│   ├── index.html               # Màn hình Radar Giám sát trung tâm
+│   ├── sales.html               # Landing Page & Cổng thanh toán (Stripe/Crypto)
+│   ├── SetupModal.js            # Bảng Cyberpunk nhập License Key & Cấu hình rủi ro
+│   └── ... (Các file CSS, JS đồ họa biểu đồ Chart.js khác của Sếp)
+│
+├── 📚 [TÀI LIỆU DỰ ÁN]
+│   └── Z_ARMOR_WHITEPAPER_V7.md # Sách trắng Lõi Triết lý & Vật lý học lượng tử
+│
+└── 🗄️ [DỮ LIỆU ĐỘNG - MÓC RA NGOÀI VPS BẰNG DOCKER VOLUME]
+    ├── Z-Armor.db               # Két sắt Kế toán & Dữ liệu khách hàng (SQLite)
+    └── Z-Armor_behavior.json    # Hồ sơ ghi nhớ hành vi Kỷ luật của AI

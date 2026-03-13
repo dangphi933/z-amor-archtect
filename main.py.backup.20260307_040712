@@ -1,0 +1,1302 @@
+"""
+Z-ARMOR CLOUD ENGINE — main.py
+================================
+Refactor V8.2:
+  - Tach EA engine sang api/ea_router.py (mount tai /ea/*)
+  - Tach Pydantic models ra khoi route handlers
+  - Giu nguyen 100% cac endpoint hien co (backward compatible)
+  - Them startup health check + graceful error handling
+  - Them periodic rollover task (chay background moi 60s)
+"""
+
+import sys
+sys.stdout.reconfigure(encoding='utf-8', line_buffering=True)
+sys.stderr.reconfigure(encoding='utf-8', line_buffering=True)
+
+import os
+import json
+import uuid
+import time
+import httpx
+import smtplib
+import asyncio
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from datetime import datetime, timedelta
+from typing import Optional
+from contextlib import asynccontextmanager
+
+from fastapi import FastAPI, Request, Depends, HTTPException, Query
+from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
+from dotenv import load_dotenv
+import uvicorn
+
+# ── Internal imports ────────────────────────────────────────────
+from database import engine, Base, SessionLocal, get_db, License
+from api.schemas import LarkWebhookPayload, ZArmorResponse, BindLicensePayload, CheckoutPayload
+from api.dashboard_service import (
+    fetch_dashboard_state,
+    update_webhook_heartbeat,
+    update_webhook_positions,
+    safe_telegram_send,
+    api_log_trade,
+    api_close_session,
+    api_log_audit,
+    api_get_trade_history,
+    api_get_session_history,
+    api_send_telegram,
+    api_sync_history,
+)
+from api.config_manager import get_all_units, update_unit_from_payload, set_lock_status
+from api.dashboard_service import (
+    fetch_dashboard_state,
+    update_webhook_heartbeat,
+    update_webhook_positions,
+    safe_telegram_send,
+    api_log_trade,
+    api_close_session,
+    api_log_audit,
+    api_get_trade_history,
+    api_get_session_history,
+    api_send_telegram,
+    api_sync_history,
+    invalidate_units_cache,
+)
+from api.ai_guard_logic import api_get_ai_analysis
+from telegram_engine import push_to_telegram, send_defcon3_silent, send_trade_opened, send_trade_closed
+
+# ── EA Router (moi) ─────────────────────────────────────────────
+from api.ea_router import router as ea_router
+
+load_dotenv()
+Base.metadata.create_all(bind=engine)
+
+# ==========================================
+# APP SETUP & LIFESPAN (NEW FASTAPI STANDARD)
+# ==========================================
+async def _rollover_loop():
+    from api.config_manager import perform_daily_rollover
+    from api.dashboard_service import reset_daily_cache, _mt5_cache
+    while True:
+        try:
+            did_rollover = perform_daily_rollover()
+            # BUG 1 FIX: Chỉ reset cache khi rollover thực sự xảy ra (đúng giờ rollover_hour)
+            # TRƯỚC: reset_daily_cache() chạy mỗi 60s vô điều kiện → sai daily metrics
+            # SAU:   chỉ reset khi perform_daily_rollover() trả về True
+            if did_rollover:
+                for acc_id in list(_mt5_cache.keys()):
+                    try:
+                        reset_daily_cache(acc_id)
+                    except Exception as ce:
+                        print(f"[ROLLOVER] Cache reset lỗi cho {acc_id}: {ce}", flush=True)
+        except Exception as e:
+            print(f"[ROLLOVER ERROR] {e}", flush=True)
+        await asyncio.sleep(60)
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # --- Chay khi Server Start ---
+    print("[STARTUP] Z-Armor Cloud Engine V8.2 dang khoi dong...", flush=True)
+    rollover_task = asyncio.create_task(_rollover_loop())
+    print("[STARTUP] OK — san sang nhan ket noi.", flush=True)
+    
+    yield # Cho o day trong suot qua trinh Server hoat dong
+    
+    # --- Chay khi Server Shutdown ---
+    rollover_task.cancel()
+    print("[SHUTDOWN] Z-Armor da tat an toan.", flush=True)
+
+app = FastAPI(
+    title="Z-Armor Cloud Engine V8.2",
+    description="Risk Management SaaS for MT5 EA",
+    version="8.2.0",
+    lifespan=lifespan
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
+
+# Mount EA Router tai /ea/*
+app.include_router(ea_router)
+
+# ==========================================
+# CONFIG
+# ==========================================
+LARK_APP_ID      = os.environ.get("LARK_APP_ID", "cli_a92af9524c789e1a")
+LARK_APP_SECRET  = os.environ.get("LARK_APP_SECRET", "")
+LARK_BASE_TOKEN  = os.environ.get("LARK_BASE_TOKEN", "lpl2bYwliawcO8s5ddOj1s58pcf")
+LARK_TABLE_ID    = os.environ.get("LARK_TABLE_ID", "tblc25ZSsf3CkdgS")
+LARK_LOG_TABLE_ID = os.environ.get("LARK_LOG_TABLE_ID", "tbl9Og6oEtEDzlNb")
+SMTP_EMAIL       = os.environ.get("SMTP_EMAIL", "")
+SMTP_PASSWORD    = os.environ.get("SMTP_PASSWORD", "")
+
+# ==========================================
+# LARK INTEGRATION
+# ==========================================
+
+async def send_lark_bot_log(message: str):
+    lark_webhook_url = os.environ.get(
+        "LARK_BOT_WEBHOOK",
+        "https://open.larksuite.com/open-apis/bot/v2/hook/c636040c-dd79-4e9b-88b0-465bfec596cd"
+    )
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            await client.post(lark_webhook_url, headers={"Content-Type": "application/json"},
+                              json={"msg_type": "text", "content": {"text": f"[Z-ARMOR AUTO-SALE]\n{message}"}})
+    except Exception as e:
+        print(f"[LARK BOT ERROR] {e}", flush=True)
+
+async def get_lark_tenant_token():
+    url     = "https://open.larksuite.com/open-apis/auth/v3/tenant_access_token/internal"
+    payload = {"app_id": LARK_APP_ID, "app_secret": LARK_APP_SECRET}
+    async with httpx.AsyncClient(timeout=10.0) as client:
+        resp = await client.post(url, json=payload)
+        return resp.json().get("tenant_access_token")
+
+async def create_pending_order_in_lark(order_id, name, email, tier, amount):
+    token = await get_lark_tenant_token()
+    if not token:
+        return False
+    url     = f"https://open.larksuite.com/open-apis/bitable/v1/apps/{LARK_BASE_TOKEN}/tables/{LARK_TABLE_ID}/records"
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+    payload = {"fields": {
+        "Order ID": order_id, "Buyer Name": name, "Buyer Email": email,
+        "Purchased Tier": tier, "Amount Paid": float(amount), "Payment Status": "PENDING"
+    }}
+    async with httpx.AsyncClient(timeout=10.0) as client:
+        resp = await client.post(url, headers=headers, json=payload)
+        return resp.status_code == 200
+
+async def log_license_to_lark(order_id: str, license_key: str, status: str = "SUCCESS"):
+    token = await get_lark_tenant_token()
+    if not token:
+        return False
+    url     = f"https://open.larksuite.com/open-apis/bitable/v1/apps/{LARK_BASE_TOKEN}/tables/{LARK_LOG_TABLE_ID}/records"
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+    payload = {"fields": {
+        "Thoi gian": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "ID Don": order_id, "Key da cap": license_key, "Trang thai": status
+    }}
+    async with httpx.AsyncClient(timeout=10.0) as client:
+        try:
+            resp = await client.post(url, headers=headers, json=payload)
+            return resp.status_code == 200
+        except Exception as e:
+            print(f"[LARK LOG ERROR] {e}", flush=True)
+            return False
+
+def send_license_email_to_customer(receiver_email: str, buyer_name: str, tier: str, license_key: str):
+    """
+    Gửi email license key cho customer
+    Bao gồm: license key + link dashboard + hướng dẫn
+    """
+    if not SMTP_EMAIL or "email_cua_sep" in SMTP_EMAIL:
+        return False
+    
+    # Dashboard URL
+    dashboard_url = os.environ.get("NEW_BACKEND_URL", "http://47.129.1.31:8000")
+    dashboard_link = f"{dashboard_url}/web/"
+    
+    msg = MIMEMultipart("alternative")
+    msg['Subject'] = f"[Z-ARMOR CLOUD] Xác nhận Đơn hàng & Cấp phát License Key ({tier})"
+    msg['From'] = f"Z-Armor Cloud <{SMTP_EMAIL}>"
+    msg['To'] = receiver_email
+    
+    html_content = f"""
+    <html>
+    <head>
+        <style>
+            body {{
+                font-family: 'Courier New', monospace;
+                background: #05070a;
+                color: #fff;
+                padding: 40px;
+                margin: 0;
+            }}
+            .container {{
+                max-width: 600px;
+                margin: 0 auto;
+                background: #0a0f1a;
+                border: 2px solid #00ff9d;
+                border-radius: 8px;
+                padding: 30px;
+            }}
+            h1 {{
+                color: #00ff9d;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                margin-bottom: 20px;
+            }}
+            .license-box {{
+                background: #141922;
+                border: 1px solid #00e5ff;
+                border-radius: 4px;
+                padding: 20px;
+                margin: 20px 0;
+                text-align: center;
+            }}
+            .license-key {{
+                color: #00e5ff;
+                font-size: 24px;
+                font-weight: bold;
+                letter-spacing: 2px;
+                font-family: 'Courier New', monospace;
+            }}
+            .button {{
+                display: inline-block;
+                background: linear-gradient(135deg, #00ff9d 0%, #00e5ff 100%);
+                color: #000;
+                text-decoration: none;
+                padding: 15px 40px;
+                border-radius: 4px;
+                font-weight: bold;
+                margin: 20px 0;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }}
+            .instructions {{
+                background: #141922;
+                border-left: 4px solid #00ff9d;
+                padding: 15px;
+                margin: 20px 0;
+            }}
+            .step {{
+                margin: 10px 0;
+                padding-left: 20px;
+            }}
+            .footer {{
+                margin-top: 30px;
+                padding-top: 20px;
+                border-top: 1px solid #333;
+                font-size: 12px;
+                color: #888;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>🛡️ SECURE PROTOCOL ACTIVATED</h1>
+            
+            <p>Kính chào <strong>{buyer_name}</strong>,</p>
+            
+            <p>Hệ thống Z-Armor Cloud đã cấp phát License Key cho bạn:</p>
+            
+            <div class="license-box">
+                <div style="color: #888; font-size: 12px; margin-bottom: 10px;">YOUR LICENSE KEY</div>
+                <div class="license-key">{license_key}</div>
+                <div style="color: #888; font-size: 12px; margin-top: 10px;">Tier: {tier}</div>
+            </div>
+            
+            <div style="text-align: center;">
+                <a href="{dashboard_link}" class="button">
+                    🚀 Truy cập Dashboard
+                </a>
+            </div>
+            
+            <div class="instructions">
+                <strong style="color: #00ff9d;">📋 HƯỚNG DẪN KÍCH HOẠT:</strong>
+                
+                <div class="step">
+                    <strong>Bước 1:</strong> Click vào button "Truy cập Dashboard" ở trên
+                </div>
+                
+                <div class="step">
+                    <strong>Bước 2:</strong> Nhập License Key: <code style="color: #00e5ff;">{license_key}</code>
+                </div>
+                
+                <div class="step">
+                    <strong>Bước 3:</strong> Bind license với MT5 Account ID của bạn
+                </div>
+                
+                <div class="step">
+                    <strong>Bước 4:</strong> Cấu hình RiskOS Parameters:
+                    <ul style="margin: 10px 0; color: #aaa;">
+                        <li>Max Daily Loss (%)</li>
+                        <li>Max Positions</li>
+                        <li>Stop Loss / Take Profit</li>
+                        <li>Trading Hours</li>
+                        <li>Và nhiều tính năng khác...</li>
+                    </ul>
+                </div>
+                
+                <div class="step">
+                    <strong>Bước 5:</strong> Copy license key vào EA trên MetaTrader 5
+                </div>
+            </div>
+            
+            <div style="background: #1a1f2e; padding: 15px; border-radius: 4px; margin: 20px 0;">
+                <strong style="color: #00ff9d;">⚡ QUICK START:</strong><br>
+                <code style="color: #00e5ff;">
+                Dashboard: {dashboard_link}<br>
+                License: {license_key}<br>
+                Support: admin@zarmor.cloud
+                </code>
+            </div>
+            
+            <p style="color: #888; font-size: 14px;">
+                <strong>Lưu ý:</strong> License key này chỉ gửi 1 lần duy nhất. 
+                Vui lòng lưu lại email này để sử dụng sau.
+            </p>
+            
+            <div class="footer">
+                <strong>Z-ARMOR CLOUD</strong> - Risk Management SaaS for MT5<br>
+                © 2026 Z-Armor. All rights reserved.<br>
+                <a href="{dashboard_link}" style="color: #00e5ff;">Dashboard</a> | 
+                <a href="mailto:support@zarmor.cloud" style="color: #00e5ff;">Support</a>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    
+    msg.attach(MIMEText(html_content, 'html'))
+    
+    try:
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(SMTP_EMAIL, SMTP_PASSWORD)
+        server.send_message(msg)
+        server.quit()
+        return True
+    except Exception as e:
+        print(f"[EMAIL ERROR] {e}", flush=True)
+        return False
+# ==========================================
+# PYDANTIC MODELS (tap trung 1 cho)
+# ==========================================
+
+class TradeEventPayload(BaseModel):
+    account_id: str
+    event_type: str
+    ticket:     str
+    symbol:     str
+    trade_type: str
+    volume:     float
+    price:      float
+    pnl:        Optional[float] = 0.0
+    rr_ratio:   Optional[float] = 0.0
+
+class WebCheckoutPayload(BaseModel):
+    buyer_name:  str
+    buyer_email: str
+    tier:        str
+    amount:      float
+    method:      str
+
+class EventModel(BaseModel):
+    order_id:       Optional[str]   = "UNKNOWN"
+    purchased_tier: str
+    payment_status: str
+    buyer_name:     Optional[str]   = "Khach hang an danh"
+    buyer_email:    Optional[str]   = "no-email@zarmor.com"
+    amount_paid:    Optional[float] = 0.0
+
+class LarkWebhookBody(BaseModel):
+    event: EventModel
+
+class LogTradeRequest(BaseModel):
+    account_id:  str
+    trade_data:  dict
+
+class CloseSessionRequest(BaseModel):
+    account_id:       str
+    session_summary:  dict
+
+class LogAuditRequest(BaseModel):
+    account_id: str
+    action:     str
+    message:    str
+    severity:   Optional[str]  = "INFO"
+    extra:      Optional[dict] = None
+
+class SendTelegramRequest(BaseModel):
+    account_id: str
+    chat_id:    str
+    message:    str
+
+
+# ==========================================
+# ROUTES — HEALTH & DASHBOARD
+# ==========================================
+
+@app.get("/api/health")
+async def health_check():
+    return {"status": "ok", "version": "8.2.0", "timestamp": datetime.utcnow().isoformat()}
+
+@app.get("/api/init-data")
+async def get_init_data(account_id: str = "MainUnit"):
+    try:
+        return await fetch_dashboard_state(account_id)
+    except Exception as e:
+        return {
+            "global_status": {
+                "balance": 0, "equity": 0, "total_pnl": 0, "total_stl": 0,
+                "open_trades": [], "license_active": True,
+                "physics": {
+                    "state": "DISCONNECTED", "z_pressure": 0,
+                    "damping_factor": 1.0, "is_hibernating": False, "velocity": 0
+                },
+                "chart_data": {"labels": [], "equity": [], "z_pressure": []}
+            },
+            "units_config": {},
+            "error": str(e)
+        }
+
+
+# ==========================================
+# ROUTES — MT5 WEBHOOKS (legacy, giu nguyen)
+# ==========================================
+
+@app.post("/api/webhook/heartbeat")
+async def webhook_heartbeat(request: Request):
+    """
+    EA MT5 gui heartbeat (legacy endpoint — khong can token).
+    EA moi nen dung /ea/heartbeat thay the.
+    """
+    raw_data = await request.body()
+    data     = json.loads(raw_data.decode("utf-8").strip('\x00').strip())
+    update_webhook_heartbeat(data)
+    return {"status": "ok"}
+
+@app.post("/api/webhook/positions")
+async def webhook_positions(request: Request):
+    raw_data = await request.body()
+    data     = json.loads(raw_data.decode("utf-8").strip('\x00').strip())
+    update_webhook_positions(str(data.get("account_id")), data.get("positions", []))
+    return {"status": "ok"}
+
+@app.post("/api/webhook/trade-event")
+async def handle_trade_event(payload: TradeEventPayload):
+    """Legacy trade event — EA moi nen dung /ea/trade-event co token."""
+    try:
+        units       = get_all_units()
+        unit_config = units.get(payload.account_id, {})
+        chat_id     = unit_config.get("telegram_config", {}).get("chat_id", "")
+        is_active   = unit_config.get("telegram_config", {}).get("is_active", True)
+        trader_name = unit_config.get("alias", f"Trader {payload.account_id}")
+
+        if not chat_id or not is_active:
+            return {"status": "ignored", "message": "Telegram chua cai dat."}
+
+        if payload.event_type.upper() == "OPEN":
+            await send_trade_opened(
+                chat_id=chat_id, trader_name=trader_name,
+                ticket=payload.ticket, symbol=payload.symbol,
+                trade_type=payload.trade_type, volume=payload.volume, price=payload.price
+            )
+        elif payload.event_type.upper() == "CLOSE":
+            await send_trade_closed(
+                chat_id=chat_id, trader_name=trader_name,
+                ticket=payload.ticket, symbol=payload.symbol,
+                trade_type=payload.trade_type, pnl=payload.pnl, rr_ratio=payload.rr_ratio
+            )
+        return {"status": "success"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+
+# ==========================================
+# ROUTES — CONFIG MANAGEMENT
+# ==========================================
+
+@app.post("/api/update-unit-config")
+async def update_config(request: Request):
+    try:
+        data       = await request.json()
+        account_id = str(data.get("mt5_login") or data.get("unit_key") or "")
+        if not account_id or account_id == "None":
+            return {"status": "error", "message": "Thiếu mt5_login"}
+
+        # BUG G FIX: Bảo vệ neural_profile nếu payload không gửi kèm
+        # fetch_dashboard_state() trả về {"global_status":{...}, "units_config":{...}}
+        # → phải lấy từ units_config[account_id].neural_profile, không phải top-level
+        if "neural_profile" not in data:
+            existing_units = get_all_units()
+            existing_neural = existing_units.get(account_id, {}).get("neural_profile")
+            if existing_neural:
+                data["neural_profile"] = existing_neural
+
+        update_unit_from_payload(account_id, data)
+        invalidate_units_cache()  # BUG 2 FIX: force refresh cache để lần poll tiếp thấy config mới
+        return {"status": "success"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+@app.post("/api/unlock-unit")
+async def unlock_unit(request: Request):
+    data = await request.json()
+    set_lock_status(data.get("account_id"), False)
+    return {"status": "unlocked"}
+
+@app.post("/api/panic-kill")
+async def panic_kill(request: Request):
+    data = await request.json()
+    set_lock_status(data.get("account_id"), True)
+    return {"status": "locked"}
+
+
+# ==========================================
+# ROUTES — TELEGRAM
+# ==========================================
+
+@app.post("/api/test-telegram")
+async def test_telegram(request: Request):
+    data    = await request.json()
+    chat_id = str(data.get("chat_id", ""))
+    if not chat_id:
+        return {"status": "error", "message": "Thieu chat_id"}
+    await push_to_telegram(
+        chat_id=chat_id,
+        text="<b>[Z-ARMOR] Test ket noi thanh cong!</b>\nBot da nhan duoc tin hieu tu Tram Radar.",
+        disable_notification=False
+    )
+    return {"status": "ok"}
+
+@app.post("/api/send-telegram")
+async def route_send_telegram(req: SendTelegramRequest):
+    return await api_send_telegram(req.account_id, req.chat_id, req.message)
+
+
+# ==========================================
+# ROUTES — LICENSE
+# ==========================================
+
+@app.post("/api/bind-license")
+async def bind_license(req: BindLicensePayload, db=Depends(get_db)):
+    try:
+        db_license = db.query(License).filter(License.license_key == req.license_key).first()
+        if not db_license:
+            return {"status": "error", "message": "Ma Ban quyen khong ton tai!"}
+        if db_license.status == "ACTIVE":
+            if db_license.bound_mt5_id == req.account_id:
+                return {"status": "success", "message": "Ban quyen nay da lien ket voi MT5 cua ban."}
+            return {"status": "error", "message": "Ma nay da bi su dung cho ID khac!"}
+        if db_license.status != "UNUSED":
+            return {"status": "error", "message": "Ma nay da bi khoa."}
+
+        db_license.status       = "ACTIVE"
+        db_license.bound_mt5_id = req.account_id
+        db_license.expires_at   = datetime.utcnow() + timedelta(days=30)
+        db.commit()
+
+        init_payload = {
+            "mt5_login": req.account_id, "alias": f"Trader {req.account_id}",
+            "arm": False,   # BUG 3 FIX: Đảm bảo is_locked=False khi init tài khoản mới
+            "telegram_config": {"is_active": True},
+            "risk_params": {"daily_limit_money": 150, "max_dd": 10.0, "dd_type": "STATIC", "consistency": 97},
+            "neural_profile": {"trader_archetype": "SNIPER", "historical_win_rate": 40.0,
+                               "historical_rr": 1.5, "optimization_bias": "HALF_KELLY"}
+        }
+        update_unit_from_payload(req.account_id, init_payload)
+        return {"status": "success", "message": "Kich hoat thanh cong. Da cap phep 30 ngay!"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+@app.get("/api/verify-license/{account_id}")
+async def verify_license_get(account_id: str, db=Depends(get_db)):
+    db_license = db.query(License).filter(
+        License.bound_mt5_id == str(account_id),
+        License.status == "ACTIVE"
+    ).first()
+    if not db_license:
+        return {"status": "error", "is_valid": False, "message": "ID nay chua co Ban quyen."}
+    if db_license.expires_at and db_license.expires_at < datetime.utcnow():
+        db_license.status = "EXPIRED"
+        db.commit()
+        return {"status": "error", "is_valid": False, "message": "Ban quyen DA HET HAN."}
+    return {"status": "success", "is_valid": True, "message": "Ban quyen Hop le"}
+
+@app.post("/api/verify-license")
+async def verify_license_post(request: Request, db=Depends(get_db)):
+    data = await request.json()
+    return await verify_license_get(str(data.get("account_id", "")), db)
+
+
+# ==========================================
+# ROUTES — AI AGENT ENGINE
+# ==========================================
+
+@app.post("/api/log-trade")
+async def route_log_trade(req: LogTradeRequest):
+    result = api_log_trade(req.account_id, req.trade_data)
+    if result.get("status") == "error":
+        raise HTTPException(status_code=500, detail=result["detail"])
+    return result
+
+@app.post("/api/close-session")
+async def route_close_session(req: CloseSessionRequest):
+    result = api_close_session(req.account_id, req.session_summary)
+    if result.get("status") == "error":
+        raise HTTPException(status_code=500, detail=result["detail"])
+    return result
+
+@app.post("/api/log-audit")
+async def route_log_audit(req: LogAuditRequest):
+    return api_log_audit(
+        account_id=req.account_id,
+        action=req.action,
+        message=req.message,
+        severity=req.severity or "INFO",
+        extra=req.extra
+    )
+
+@app.get("/api/trade-history/{account_id}")
+async def route_get_trade_history(account_id: str, limit: int = 500):
+    return api_get_trade_history(account_id, limit=limit)
+
+@app.get("/api/session-history/{account_id}")
+async def route_get_session_history(account_id: str, limit: int = 90):
+    return api_get_session_history(account_id, limit=limit)
+
+@app.get("/api/sync-history/{account_id}")
+async def route_sync_history(account_id: str, db=Depends(get_db)):
+    try:
+        from database import TradeHistory, SessionHistory
+        import json as _json
+
+        raw_trades = (
+            db.query(TradeHistory)
+            .filter(TradeHistory.account_id == account_id)
+            .order_by(TradeHistory.timestamp.desc())
+            .limit(500).all()
+        )
+        raw_sessions = (
+            db.query(SessionHistory)
+            .filter(SessionHistory.account_id == account_id)
+            .order_by(SessionHistory.closed_at.desc())
+            .limit(90).all()
+        )
+
+        trades = [{
+            "id": t.id, "account_id": t.account_id, "session_id": t.session_id,
+            "timestamp": t.timestamp, "closed_at": t.closed_at,
+            "symbol": t.symbol, "direction": t.direction, "result": t.result,
+            "risk_amount": t.risk_amount, "actual_rr": t.actual_rr,
+            "planned_rr": t.planned_rr, "profit": t.profit,
+            "hour_of_day": t.hour_of_day, "day_of_week": t.day_of_week,
+            "deviation_score": t.deviation_score,
+        } for t in raw_trades]
+
+        sessions = []
+        for s in raw_sessions:
+            try:    violations = _json.loads(s.violations or "[]")
+            except: violations = []
+            try:    contract = _json.loads(s.contract_json or "{}")
+            except: contract = {}
+            sessions.append({
+                "session_id": s.session_id, "account_id": s.account_id,
+                "date": s.date, "opened_at": s.opened_at, "closed_at": s.closed_at,
+                "opening_balance": s.opening_balance, "closing_balance": s.closing_balance,
+                "pnl": s.pnl, "actual_wr": s.actual_wr, "actual_rr_avg": s.actual_rr_avg,
+                "actual_max_dd_hit": s.actual_max_dd_hit, "trades_count": s.trades_count,
+                "wins": s.wins, "losses": s.losses, "compliance_score": s.compliance_score,
+                "violations": violations, "contract_json": contract, "status": s.status,
+            })
+
+        return {
+            "status": "ok", "trades": trades, "sessions": sessions,
+            "meta": {
+                "account_id": account_id,
+                "trade_count": len(trades),
+                "session_count": len(sessions),
+                "synced_at": datetime.utcnow().isoformat() + "Z",
+            }
+        }
+    except Exception as e:
+        print(f"[SYNC-HISTORY ERROR] account={account_id}: {e}", flush=True)
+        return {
+            "status": "ok", "trades": [], "sessions": [],
+            "meta": {
+                "account_id": account_id, "trade_count": 0, "session_count": 0,
+                "synced_at": datetime.utcnow().isoformat() + "Z",
+                "warning": f"DB error: {str(e)[:100]}"
+            }
+        }
+
+@app.get("/api/ai-analysis/{account_id}")
+async def route_get_ai_analysis(account_id: str):
+    return api_get_ai_analysis(account_id)
+
+
+# ==========================================
+# ROUTES — BILLING / CHECKOUT
+# ==========================================
+
+@app.post("/api/checkout")
+async def api_checkout(payload: CheckoutPayload, db=Depends(get_db)):
+    """
+    AUTO-SALE WORKFLOW (FINAL VERSION - All bugs fixed)
+    ===================================================
+    1. Nhận request checkout (TRIAL_FREE hoặc PAID)
+    2. Tạo order_id
+    3. Ghi vào Lark Base (status = PENDING)
+    4. TẠO LICENSE KEY (nếu là TRIAL_FREE)
+    5. GỬI EMAIL cho customer
+    6. BÁO TELEGRAM
+    7. GHI LOG vào LARK_LOG_TABLE
+    8. Trả về license_key cho user
+    """
+    order_id = f"ORD-{uuid.uuid4().hex[:6].upper()}"
+    buyer_name = payload.buyer_name or "Unknown"
+    buyer_email = payload.buyer_email
+    tier = payload.tier or "STARTER"
+    amount = payload.amount or 0.0
+    method = payload.method or "MANUAL"
+
+    print(f"[CHECKOUT] START | order={order_id} email={buyer_email} tier={tier} method={method}", flush=True)
+
+    # ═══════════════════════════════════════════════════════════
+    # BƯỚC 1: Ghi vào Lark Base (bảng chính - status PENDING)
+    # ═══════════════════════════════════════════════════════════
+    lark_ok = await create_pending_order_in_lark(order_id, buyer_name, buyer_email, tier, amount)
+    if not lark_ok:
+        print(f"[CHECKOUT] ⚠️ Lark Base ghi thất bại (order vẫn tiếp tục)", flush=True)
+
+    # ═══════════════════════════════════════════════════════════
+    # BƯỚC 2: Tạo License Key (nếu TRIAL_FREE hoặc auto-provision)
+    # ═══════════════════════════════════════════════════════════
+    license_key = None
+    expires_at = None
+    
+    if method == "TRIAL_FREE":
+        # Tạo license key ngay lập tức
+        license_key = f"ZARMOR-{uuid.uuid4().hex[:5].upper()}-{uuid.uuid4().hex[:5].upper()}"
+        
+        # Tính expires_at cho trial (7 ngày)
+        expires_at = datetime.now() + timedelta(days=7)
+        
+        # Lưu vào database với ĐẦY ĐỦ các fields
+        new_license = License(
+            license_key=license_key,
+            tier=tier,
+            status="ACTIVE",
+            buyer_name=buyer_name,        # ✅ FIX: Thêm buyer_name
+            buyer_email=buyer_email,
+            bound_mt5_id=None,
+            is_trial=True,                # ✅ FIX: Đánh dấu trial
+            amount_usd=amount,            # ✅ FIX: Lưu amount
+            payment_method=method,        # ✅ FIX: Lưu payment method
+            expires_at=expires_at,
+            max_machines=1,               # Trial: 1 máy
+            email_sent=False,             # Sẽ update sau khi gửi email
+        )
+        db.add(new_license)
+        
+        try:
+            db.commit()
+            print(f"[CHECKOUT] ✅ License created | key={license_key} expires={expires_at.strftime('%Y-%m-%d')}", flush=True)
+        except Exception as db_error:
+            db.rollback()
+            print(f"[CHECKOUT] ❌ Database error: {db_error}", flush=True)
+            raise HTTPException(500, f"Failed to create license: {str(db_error)}")
+    
+    elif method in ["STRIPE", "PAYPAL", "BANK_TRANSFER"]:
+        # Paid checkout: chờ xác nhận payment trước khi tạo key
+        print(f"[CHECKOUT] ⏳ Paid order - chờ payment confirmation để tạo key", flush=True)
+    
+    # ═══════════════════════════════════════════════════════════
+    # BƯỚC 3: GỬI EMAIL cho customer
+    # ═══════════════════════════════════════════════════════════
+    email_sent = False
+    if license_key:
+        email_sent = send_license_email_to_customer(
+            receiver_email=buyer_email,
+            buyer_name=buyer_name,
+            tier=tier,
+            license_key=license_key
+        )
+        
+        if email_sent:
+            print(f"[CHECKOUT] ✅ Email sent to {buyer_email}", flush=True)
+            # Update email_sent flag
+            try:
+                new_license.email_sent = True
+                db.commit()
+            except:
+                pass
+        else:
+            print(f"[CHECKOUT] ⚠️ Email FAILED (SMTP chưa config hoặc lỗi)", flush=True)
+    
+    # ═══════════════════════════════════════════════════════════
+    # BƯỚC 4: BÁO TELEGRAM
+    # ═══════════════════════════════════════════════════════════
+    telegram_msg = (
+        f"🛒 NEW CHECKOUT\n"
+        f"━━━━━━━━━━━━━━━━━━━━\n"
+        f"Order ID: {order_id}\n"
+        f"Customer: {buyer_name}\n"
+        f"Email: {buyer_email}\n"
+        f"Tier: {tier}\n"
+        f"Amount: ${amount}\n"
+        f"Method: {method}\n"
+    )
+    if license_key:
+        telegram_msg += f"License: {license_key}\n"
+        telegram_msg += f"Expires: {expires_at.strftime('%Y-%m-%d')}\n"
+        telegram_msg += f"Status: ✅ ACTIVE (Trial)\n"
+    else:
+        telegram_msg += f"Status: ⏳ PENDING PAYMENT\n"
+    
+    try:
+        await safe_telegram_send(telegram_msg)
+        print(f"[CHECKOUT] ✅ Telegram notification sent", flush=True)
+    except Exception as tg_error:
+        print(f"[CHECKOUT] ⚠️ Telegram FAILED: {tg_error}", flush=True)
+    
+    # ═══════════════════════════════════════════════════════════
+    # BƯỚC 5: GHI LOG vào LARK_LOG_TABLE
+    # ═══════════════════════════════════════════════════════════
+    if license_key:
+        log_ok = await log_license_to_lark(
+            order_id=order_id,
+            license_key=license_key,
+            status="SUCCESS"
+        )
+        if log_ok:
+            print(f"[CHECKOUT] ✅ Lark log created", flush=True)
+        else:
+            print(f"[CHECKOUT] ⚠️ Lark log FAILED", flush=True)
+    
+    # ═══════════════════════════════════════════════════════════
+    # BƯỚC 6: GỬI LARK BOT NOTIFICATION
+    # ═══════════════════════════════════════════════════════════
+    lark_bot_msg = (
+        f"🎉 NEW ORDER: {order_id}\n"
+        f"Customer: {buyer_name} ({buyer_email})\n"
+        f"Tier: {tier} | Amount: ${amount}\n"
+    )
+    if license_key:
+        lark_bot_msg += f"License: {license_key}\n"
+        if email_sent:
+            lark_bot_msg += f"✅ Email sent successfully"
+        else:
+            lark_bot_msg += f"⚠️ Email failed (check SMTP config)"
+    else:
+        lark_bot_msg += f"⏳ Chờ payment confirmation"
+    
+    await send_lark_bot_log(lark_bot_msg)
+    
+    # ═══════════════════════════════════════════════════════════
+    # BƯỚC 7: TRẢ VỀ KẾT QUẢ
+    # ═══════════════════════════════════════════════════════════
+    response = {
+        "status": "success",
+        "order_id": order_id,
+        "message": "Checkout successful"
+    }
+    
+    if license_key:
+        response["license_key"] = license_key
+        response["expires_at"] = expires_at.isoformat()
+        response["message"] = "Trial license activated! Check your email."
+    else:
+        response["message"] = "Order created. Awaiting payment confirmation."
+    
+    print(f"[CHECKOUT] ✅ COMPLETE | order={order_id} license={license_key or 'PENDING'}", flush=True)
+    return response
+
+@app.post("/api/lark-webhook")
+async def receive_lark_order(payload: LarkWebhookBody, db=Depends(get_db)):
+    try:
+        order = payload.event
+        if order.payment_status.upper() != "PAID":
+            return {"status": "error", "message": "Don hang chua thanh toan."}
+
+        new_key     = f"ZARMOR-{order.purchased_tier.upper()}-{uuid.uuid4().hex[:6].upper()}"
+        new_license = License(
+            license_key=new_key, tier=order.purchased_tier,
+            status="UNUSED", buyer_email=order.buyer_email
+        )
+        db.add(new_license)
+        db.commit()
+
+        admin_chat = os.environ.get("ADMIN_TELEGRAM_CHAT_ID", "7976137362")
+        await push_to_telegram(
+            chat_id=admin_chat,
+            text=(f"CO DON HANG MOI TU LARK!\n"
+                  f"Khach: {order.buyer_name}\nGoi: {order.purchased_tier}\nKey: {new_key}"),
+            disable_notification=False
+        )
+        await log_license_to_lark(order_id=order.order_id, license_key=new_key, status="SUCCESS")
+        send_license_email_to_customer(order.buyer_email, order.buyer_name, order.purchased_tier, new_key)
+
+        return {"status": "success", "message": "Tao License thanh cong!", "data": {"license_key": new_key}}
+    except Exception as e:
+        db.rollback()
+        if 'order' in locals() and hasattr(order, 'order_id'):
+            await log_license_to_lark(order_id=order.order_id, license_key="---", status=f"LOI: {str(e)[:50]}")
+        return {"status": "error", "message": f"Loi: {str(e)}"}
+
+
+# ==========================================
+# LICENSE ADMIN — Machine tracking helpers
+# ==========================================
+
+LICENSE_ADMIN_TOKEN = os.environ.get("LICENSE_ADMIN_TOKEN", "CHANGE_ME_BEFORE_DEPLOY")
+
+# In-memory machine registry: license_key → set of account_ids
+_machine_registry: dict = {}
+
+def _check_admin(request: Request):
+    if request.headers.get("X-Admin-Token", "") != LICENSE_ADMIN_TOKEN:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+def _get_machines(db, license_key: str) -> set:
+    if license_key in _machine_registry:
+        return _machine_registry[license_key]
+    try:
+        from database import LicenseActivation
+        rows = db.query(LicenseActivation).filter(
+            LicenseActivation.license_key == license_key
+        ).all()
+        accts = {r.account_id for r in rows}
+    except Exception:
+        accts = set()
+    _machine_registry[license_key] = accts
+    return accts
+
+def _add_machine(db, license_key: str, account_id: str, magic: str = "") -> bool:
+    """Thêm máy mới. Trả về True nếu là máy mới, False nếu đã có."""
+    accts = _machine_registry.setdefault(license_key, set())
+    try:
+        from database import LicenseActivation
+        row = db.query(LicenseActivation).filter(
+            LicenseActivation.license_key == license_key,
+            LicenseActivation.account_id  == account_id
+        ).first()
+        if row:
+            row.last_seen = datetime.utcnow()
+            db.commit()
+            accts.add(account_id)
+            return False
+        db.add(LicenseActivation(
+            license_key=license_key, account_id=account_id,
+            magic=magic, first_seen=datetime.utcnow(), last_seen=datetime.utcnow()
+        ))
+        db.commit()
+    except Exception:
+        db.rollback()
+    accts.add(account_id)
+    return True
+
+
+# ==========================================
+# HEARTBEAT — EA gọi GET mỗi BridgeInterval giây
+# Thay thế cho cách dùng Python bridge riêng
+# ── Rate-limit caches (in-memory) ─────────────────────────────
+_hb_last_seen: dict = {}   # license_key → last heartbeat unix timestamp
+_co_ip_log:    dict = {}   # ip → [timestamps] cho checkout
+HB_MIN_INTERVAL = 20       # giây tối thiểu giữa 2 heartbeat / key
+CO_MAX_PER_IP   = 5        # max checkout / IP trong 10 phút
+CO_WINDOW       = 600      # 10 phút
+
+# ==========================================
+
+async def _ea_heartbeat_handler(
+    account:  str   = None,
+    magic:    str   = "",
+    license:  str   = "",
+    equity:   float = 0,
+    balance:  float = 0,
+    ts:       str   = "",
+    db=None,
+):
+    """Logic xử lý heartbeat — dùng chung cho cả GET và POST."""
+    if not license:
+        return {"valid": False, "lock": False, "emergency": False,
+                "reason": "NO_LICENSE_KEY"}
+
+    # [C2] Rate limit: bỏ qua nếu < HB_MIN_INTERVAL giây từ lần trước
+    _now = time.time()
+    if _now - _hb_last_seen.get(license, 0) < HB_MIN_INTERVAL:
+        return {"valid": True, "lock": False, "emergency": False, "reason": "OK_CACHED"}
+    _hb_last_seen[license] = _now
+    if len(_hb_last_seen) > 10000:
+        _cutoff = _now - 3600
+        for _k in [k for k,v in list(_hb_last_seen.items()) if v < _cutoff]:
+            del _hb_last_seen[_k]
+
+    db_license = db.query(License).filter(License.license_key == license).first()
+
+    if not db_license:
+        print(f"[HEARTBEAT] INVALID_KEY | account={account} key={license[:12]}...", flush=True)
+        return {"valid": False, "lock": False, "emergency": False,
+                "reason": "INVALID_KEY"}
+
+    if db_license.status == "REVOKED":
+        return {"valid": False, "lock": True, "emergency": False,
+                "reason": "LICENSE_REVOKED"}
+
+    if db_license.status == "EXPIRED" or (
+        db_license.expires_at and db_license.expires_at < datetime.utcnow()
+    ):
+        if db_license.status != "EXPIRED":
+            db_license.status = "EXPIRED"
+            db.commit()
+        return {"valid": False, "lock": True, "emergency": False,
+                "reason": "LICENSE_EXPIRED"}
+
+    if db_license.status not in ("ACTIVE", "UNUSED"):
+        return {"valid": False, "lock": True, "emergency": False,
+                "reason": "LICENSE_INACTIVE"}
+
+    max_machines = getattr(db_license, "max_machines", 1) or 1
+    known        = _get_machines(db, license)
+
+    if account and account not in known:
+        if len(known) >= max_machines:
+            print(f"[HEARTBEAT] MACHINE_LIMIT | key={license[:12]}... account={account}", flush=True)
+            return {"valid": False, "lock": True, "emergency": False,
+                    "reason": "MACHINE_LIMIT_REACHED",
+                    "detail": f"Toi da {max_machines} may. Lien he admin de reset."}
+        _add_machine(db, license, account, magic)
+
+    # [C1] Enforce MT5 binding
+    _bound = getattr(db_license, "bound_mt5_id", None)
+    if not _bound:
+        print(f"[HEARTBEAT] NOT_BOUND | key={license[:12]} account={account}", flush=True)
+        return {
+            "valid": False, "lock": False, "emergency": False,
+            "reason": "KEY_NOT_BOUND",
+            "message": "Vao dashboard bind MT5 ID truoc khi chay EA."
+        }
+    if account and account != _bound:
+        print(f"[HEARTBEAT] MT5_MISMATCH | key={license[:12]} expected={_bound} got={account}", flush=True)
+        return {
+            "valid": False, "lock": True, "emergency": False,
+            "reason": "MT5_ID_MISMATCH",
+            "message": "Key nay da bind vao MT5 ID khac. Lien he admin."
+        }
+    db.commit()
+
+    print(f"[HEARTBEAT] OK | key={license[:12]}... account={account} equity={equity:.2f}", flush=True)
+    return {
+        "valid":      True,
+        "lock":       False,
+        "emergency":  False,
+        "status":     db_license.status,
+        "expires_at": db_license.expires_at.isoformat() if db_license.expires_at else "lifetime",
+        "reason":     "OK",
+    }
+
+
+@app.get("/heartbeat")
+async def ea_heartbeat_get(
+    account:  str   = None,
+    magic:    str   = "",
+    license:  str   = "",
+    equity:   float = 0,
+    balance:  float = 0,
+    ts:       str   = "",
+    db=Depends(get_db)
+):
+    """GET /heartbeat — EA dùng WebRequest GET"""
+    return await _ea_heartbeat_handler(account, magic, license, equity, balance, ts, db)
+
+
+@app.post("/heartbeat")
+async def ea_heartbeat_post(
+    request: Request,
+    db=Depends(get_db)
+):
+    """
+    POST /heartbeat — tương thích với EA phiên bản cũ dùng WebRequest POST.
+    Đọc params từ query string hoặc JSON body.
+    """
+    # Thử đọc JSON body trước
+    account = magic = license = ts = ""
+    equity = balance = 0.0
+    try:
+        body = await request.json()
+        account  = str(body.get("account",  body.get("account_id", "")) or "")
+        magic    = str(body.get("magic",    "") or "")
+        license  = str(body.get("license",  body.get("license_key", "")) or "")
+        equity   = float(body.get("equity",  0) or 0)
+        balance  = float(body.get("balance", 0) or 0)
+        ts       = str(body.get("ts", "") or "")
+    except Exception:
+        pass
+
+    # Fallback: đọc từ query string (EA gửi POST với params trên URL)
+    qp = request.query_params
+    if not account:  account  = qp.get("account",  qp.get("account_id", ""))
+    if not magic:    magic    = qp.get("magic",    "")
+    if not license:  license  = qp.get("license",  qp.get("license_key", ""))
+    if not equity:   equity   = float(qp.get("equity",  0) or 0)
+    if not balance:  balance  = float(qp.get("balance", 0) or 0)
+    if not ts:       ts       = qp.get("ts", "")
+
+    return await _ea_heartbeat_handler(account, magic, license, equity, balance, ts, db)
+
+
+# ==========================================
+# ADMIN API — Quản lý license từ dashboard
+# Header bắt buộc: X-Admin-Token: <LICENSE_ADMIN_TOKEN>
+# ==========================================
+
+@app.post("/admin/licenses")
+async def admin_create_license(
+    request:      Request,
+    owner_name:   str   = Query(""),
+    owner_email:  str   = Query(""),
+    plan:         str   = Query("standard"),
+    max_machines: int   = Query(1),
+    expires_at:   str   = Query(""),
+    note:         str   = Query(""),
+    db=Depends(get_db)
+):
+    """Tao license key moi. Header: X-Admin-Token required."""
+    _check_admin(request)
+    import uuid as _uuid
+    key = "ZARMOR-" + _uuid.uuid4().hex[:5].upper() + "-" + _uuid.uuid4().hex[:5].upper()
+    exp = None
+    if expires_at:
+        try:
+            from datetime import datetime as _dt
+            exp = _dt.fromisoformat(expires_at)
+        except Exception:
+            exp = None
+    lic = License(
+        license_key  = key,
+        tier         = plan,
+        status       = "ACTIVE",
+        buyer_email  = owner_email or "admin@zarmor.com",
+        bound_mt5_id = None,
+        expires_at   = exp,
+        max_machines = max_machines,
+    )
+    db.add(lic)
+    db.commit()
+    print(f"[ADMIN] LICENSE CREATED | key={key} owner={owner_name} plan={plan}", flush=True)
+    return {
+        "status":      "created",
+        "key":         key,
+        "owner":       owner_name,
+        "plan":        plan,
+        "max_machines": max_machines,
+        "expires_at":  expires_at or "lifetime",
+    }
+
+
+@app.get("/admin/licenses")
+async def admin_list_licenses(request: Request, db=Depends(get_db)):
+    _check_admin(request)
+    rows = db.query(License).order_by(License.id.desc()).all()
+    result = []
+    for r in rows:
+        machines = list(_get_machines(db, r.license_key))
+        result.append({
+            "id":           r.id,
+            "license_key":  r.license_key,
+            "tier":         getattr(r, "tier", "standard"),
+            "status":       r.status,
+            "bound_mt5_id": r.bound_mt5_id,
+            "buyer_email":  getattr(r, "buyer_email", ""),
+            "expires_at":   r.expires_at.isoformat() if r.expires_at else None,
+            "max_machines": getattr(r, "max_machines", 1),
+            "machines":     machines,
+            "machine_count": len(machines),
+        })
+    return result
+
+@app.post("/admin/licenses/{key}/revoke")
+async def admin_revoke(key: str, request: Request, db=Depends(get_db)):
+    _check_admin(request)
+    lic = db.query(License).filter(License.license_key == key).first()
+    if not lic:
+        raise HTTPException(404, "License not found")
+    lic.status = "REVOKED"
+    db.commit()
+    print(f"[ADMIN] REVOKED | key={key}", flush=True)
+    return {"status": "revoked", "key": key}
+
+@app.post("/admin/licenses/{key}/activate")
+async def admin_activate(key: str, request: Request, db=Depends(get_db)):
+    _check_admin(request)
+    lic = db.query(License).filter(License.license_key == key).first()
+    if not lic:
+        raise HTTPException(404, "License not found")
+    lic.status = "ACTIVE"
+    db.commit()
+    return {"status": "activated", "key": key}
+
+@app.post("/admin/licenses/{key}/reset-machines")
+async def admin_reset_machines(key: str, request: Request, db=Depends(get_db)):
+    """Xóa danh sách máy — user có thể kích hoạt lại trên máy mới."""
+    _check_admin(request)
+    _machine_registry.pop(key, None)
+    try:
+        from database import LicenseActivation
+        db.query(LicenseActivation).filter(
+            LicenseActivation.license_key == key
+        ).delete()
+        db.commit()
+    except Exception:
+        db.rollback()
+    return {"status": "machines_reset", "key": key}
+
+@app.get("/admin/stats")
+async def admin_stats(request: Request, db=Depends(get_db)):
+    _check_admin(request)
+    total   = db.query(License).count()
+    active  = db.query(License).filter(License.status == "ACTIVE").count()
+    unused  = db.query(License).filter(License.status == "UNUSED").count()
+    revoked = db.query(License).filter(License.status == "REVOKED").count()
+    return {
+        "total":   total,
+        "active":  active,
+        "unused":  unused,
+        "revoked": revoked,
+    }
+
+
+# ==========================================
+# STATIC FILES + ENTRYPOINT
+# ==========================================
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+web_path  = os.path.join(BASE_DIR, "web")
+
+# Landing page tại /
+@app.get("/", response_class=FileResponse)
+def landing_page():
+    for name in ("salemain.html", "sales-main.html", "index_landing.html"):
+        f = os.path.join(BASE_DIR, name)
+        if os.path.exists(f):
+            return FileResponse(f)
+    return HTMLResponse("<h1>Z-ARMOR CLOUD</h1><p><a href='/web/'>Dashboard →</a></p>")
+
+# Dashboard SPA tại /web/
+if os.path.exists(web_path):
+    app.mount("/web", StaticFiles(directory=web_path, html=True), name="web")
+    print(f"[INFO] Dashboard mounted at /web/ from {web_path}", flush=True)
+import os
+from fastapi.responses import FileResponse
+
+# Serve manifest.json
+@app.get("/manifest.json")
+def get_manifest():
+    """Serve PWA manifest file"""
+    manifest_path = os.path.join(BASE_DIR, "manifest.json")
+    if os.path.exists(manifest_path):
+        return FileResponse(manifest_path, media_type="application/json")
+    return {"error": "manifest.json not found"}
+
+# Serve favicon.ico
+@app.get("/favicon.ico")
+def get_favicon():
+    """Serve favicon"""
+    favicon_path = os.path.join(web_path, "favicon.ico")
+    if os.path.exists(favicon_path):
+        return FileResponse(favicon_path, media_type="image/x-icon")
+    return {"error": "favicon.ico not found"}
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, workers=1, reload=False)

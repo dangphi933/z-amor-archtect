@@ -1,0 +1,2587 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Z·ARMOR — Zone Control Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ════════════════════════════════════════════════════════════════
+   Z·ARMOR ZONE CONTROL CENTER
+   Inspired by: Stripe Dashboard + Chargebee + LaunchDarkly
+   Aesthetic: Mission Control — deep navy command deck,
+   amber MASTER toggles, teal status, surgical precision
+   ════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Core navy */
+  --void:   #03080f;
+  --base:   #060e1c;
+  --layer1: #0a1628;
+  --layer2: #0f1f38;
+  --layer3: #152848;
+  --edge:   #1e3a5f;
+  --edge2:  #2a4f78;
+  --edge3:  #3a6090;
+  --mist:   #5a82a8;
+  --fog:    #8aaac8;
+  --pale:   #c8ddf0;
+  --bright: #e8f4ff;
+
+  /* Amber — primary action/alert */
+  --am:     #f59e0b;
+  --am2:    #d97706;
+  --am3:    #92400e;
+  --amfg:   rgba(245,158,11,.08);
+  --ambr:   rgba(245,158,11,.18);
+
+  /* Teal — confirm/live */
+  --tl:     #0d9488;
+  --tl2:    #14b8a6;
+  --tl3:    #2dd4bf;
+  --tlfg:   rgba(20,184,166,.08);
+  --tlbr:   rgba(20,184,166,.18);
+
+  /* Red — danger */
+  --rd:     #dc2626;
+  --rd2:    #ef4444;
+  --rd3:    #f87171;
+  --rdfg:   rgba(220,38,38,.08);
+  --rdbr:   rgba(220,38,38,.2);
+
+  /* Green */
+  --gn:     #059669;
+  --gn2:    #10b981;
+  --gn3:    #34d399;
+
+  /* Sky blue */
+  --sk:     #0284c7;
+  --sk2:    #0ea5e9;
+  --sk3:    #38bdf8;
+
+  /* Violet */
+  --vi:     #7c3aed;
+  --vi2:    #8b5cf6;
+  --vi3:    #a78bfa;
+
+  --mono:  'JetBrains Mono', monospace;
+  --sans:  'Plus Jakarta Sans', sans-serif;
+
+  --r3: 3px; --r6: 6px; --r10: 10px; --r14: 14px;
+  --shadow: 0 4px 20px rgba(0,0,0,.5);
+  --shadow2: 0 1px 4px rgba(0,0,0,.4);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+
+body {
+  font-family: var(--sans);
+  background: var(--base);
+  color: var(--bright);
+  display: flex; flex-direction: column;
+  position: relative;
+}
+
+/* Atmospheric depth */
+body::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 0% 0%, rgba(13,148,136,.05) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 100% 100%, rgba(245,158,11,.04) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 50% 50%, rgba(14,165,233,.02) 0%, transparent 70%);
+}
+
+/* ── TOPBAR (always visible) ──────────────────────── */
+.topbar {
+  height: 50px; flex-shrink: 0;
+  display: flex; align-items: center;
+  padding: 0 20px; gap: 0;
+  background: var(--layer1);
+  border-bottom: 1px solid var(--edge);
+  position: relative; z-index: 20;
+}
+
+.tb-brand {
+  display: flex; align-items: center; gap: 10px;
+  padding-right: 20px; border-right: 1px solid var(--edge);
+  margin-right: 20px;
+}
+.tb-hex {
+  width: 26px; height: 26px;
+  background: linear-gradient(135deg, var(--tl), var(--sk));
+  clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+}
+.tb-name {
+  font-family: var(--mono); font-size: 12px; font-weight: 700;
+  color: var(--bright); letter-spacing: 3px;
+}
+
+.tb-tabs {
+  display: flex; gap: 2px; flex: 1;
+}
+.tb-tab {
+  display: flex; align-items: center; gap: 6px;
+  padding: 0 14px; height: 50px;
+  font-size: 12px; font-weight: 500; color: var(--mist);
+  cursor: pointer; border: none; background: none;
+  border-bottom: 2px solid transparent;
+  transition: all .15s; white-space: nowrap;
+  font-family: var(--sans);
+}
+.tb-tab:hover { color: var(--pale); background: rgba(255,255,255,.02); }
+.tb-tab.on {
+  color: var(--bright);
+  border-bottom-color: var(--tl3);
+  background: rgba(45,212,191,.03);
+}
+.tb-tab-icon { font-size: 14px; }
+.tb-tab-badge {
+  font-family: var(--mono); font-size: 9px;
+  background: var(--edge); color: var(--fog);
+  padding: 1px 6px; border-radius: 10px;
+}
+.tb-tab.on .tb-tab-badge { background: rgba(45,212,191,.15); color: var(--tl3); }
+
+.tb-right {
+  margin-left: auto; display: flex; align-items: center; gap: 10px;
+  padding-left: 20px; border-left: 1px solid var(--edge);
+}
+.tb-clock {
+  font-family: var(--mono); font-size: 11px; color: var(--mist);
+}
+.tb-server {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--mono); font-size: 11px;
+}
+.srv-led {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--gn2);
+  box-shadow: 0 0 6px var(--gn2);
+  animation: led-blink 3s ease-in-out infinite;
+}
+.srv-led.dead { background: var(--rd2); box-shadow: 0 0 6px var(--rd2); animation: none; }
+@keyframes led-blink { 0%,100%{opacity:1} 60%{opacity:.5} }
+
+/* ── SHELL ────────────────────────────────────────── */
+.shell {
+  flex: 1; display: flex; overflow: hidden;
+  position: relative; z-index: 1;
+}
+
+/* ── LEFT ZONE RAIL ───────────────────────────────── */
+.zone-rail {
+  width: 200px; flex-shrink: 0;
+  background: var(--layer1);
+  border-right: 1px solid var(--edge);
+  display: flex; flex-direction: column;
+  overflow-y: auto;
+}
+.zone-rail::-webkit-scrollbar { width: 3px; }
+.zone-rail::-webkit-scrollbar-thumb { background: var(--edge2); border-radius: 2px; }
+
+.zone-sect { padding: 12px 10px 4px; }
+.zone-lbl {
+  font-family: var(--mono); font-size: 8px;
+  letter-spacing: 2.5px; color: var(--edge3);
+  padding: 0 8px; margin-bottom: 3px;
+}
+.zone-btn {
+  width: 100%; display: flex; align-items: center; gap: 9px;
+  padding: 8px 10px; border-radius: var(--r6);
+  border: none; background: none; cursor: pointer;
+  color: var(--mist); font-family: var(--sans);
+  font-size: 12px; font-weight: 500;
+  transition: all .14s; text-align: left;
+  position: relative;
+}
+.zone-btn:hover { background: var(--layer2); color: var(--pale); }
+.zone-btn.on {
+  background: rgba(45,212,191,.07);
+  color: var(--tl3);
+}
+.zone-btn.on::before {
+  content: '';
+  position: absolute; left: 0; top: 20%; bottom: 20%;
+  width: 2px; border-radius: 0 2px 2px 0;
+  background: var(--tl2);
+}
+.zone-icon { font-size: 13px; width: 16px; text-align: center; flex-shrink: 0; }
+.zone-count {
+  margin-left: auto;
+  font-family: var(--mono); font-size: 9px;
+  background: var(--edge); color: var(--fog);
+  padding: 1px 6px; border-radius: 8px;
+  transition: all .14s;
+}
+.zone-btn.on .zone-count { background: rgba(45,212,191,.15); color: var(--tl3); }
+
+/* ── MAIN CANVAS ──────────────────────────────────── */
+.canvas {
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  padding: 20px 24px;
+  background: var(--base);
+}
+.canvas::-webkit-scrollbar { width: 4px; }
+.canvas::-webkit-scrollbar-thumb { background: var(--edge2); border-radius: 2px; }
+
+.view { display: none; }
+.view.on { display: block; animation: vw-in .2s ease; }
+@keyframes vw-in { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+
+/* ── SECTION HEADER ───────────────────────────────── */
+.sec-hd {
+  display: flex; align-items: flex-start; gap: 14px;
+  margin-bottom: 20px;
+}
+.sec-ttl { font-size: 17px; font-weight: 700; color: var(--bright); }
+.sec-sub { font-size: 12px; color: var(--mist); margin-top: 2px; }
+.sec-acts { margin-left: auto; display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+
+/* ── BUTTONS ──────────────────────────────────────── */
+.btn {
+  font-family: var(--mono); font-size: 11px; font-weight: 600;
+  padding: 7px 14px; border-radius: var(--r6);
+  border: 1px solid transparent; cursor: pointer;
+  letter-spacing: .5px; transition: all .14s;
+  display: inline-flex; align-items: center; gap: 6px;
+  white-space: nowrap;
+}
+.btn-teal  { background: var(--tl); color: #fff; border-color: var(--tl); }
+.btn-teal:hover  { background: var(--tl2); border-color: var(--tl2); }
+.btn-am    { background: var(--am); color: var(--void); border-color: var(--am); font-weight: 700; }
+.btn-am:hover    { background: var(--am2); border-color: var(--am2); }
+.btn-ghost { background: transparent; color: var(--fog); border-color: var(--edge2); }
+.btn-ghost:hover { border-color: var(--edge3); color: var(--pale); }
+.btn-danger{ background: var(--rdfg); color: var(--rd3); border-color: var(--rdbr); }
+.btn-danger:hover { background: rgba(220,38,38,.14); }
+.btn-xs { padding: 4px 9px; font-size: 10px; }
+.btn-sm { padding: 5px 12px; font-size: 11px; }
+
+/* ── KPI STRIP ────────────────────────────────────── */
+.kpi-strip { display: grid; gap: 10px; margin-bottom: 18px; }
+.kpi-strip.c5 { grid-template-columns: repeat(5,1fr); }
+.kpi-strip.c4 { grid-template-columns: repeat(4,1fr); }
+.kpi-strip.c3 { grid-template-columns: repeat(3,1fr); }
+
+.kpi {
+  background: var(--layer1);
+  border: 1px solid var(--edge);
+  border-radius: var(--r10); padding: 14px 16px;
+  position: relative; overflow: hidden;
+  transition: border-color .18s;
+  cursor: default;
+}
+.kpi:hover { border-color: var(--edge2); }
+.kpi::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+}
+.kpi.tl::before { background: var(--tl2); }
+.kpi.am::before { background: var(--am); }
+.kpi.sk::before { background: var(--sk2); }
+.kpi.vi::before { background: var(--vi2); }
+.kpi.gn::before { background: var(--gn2); }
+.kpi.rd::before { background: var(--rd2); }
+
+.kpi-lbl { font-family: var(--mono); font-size: 8px; letter-spacing: 2px; color: var(--mist); margin-bottom: 8px; }
+.kpi-val { font-family: var(--mono); font-size: 26px; font-weight: 700; line-height: 1; letter-spacing: -1px; }
+.kpi.tl .kpi-val { color: var(--tl3); }
+.kpi.am .kpi-val { color: var(--am); }
+.kpi.sk .kpi-val { color: var(--sk3); }
+.kpi.vi .kpi-val { color: var(--vi3); }
+.kpi.gn .kpi-val { color: var(--gn3); }
+.kpi.rd .kpi-val { color: var(--rd3); }
+.kpi-sub { font-size: 11px; color: var(--mist); margin-top: 4px; }
+.kpi-delta {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-family: var(--mono); font-size: 10px; margin-top: 4px;
+}
+.kpi-delta.up { color: var(--gn3); }
+.kpi-delta.dn { color: var(--rd3); }
+
+/* ── PANEL ────────────────────────────────────────── */
+.panel {
+  background: var(--layer1);
+  border: 1px solid var(--edge);
+  border-radius: var(--r10); overflow: hidden;
+  margin-bottom: 14px;
+}
+.panel-hd {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--edge);
+  background: rgba(0,0,0,.12);
+}
+.panel-ttl {
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 2px; color: var(--fog); font-weight: 600;
+}
+.panel-acts { margin-left: auto; display: flex; gap: 6px; align-items: center; }
+
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.grid3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+
+/* ══════════════════════════════════════════════════════
+   MASTER TOGGLE — The star of the show
+   ══════════════════════════════════════════════════════ */
+.master-toggle-row {
+  display: flex; align-items: center; gap: 0;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--edge);
+}
+.master-toggle-row:last-child { border-bottom: none; }
+
+.mtr-left { flex: 1; display: flex; align-items: center; gap: 12px; }
+.mtr-icon {
+  width: 36px; height: 36px; border-radius: var(--r6);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+}
+.mtr-info {}
+.mtr-name { font-size: 13px; font-weight: 600; color: var(--bright); }
+.mtr-desc { font-size: 11px; color: var(--mist); margin-top: 2px; }
+
+.mtr-meta { display: flex; align-items: center; gap: 16px; padding: 0 20px; }
+.mtr-stat { text-align: center; }
+.mtr-stat-val { font-family: var(--mono); font-size: 14px; font-weight: 700; }
+.mtr-stat-lbl { font-family: var(--mono); font-size: 9px; color: var(--mist); letter-spacing: 1px; margin-top: 1px; }
+.mtr-divider { width: 1px; height: 28px; background: var(--edge); }
+
+/* THE TOGGLE SWITCH */
+.toggle-wrap {
+  display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+}
+.toggle-label {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .5px;
+  color: var(--mist); width: 40px; text-align: right;
+}
+.toggle {
+  position: relative; width: 48px; height: 26px; cursor: pointer;
+}
+.toggle input { display: none; }
+.toggle-track {
+  position: absolute; inset: 0;
+  background: var(--edge); border-radius: 13px;
+  transition: all .25s cubic-bezier(.4,0,.2,1);
+  border: 1px solid var(--edge2);
+}
+.toggle input:checked ~ .toggle-track {
+  background: var(--tl);
+  border-color: var(--tl2);
+  box-shadow: 0 0 12px rgba(20,184,166,.3);
+}
+.toggle-thumb {
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 18px; height: 18px;
+  background: var(--fog); border-radius: 50%;
+  transition: all .25s cubic-bezier(.4,0,.2,1);
+  box-shadow: var(--shadow2);
+}
+.toggle input:checked ~ .toggle-thumb {
+  left: 25px; background: #fff;
+}
+/* Master (larger) toggle — amber color when on */
+.toggle.master { width: 56px; height: 30px; }
+.toggle.master .toggle-thumb { width: 22px; height: 22px; }
+.toggle.master input:checked ~ .toggle-thumb { left: 30px; }
+.toggle.master input:checked ~ .toggle-track {
+  background: var(--am);
+  border-color: var(--am2);
+  box-shadow: 0 0 16px rgba(245,158,11,.35);
+}
+
+/* ══════════════════════════════════════════════════════
+   ZONE PLAN CARD — Pricing policy card
+   ══════════════════════════════════════════════════════ */
+.plan-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 14px; }
+
+.plan-card {
+  background: var(--layer1);
+  border: 1px solid var(--edge);
+  border-radius: var(--r10); overflow: hidden;
+  transition: border-color .2s;
+  position: relative;
+}
+.plan-card.on { border-color: var(--tl2); }
+.plan-card.on::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--tl), var(--sk2));
+}
+
+.plan-card-hd {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--edge);
+}
+.plan-name { font-size: 14px; font-weight: 700; color: var(--bright); }
+.plan-badge {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 1px;
+  padding: 3px 8px; border-radius: var(--r3); font-weight: 700;
+}
+.plan-card-body { padding: 14px 16px; }
+
+.plan-price {
+  display: flex; align-items: baseline; gap: 4px;
+  margin-bottom: 12px;
+}
+.plan-price-val { font-family: var(--mono); font-size: 28px; font-weight: 700; color: var(--am); }
+.plan-price-cur { font-family: var(--mono); font-size: 14px; color: var(--mist); }
+.plan-price-per { font-size: 11px; color: var(--mist); }
+
+.plan-quota-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px;
+}
+.plan-quota-lbl { font-family: var(--mono); font-size: 10px; color: var(--mist); letter-spacing: 1px; }
+
+/* Counter control */
+.counter {
+  display: flex; align-items: center; gap: 0;
+}
+.counter-btn {
+  width: 26px; height: 26px;
+  background: var(--layer2); border: 1px solid var(--edge2);
+  color: var(--fog); cursor: pointer; border-radius: 0;
+  font-size: 14px; font-family: var(--mono); font-weight: 700;
+  transition: all .12s; display: flex; align-items: center; justify-content: center;
+}
+.counter-btn:first-child { border-radius: var(--r3) 0 0 var(--r3); }
+.counter-btn:last-child  { border-radius: 0 var(--r3) var(--r3) 0; }
+.counter-btn:hover { background: var(--edge); color: var(--bright); }
+.counter-val {
+  width: 48px; height: 26px;
+  background: var(--layer3); border: 1px solid var(--edge2);
+  border-left: none; border-right: none;
+  text-align: center; color: var(--bright);
+  font-family: var(--mono); font-size: 13px; font-weight: 600;
+  outline: none; padding: 0;
+}
+.counter-val:focus { border-color: var(--tl2); background: var(--layer2); }
+
+.plan-bar-row { margin-top: 10px; }
+.plan-bar-lbl {
+  display: flex; justify-content: space-between;
+  font-family: var(--mono); font-size: 9px; color: var(--mist);
+  margin-bottom: 5px;
+}
+.plan-bar-bg { height: 4px; background: var(--edge); border-radius: 2px; overflow: hidden; }
+.plan-bar-fill { height: 100%; border-radius: 2px; transition: width .6s ease; }
+
+.plan-features {
+  margin-top: 12px; display: flex; flex-direction: column; gap: 5px;
+}
+.plan-feat {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 11px; color: var(--pale);
+}
+.plan-feat::before { content: '✓'; color: var(--tl3); font-family: var(--mono); font-size: 10px; flex-shrink: 0; }
+.plan-feat.disabled { color: var(--mist); text-decoration: line-through; }
+.plan-feat.disabled::before { content: '×'; color: var(--edge3); }
+
+.plan-card-ft {
+  padding: 12px 16px;
+  border-top: 1px solid var(--edge);
+  display: flex; align-items: center; gap: 10px;
+}
+
+/* ══════════════════════════════════════════════════════
+   PAYMENT GATEWAY CARD
+   ══════════════════════════════════════════════════════ */
+.gw-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 14px; }
+
+.gw-card {
+  background: var(--layer1);
+  border: 1px solid var(--edge);
+  border-radius: var(--r10); overflow: hidden;
+  transition: all .18s;
+}
+.gw-card.live { border-color: var(--tl2); }
+.gw-card.live .gw-status-bar { background: var(--tl); }
+.gw-card.paused .gw-status-bar { background: var(--am); }
+.gw-card.off .gw-status-bar { background: var(--edge); }
+
+.gw-status-bar { height: 3px; }
+.gw-card-hd {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px 12px;
+}
+.gw-logo {
+  width: 40px; height: 40px; border-radius: var(--r6);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+  background: var(--layer2); border: 1px solid var(--edge2);
+}
+.gw-name { font-size: 14px; font-weight: 700; }
+.gw-type { font-size: 11px; color: var(--mist); margin-top: 2px; }
+
+.gw-body { padding: 0 16px 12px; }
+.gw-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.gw-stat { background: var(--layer2); border-radius: var(--r6); padding: 8px 10px; }
+.gw-stat-lbl { font-family: var(--mono); font-size: 8px; letter-spacing: 1.5px; color: var(--mist); margin-bottom: 3px; }
+.gw-stat-val { font-family: var(--mono); font-size: 14px; font-weight: 700; color: var(--bright); }
+
+.gw-modes { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.gw-mode-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 7px 10px; background: var(--layer2);
+  border-radius: var(--r6); border: 1px solid var(--edge);
+}
+.gw-mode-lbl { font-size: 12px; color: var(--pale); font-weight: 500; }
+.gw-mode-sub { font-size: 10px; color: var(--mist); margin-top: 1px; }
+
+.gw-foot {
+  padding: 10px 16px;
+  border-top: 1px solid var(--edge);
+  display: flex; align-items: center; gap: 8px;
+}
+.gw-health {
+  display: flex; align-items: center; gap: 5px;
+  font-family: var(--mono); font-size: 10px; color: var(--mist);
+}
+
+/* ══════════════════════════════════════════════════════
+   TABLE
+   ══════════════════════════════════════════════════════ */
+.tbl-wrap { overflow-x: auto; }
+.tbl-scroll { max-height: 380px; overflow-y: auto; }
+.tbl-scroll::-webkit-scrollbar { width: 3px; }
+.tbl-scroll::-webkit-scrollbar-thumb { background: var(--edge2); border-radius: 2px; }
+
+table { width: 100%; border-collapse: collapse; }
+thead th {
+  font-family: var(--mono); font-size: 8px; letter-spacing: 2px;
+  color: var(--edge3); text-align: left;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--edge);
+  background: rgba(0,0,0,.2);
+  position: sticky; top: 0; z-index: 2;
+  white-space: nowrap;
+}
+td {
+  padding: 10px 14px; font-size: 12px;
+  border-bottom: 1px solid rgba(30,58,95,.3);
+  vertical-align: middle;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,.015); }
+.mono { font-family: var(--mono); font-size: 11px; }
+
+/* ── BADGES ───────────────────────────────────────── */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 7px; border-radius: var(--r3);
+  font-family: var(--mono); font-size: 9px; letter-spacing: .8px; font-weight: 700;
+}
+.b-tl  { background: var(--tlfg); color: var(--tl3); border: 1px solid var(--tlbr); }
+.b-am  { background: var(--amfg); color: var(--am);  border: 1px solid var(--ambr); }
+.b-rd  { background: var(--rdfg); color: var(--rd3); border: 1px solid var(--rdbr); }
+.b-gn  { background: rgba(16,185,129,.08); color: var(--gn3); border: 1px solid rgba(16,185,129,.2); }
+.b-sk  { background: rgba(14,165,233,.08); color: var(--sk3); border: 1px solid rgba(14,165,233,.2); }
+.b-vi  { background: rgba(139,92,246,.08); color: var(--vi3); border: 1px solid rgba(139,92,246,.2); }
+.b-dim { background: rgba(42,79,120,.2);   color: var(--fog); border: 1px solid var(--edge); }
+
+/* ── FORMS ────────────────────────────────────────── */
+.field { display: flex; flex-direction: column; gap: 5px; }
+.fl { font-family: var(--mono); font-size: 9px; letter-spacing: 2px; color: var(--mist); }
+.fi, .fs, .fta {
+  background: var(--layer2); border: 1px solid var(--edge2);
+  color: var(--bright); padding: 8px 11px;
+  border-radius: var(--r6); font-family: var(--mono); font-size: 12px;
+  outline: none; transition: border-color .14s; width: 100%;
+}
+.fi:focus, .fs:focus, .fta:focus { border-color: var(--tl2); }
+.fs { cursor: pointer; }
+.fta { resize: vertical; }
+.fg2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.fg3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+
+/* ── MODAL ────────────────────────────────────────── */
+.modal-bg {
+  display: none; position: fixed; inset: 0;
+  background: rgba(3,8,15,.8); backdrop-filter: blur(6px);
+  z-index: 100; align-items: center; justify-content: center;
+}
+.modal-bg.on { display: flex; }
+.modal {
+  background: var(--layer1); border: 1px solid var(--edge2);
+  border-radius: var(--r14); padding: 24px;
+  width: 520px; max-width: 95vw; max-height: 90vh; overflow-y: auto;
+  animation: mdl .22s cubic-bezier(.16,1,.3,1);
+  box-shadow: 0 40px 120px rgba(0,0,0,.7);
+  position: relative;
+}
+.modal::after {
+  content: '';
+  position: absolute; top: 0; left: 20%; right: 20%; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--tl2), transparent);
+}
+@keyframes mdl { from{opacity:0;transform:translateY(-16px)scale(.96)} to{opacity:1;transform:none} }
+.modal-ttl { font-family: var(--mono); font-size: 11px; letter-spacing: 2px; color: var(--tl3); margin-bottom: 18px; }
+.modal-foot { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--edge); }
+
+/* ── TOAST ────────────────────────────────────────── */
+#toast {
+  position: fixed; bottom: 20px; right: 20px; z-index: 200;
+  background: var(--layer2); border: 1px solid var(--edge2);
+  border-radius: var(--r10); padding: 12px 18px;
+  font-family: var(--mono); font-size: 12px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.6);
+  opacity: 0; transform: translateY(10px);
+  transition: all .2s; pointer-events: none;
+  display: flex; align-items: center; gap: 10px;
+  min-width: 260px;
+}
+#toast.on { opacity: 1; transform: translateY(0); }
+#toast-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+/* ── AUDIT LOG ITEM ───────────────────────────────── */
+.log-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 10px 16px; border-bottom: 1px solid rgba(30,58,95,.3);
+  font-size: 12px;
+}
+.log-item:last-child { border-bottom: none; }
+.log-time { font-family: var(--mono); font-size: 10px; color: var(--mist); flex-shrink: 0; width: 86px; padding-top: 1px; }
+.log-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+.log-body { flex: 1; }
+.log-msg { color: var(--pale); line-height: 1.4; }
+.log-actor { font-family: var(--mono); font-size: 10px; color: var(--mist); margin-top: 2px; }
+
+/* ── EMPTY ────────────────────────────────────────── */
+.empty { padding: 32px; text-align: center; font-family: var(--mono); font-size: 12px; color: var(--edge3); }
+
+/* ── SEARCH ───────────────────────────────────────── */
+.srch { position: relative; }
+.srch .fi { padding-left: 28px; }
+.srch-ico { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); color: var(--mist); font-size: 13px; pointer-events: none; }
+
+/* ── HEALTH PIPS ──────────────────────────────────── */
+.health-pip {
+  display: inline-block;
+  width: 8px; height: 8px; border-radius: 50%; margin-right: 2px;
+}
+
+/* ── HORIZON RULE ─────────────────────────────────── */
+.hr { height: 1px; background: var(--edge); margin: 16px 0; }
+
+/* ── WARNING BANNER ───────────────────────────────── */
+.warn-banner {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 16px; border-radius: var(--r10);
+  margin-bottom: 16px; font-size: 13px;
+}
+.warn-banner.rd { background: var(--rdfg); border: 1px solid var(--rdbr); color: var(--rd3); }
+.warn-banner.am { background: var(--amfg); border: 1px solid var(--ambr); color: var(--am); }
+.warn-banner.tl { background: var(--tlfg); border: 1px solid var(--tlbr); color: var(--tl3); }
+
+/* ── PERCENT RING ─────────────────────────────────── */
+.ring-wrap { position: relative; width: 52px; height: 52px; flex-shrink: 0; }
+.ring-wrap svg { transform: rotate(-90deg); }
+.ring-txt { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 11px; font-weight: 700; }
+
+/* ── METRIC ROW ───────────────────────────────────── */
+.metric-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 16px; border-bottom: 1px solid rgba(30,58,95,.3);
+}
+.metric-row:last-child { border-bottom: none; }
+.mr-lbl { font-size: 12px; color: var(--pale); flex: 1; }
+.mr-bar-bg { width: 100px; height: 4px; background: var(--edge); border-radius: 2px; overflow: hidden; flex-shrink: 0; }
+.mr-bar { height: 100%; border-radius: 2px; }
+.mr-val { font-family: var(--mono); font-size: 12px; font-weight: 600; width: 48px; text-align: right; flex-shrink: 0; }
+
+@media (max-width: 1200px) {
+  .plan-grid, .gw-grid { grid-template-columns: 1fr 1fr; }
+  .kpi-strip.c5 { grid-template-columns: repeat(3,1fr); }
+}
+@media (max-width: 900px) {
+  .grid2 { grid-template-columns: 1fr; }
+  .zone-rail { display: none; }
+}
+
+/* ── MOBILE NAV ─────────────────────────────────── */
+@media (max-width: 768px) {
+  html, body { overflow: auto; }
+
+  .shell { flex-direction: column; height: auto; overflow: visible; }
+  .main  { overflow: visible; height: auto; }
+
+  /* Ẩn topbar tabs trên mobile */
+  .tb-tabs { display: none; }
+
+  /* Hamburger button */
+  .mob-menu-btn {
+    display: flex !important;
+    align-items: center; justify-content: center;
+    width: 36px; height: 36px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--edge);
+    border-radius: var(--r6);
+    cursor: pointer; color: var(--pale);
+    font-size: 18px; flex-shrink: 0;
+    margin-left: 8px;
+  }
+  .mob-menu-btn:active { background: rgba(255,255,255,.08); }
+
+  /* Backdrop */
+  .mob-nav-backdrop {
+    display: none;
+    position: fixed; inset: 0; z-index: 90;
+    background: rgba(0,0,0,.6);
+    backdrop-filter: blur(2px);
+  }
+  .mob-nav-backdrop.open { display: block; }
+
+  /* Slide-down nav sheet */
+  .mob-nav {
+    position: fixed; top: 50px; left: 0; right: 0; z-index: 91;
+    background: var(--layer2);
+    border-bottom: 1px solid var(--edge);
+    transform: translateY(-110%);
+    transition: transform .25s cubic-bezier(.4,0,.2,1);
+    box-shadow: 0 8px 32px rgba(0,0,0,.5);
+  }
+  .mob-nav.open { transform: translateY(0); }
+
+  /* Nav section label */
+  .mob-nav-lbl {
+    font-family: var(--mono); font-size: 9px; letter-spacing: 2px;
+    color: var(--fog); padding: 10px 16px 6px;
+  }
+
+  /* Nav items */
+  .mob-nav-item {
+    display: flex; align-items: center; gap: 12px;
+    width: 100%; padding: 14px 16px;
+    border: none; background: none;
+    color: var(--mist); font-family: var(--sans); font-size: 14px;
+    cursor: pointer; text-align: left;
+    border-top: 1px solid var(--edge);
+    transition: background .15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mob-nav-item:active,
+  .mob-nav-item:hover { background: rgba(255,255,255,.03); }
+  .mob-nav-item.on {
+    color: var(--tl3);
+    background: rgba(45,212,191,.05);
+    border-left: 3px solid var(--tl3);
+    padding-left: 13px;
+  }
+  .mob-nav-icon {
+    font-size: 18px; width: 28px; text-align: center; flex-shrink: 0;
+  }
+  .mob-nav-text { flex: 1; font-weight: 500; }
+  .mob-nav-badge {
+    font-family: var(--mono); font-size: 10px;
+    background: var(--edge); color: var(--fog);
+    padding: 2px 8px; border-radius: 10px;
+  }
+  .mob-nav-item.on .mob-nav-badge {
+    background: rgba(45,212,191,.15); color: var(--tl3);
+  }
+
+  /* Current view label in topbar */
+  .mob-view-label {
+    display: flex !important;
+    align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 11px;
+    color: var(--pale); letter-spacing: 1px;
+    flex: 1; margin: 0 8px;
+  }
+
+  /* Plan grid mobile */
+  .plan-grid { grid-template-columns: 1fr !important; }
+  .gw-grid   { grid-template-columns: 1fr !important; }
+  .kpi-strip { grid-template-columns: repeat(2,1fr) !important; }
+  .kpi-strip.c5 { grid-template-columns: repeat(2,1fr) !important; }
+  .fg2, .fg3 { grid-template-columns: 1fr !important; }
+}
+
+/* Ẩn trên desktop */
+.mob-menu-btn   { display: none; }
+.mob-view-label { display: none; }
+.mob-nav        { display: none; }
+.mob-nav-backdrop { display: none; }
+
+@media (max-width: 768px) {
+  .mob-nav       { display: block; }
+  .mob-nav-backdrop { display: block; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ TOPBAR ══════════════════════════════════════════════ -->
+<header class="topbar">
+  <div class="tb-brand">
+    <div class="tb-hex"></div>
+    <span class="tb-name">Z·ARMOR</span>
+  </div>
+
+  <div class="tb-tabs">
+    <button class="tb-tab on" data-view="overview">
+      <span class="tb-tab-icon">⬡</span> Command Overview
+    </button>
+    <button class="tb-tab" data-view="zone">
+      <span class="tb-tab-icon">◈</span> Zone Control
+      <span class="tb-tab-badge" id="ztab-badge">5 plans</span>
+    </button>
+    <button class="tb-tab" data-view="gateway">
+      <span class="tb-tab-icon">⊞</span> Payment Gateways
+      <span class="tb-tab-badge" id="gwtab-badge">2 live</span>
+    </button>
+    <button class="tb-tab" data-view="keys">
+      <span class="tb-tab-icon">◎</span> Key Inventory
+      <span class="tb-tab-badge" id="keytab-badge">—</span>
+    </button>
+    <button class="tb-tab" data-view="audit">
+      <span class="tb-tab-icon">◉</span> Audit Log
+    </button>
+  </div>
+
+  <!-- Mobile: current view label (hidden on desktop) -->
+  <div class="mob-view-label" id="mob-view-label">
+    <span id="mob-view-icon">⬡</span>
+    <span id="mob-view-name">OVERVIEW</span>
+  </div>
+
+  <div class="tb-right">
+    <div class="tb-server">
+      <div class="srv-led" id="srv-led"></div>
+      <span id="srv-txt" style="color:var(--fog)">LIVE</span>
+    </div>
+    <div class="tb-clock" id="clock">00:00:00</div>
+    <!-- Hamburger (mobile only) -->
+    <button class="mob-menu-btn" id="mob-menu-btn" onclick="toggleMobNav()" aria-label="Menu">
+      <span id="mob-menu-icon">☰</span>
+    </button>
+  </div>
+</header>
+
+<!-- Mobile nav backdrop -->
+<div class="mob-nav-backdrop" id="mob-backdrop" onclick="closeMobNav()"></div>
+
+<!-- Mobile nav sheet -->
+<nav class="mob-nav" id="mob-nav">
+  <div class="mob-nav-lbl">// NAVIGATION</div>
+  <button class="mob-nav-item on" data-view="overview" onclick="mobSwitchView(this)">
+    <span class="mob-nav-icon">⬡</span>
+    <span class="mob-nav-text">Command Overview</span>
+  </button>
+  <button class="mob-nav-item" data-view="zone" onclick="mobSwitchView(this)">
+    <span class="mob-nav-icon">◈</span>
+    <span class="mob-nav-text">Zone Control</span>
+    <span class="mob-nav-badge" id="mob-ztab-badge">5 plans</span>
+  </button>
+  <button class="mob-nav-item" data-view="gateway" onclick="mobSwitchView(this)">
+    <span class="mob-nav-icon">⊞</span>
+    <span class="mob-nav-text">Payment Gateways</span>
+    <span class="mob-nav-badge" id="mob-gwtab-badge">3 live</span>
+  </button>
+  <button class="mob-nav-item" data-view="keys" onclick="mobSwitchView(this)">
+    <span class="mob-nav-icon">◎</span>
+    <span class="mob-nav-text">Key Inventory</span>
+    <span class="mob-nav-badge" id="mob-keytab-badge">—</span>
+  </button>
+  <button class="mob-nav-item" data-view="audit" onclick="mobSwitchView(this)">
+    <span class="mob-nav-icon">◉</span>
+    <span class="mob-nav-text">Audit Log</span>
+  </button>
+</nav>
+
+<!-- ══ SHELL ════════════════════════════════════════════════ -->
+<div class="shell">
+
+<!-- ── LEFT ZONE RAIL ──────────────────────────────────── -->
+<aside class="zone-rail">
+  <div class="zone-sect">
+    <div class="zone-lbl">OVERVIEW</div>
+    <button class="zone-btn on" data-z="overview">
+      <span class="zone-icon">▦</span> Dashboard
+    </button>
+  </div>
+  <div class="zone-sect">
+    <div class="zone-lbl">SALES POLICY</div>
+    <button class="zone-btn" data-z="zone">
+      <span class="zone-icon">◈</span> Zone Control
+    </button>
+    <button class="zone-btn" data-z="keys">
+      <span class="zone-icon">◎</span> Key Inventory
+      <span class="zone-count" id="zr-keys">—</span>
+    </button>
+  </div>
+  <div class="zone-sect">
+    <div class="zone-lbl">PAYMENTS</div>
+    <button class="zone-btn" data-z="gateway">
+      <span class="zone-icon">⊞</span> Gateways
+    </button>
+    <button class="zone-btn" data-z="transactions">
+      <span class="zone-icon">⊙</span> Transactions
+    </button>
+  </div>
+  <div class="zone-sect">
+    <div class="zone-lbl">SYSTEM</div>
+    <button class="zone-btn" data-z="audit">
+      <span class="zone-icon">◉</span> Audit Log
+    </button>
+  </div>
+</aside>
+
+<!-- ── MAIN CANVAS ─────────────────────────────────────── -->
+<div class="canvas">
+
+<!-- ████████ OVERVIEW ████████ -->
+<div class="view on" id="view-overview">
+
+  <div class="sec-hd">
+    <div>
+      <div class="sec-ttl">Command Overview</div>
+      <div class="sec-sub">Real-time system health · Sales operations · Revenue intelligence</div>
+    </div>
+    <div class="sec-acts">
+      <button class="btn btn-ghost btn-sm" onclick="refreshAll()">↺ Refresh</button>
+    </div>
+  </div>
+
+  <!-- KPI Strip -->
+  <div class="kpi-strip c5">
+    <div class="kpi tl">
+      <div class="kpi-lbl">ACTIVE LICENSES</div>
+      <div class="kpi-val" id="ov-k1">—</div>
+      <div class="kpi-delta up" id="ov-k1d">— vs yesterday</div>
+    </div>
+    <div class="kpi am">
+      <div class="kpi-lbl">REVENUE TODAY</div>
+      <div class="kpi-val" id="ov-k2">—</div>
+      <div class="kpi-delta up" id="ov-k2d">—</div>
+    </div>
+    <div class="kpi sk">
+      <div class="kpi-lbl">KEYS ISSUED</div>
+      <div class="kpi-val" id="ov-k3">—</div>
+      <div class="kpi-sub">total all time</div>
+    </div>
+    <div class="kpi gn">
+      <div class="kpi-lbl">ZONES ACTIVE</div>
+      <div class="kpi-val" id="ov-k4">3/3</div>
+      <div class="kpi-sub">sales policies live</div>
+    </div>
+    <div class="kpi vi">
+      <div class="kpi-lbl">GATEWAYS LIVE</div>
+      <div class="kpi-val" id="ov-k5">—</div>
+      <div class="kpi-sub">payment endpoints</div>
+    </div>
+  </div>
+
+  <div class="grid2">
+
+    <!-- Zone Status Panel -->
+    <div class="panel">
+      <div class="panel-hd">
+        <span class="panel-ttl">◈ ZONE STATUS — SALES POLICIES</span>
+        <div class="panel-acts">
+          <button class="btn btn-ghost btn-xs" onclick="switchView('zone')">Manage →</button>
+        </div>
+      </div>
+      <div id="ov-zones">
+        <!-- rendered by JS -->
+        <div class="empty">Loading zones...</div>
+      </div>
+    </div>
+
+    <!-- Gateway Status Panel -->
+    <div class="panel">
+      <div class="panel-hd">
+        <span class="panel-ttl">⊞ GATEWAY STATUS</span>
+        <div class="panel-acts">
+          <button class="btn btn-ghost btn-xs" onclick="switchView('gateway')">Manage →</button>
+        </div>
+      </div>
+      <div id="ov-gateways">
+        <div class="empty">Loading gateways...</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="grid2">
+    <!-- Revenue by plan -->
+    <div class="panel">
+      <div class="panel-hd">
+        <span class="panel-ttl">REVENUE BY PLAN</span>
+      </div>
+      <div id="ov-rev">
+        <div class="empty">Loading...</div>
+      </div>
+    </div>
+
+    <!-- Recent activity -->
+    <div class="panel">
+      <div class="panel-hd">
+        <span class="panel-ttl">RECENT ACTIVITY</span>
+        <div class="panel-acts"><button class="btn btn-ghost btn-xs" onclick="loadOverview()">↺</button></div>
+      </div>
+      <div id="ov-activity">
+        <div class="empty">Loading...</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ████████ ZONE CONTROL ████████ -->
+<div class="view" id="view-zone">
+
+  <div class="sec-hd">
+    <div>
+      <div class="sec-ttl">Zone Control — Sales Policy Engine</div>
+      <div class="sec-sub">Điều khiển gói bán hàng · Bộ đếm key · Công tắc master · Quota limits</div>
+    </div>
+    <div class="sec-acts">
+      <button class="btn btn-ghost btn-sm" onclick="openMdl('m-newplan')">＋ New Plan</button>
+      <button class="btn btn-am" onclick="saveAllZones()">💾 Save All Changes</button>
+    </div>
+  </div>
+
+  <!-- MASTER SYSTEM SWITCH -->
+  <div class="panel" style="margin-bottom:14px">
+    <div class="panel-hd" style="background:rgba(220,38,38,.06);border-color:var(--rdbr);">
+      <span class="panel-ttl" style="color:var(--rd3)">⚡ MASTER SALES SWITCH</span>
+      <div class="panel-acts">
+        <span style="font-family:var(--mono);font-size:10px;color:var(--mist)">Tắt toàn bộ bán hàng</span>
+      </div>
+    </div>
+    <div class="master-toggle-row" style="background:rgba(220,38,38,.03)">
+      <div class="mtr-left">
+        <div class="mtr-icon" style="background:var(--rdfg);border:1px solid var(--rdbr)">🛑</div>
+        <div class="mtr-info">
+          <div class="mtr-name">Sales System Master Gate</div>
+          <div class="mtr-desc">Khi OFF — tất cả checkout links và payment gateways sẽ bị chặn. EA vẫn chạy bình thường.</div>
+        </div>
+      </div>
+      <div class="mtr-meta">
+        <div class="mtr-stat">
+          <div class="mtr-stat-val" id="ms-today" style="color:var(--am)">—</div>
+          <div class="mtr-stat-lbl">TODAY SALES</div>
+        </div>
+        <div class="mtr-divider"></div>
+        <div class="mtr-stat">
+          <div class="mtr-stat-val" id="ms-pending" style="color:var(--sk3)">—</div>
+          <div class="mtr-stat-lbl">PENDING KEYS</div>
+        </div>
+      </div>
+      <div class="toggle-wrap">
+        <span class="toggle-label" id="master-lbl">OFF</span>
+        <label class="toggle master" title="Master sales switch">
+          <input type="checkbox" id="master-switch" onchange="toggleMaster(this)">
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- PLAN ZONES -->
+  <div style="font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--mist);margin-bottom:10px">PRICING ZONES — SALES PLANS</div>
+
+  <div class="plan-grid" id="zone-plans">
+    <!-- Rendered by JS -->
+  </div>
+
+  <!-- Quota summary panel -->
+  <div class="panel">
+    <div class="panel-hd">
+      <span class="panel-ttl">KEY QUOTA SUMMARY</span>
+      <div class="panel-acts">
+        <button class="btn btn-ghost btn-xs" onclick="refreshQuotas()">↺ Sync</button>
+      </div>
+    </div>
+    <div id="quota-summary">
+      <div class="empty">Loading quotas...</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ████████ PAYMENT GATEWAYS ████████ -->
+<div class="view" id="view-gateway">
+
+  <div class="sec-hd">
+    <div>
+      <div class="sec-ttl">Payment Gateway Control</div>
+      <div class="sec-sub">Đóng/mở cổng thanh toán · Live mode · Sandbox mode · Routing rules</div>
+    </div>
+    <div class="sec-acts">
+      <button class="btn btn-ghost btn-sm" onclick="openMdl('m-addgw')">＋ Add Gateway</button>
+    </div>
+  </div>
+
+  <!-- Gateway cards -->
+  <div class="gw-grid" id="gw-grid">
+    <!-- Rendered by JS -->
+  </div>
+
+  <!-- Routing Rules -->
+  <div class="panel">
+    <div class="panel-hd">
+      <span class="panel-ttl">ROUTING RULES — AUTOMATIC FAILOVER</span>
+      <div class="panel-acts">
+        <button class="btn btn-ghost btn-xs" onclick="openMdl('m-routing')">Edit Rules</button>
+      </div>
+    </div>
+    <div id="routing-rules">
+      <div class="metric-row">
+        <span class="mr-lbl">Primary → Crypto USDT (TRC20/BEP20 · auto 60s)</span>
+        <div class="mr-bar-bg"><div class="mr-bar" style="width:65%;background:var(--am)"></div></div>
+        <span class="mr-val" style="color:var(--am)">65%</span>
+      </div>
+      <div class="metric-row">
+        <span class="mr-lbl">Secondary → PayOS (Vietnam bank / QR)</span>
+        <div class="mr-bar-bg"><div class="mr-bar" style="width:25%;background:var(--tl2)"></div></div>
+        <span class="mr-val" style="color:var(--tl3)">25%</span>
+      </div>
+      <div class="metric-row">
+        <span class="mr-lbl">Fallback → Stripe (card / wallet)</span>
+        <div class="mr-bar-bg"><div class="mr-bar" style="width:10%;background:var(--sk2)"></div></div>
+        <span class="mr-val" style="color:var(--sk3)">10%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transaction health -->
+  <div class="grid2">
+    <div class="panel">
+      <div class="panel-hd"><span class="panel-ttl">TRANSACTION HEALTH</span></div>
+      <div id="txn-health"><div class="empty">Loading...</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-hd"><span class="panel-ttl">WEBHOOK STATUS</span></div>
+      <div id="webhook-status"><div class="empty">Loading...</div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ████████ KEY INVENTORY ████████ -->
+<div class="view" id="view-keys">
+
+  <div class="sec-hd">
+    <div>
+      <div class="sec-ttl">Key Inventory</div>
+      <div class="sec-sub">License key stock · Issued · Available · Expired · Revoked</div>
+    </div>
+    <div class="sec-acts">
+      <div class="srch">
+        <span class="srch-ico">⌕</span>
+        <input class="fi" id="key-q" placeholder="key / email / MT5..." oninput="filterKeys()" style="width:220px;">
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="openMdl('m-bulkgen')">⚡ Bulk Generate</button>
+      <button class="btn btn-teal btn-sm" onclick="openMdl('m-issuekey')">＋ Issue Key</button>
+    </div>
+  </div>
+
+  <!-- Inventory KPIs -->
+  <div class="kpi-strip c4" style="margin-bottom:14px">
+    <div class="kpi tl">
+      <div class="kpi-lbl">ACTIVE</div>
+      <div class="kpi-val" id="inv-active">—</div>
+      <div class="kpi-sub">in use now</div>
+    </div>
+    <div class="kpi am">
+      <div class="kpi-lbl">AVAILABLE POOL</div>
+      <div class="kpi-val" id="inv-pool">—</div>
+      <div class="kpi-sub">ready to issue</div>
+    </div>
+    <div class="kpi rd">
+      <div class="kpi-lbl">EXPIRED</div>
+      <div class="kpi-val" id="inv-exp">—</div>
+      <div class="kpi-sub">need renewal</div>
+    </div>
+    <div class="kpi vi">
+      <div class="kpi-lbl">REVOKED</div>
+      <div class="kpi-val" id="inv-rev">—</div>
+      <div class="kpi-sub">deactivated</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-hd">
+      <span class="panel-ttl">LICENSE KEY TABLE</span>
+      <div class="panel-acts">
+        <select class="fs" id="key-filter-plan" onchange="filterKeys()" style="width:130px;padding:4px 8px;font-size:11px">
+          <option value="">All Plans</option>
+          <option value="radar_trial">Radar Trial</option>
+          <option value="radar_pro_3m">Radar Pro 3M</option>
+          <option value="radar_pro_12m">Radar Pro 12M</option>
+          <option value="partner_3m">Partner 3M</option>
+          <option value="partner_12m">Partner 12M</option>
+        </select>
+        <select class="fs" id="key-filter-status" onchange="filterKeys()" style="width:120px;padding:4px 8px;font-size:11px">
+          <option value="">All Status</option>
+          <option value="ACTIVE">Active</option>
+          <option value="UNUSED">Unused</option>
+          <option value="EXPIRED">Expired</option>
+          <option value="REVOKED">Revoked</option>
+        </select>
+        <button class="btn btn-ghost btn-xs" onclick="exportKeys()">↓ CSV</button>
+      </div>
+    </div>
+    <div class="tbl-scroll tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>KEY</th><th>OWNER</th><th>PLAN</th><th>STATUS</th>
+          <th>MT5 BOUND</th><th>MACHINES</th><th>ISSUED VIA</th><th>EXPIRES</th><th>ACTIONS</th>
+        </tr></thead>
+        <tbody id="key-tb"><tr><td colspan="9" class="empty">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- ████████ TRANSACTIONS ████████ -->
+<div class="view" id="view-transactions">
+  <div class="sec-hd">
+    <div>
+      <div class="sec-ttl">Transaction History</div>
+      <div class="sec-sub">All payment events · Gateway routing · Refunds · Disputes</div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-hd">
+      <span class="panel-ttl">TRANSACTIONS</span>
+      <div class="panel-acts">
+        <button class="btn btn-ghost btn-xs" onclick="loadTxns()">↺</button>
+      </div>
+    </div>
+    <div class="tbl-scroll tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>TIME</th><th>ORDER ID</th><th>CUSTOMER</th><th>PLAN</th>
+          <th>AMOUNT</th><th>GATEWAY</th><th>STATUS</th><th>ACTIONS</th>
+        </tr></thead>
+        <tbody id="txn-tb"><tr><td colspan="8" class="empty">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ████████ AUDIT LOG ████████ -->
+<div class="view" id="view-audit">
+
+  <div class="sec-hd">
+    <div>
+      <div class="sec-ttl">System Audit Log</div>
+      <div class="sec-sub">Every toggle, key action, gateway change — immutable record</div>
+    </div>
+    <div class="sec-acts">
+      <button class="btn btn-ghost btn-sm" onclick="exportAudit()">↓ Export</button>
+      <button class="btn btn-ghost btn-sm" onclick="loadAudit()">↺ Refresh</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-hd">
+      <span class="panel-ttl">AUDIT TRAIL</span>
+      <div class="panel-acts">
+        <select class="fs" id="audit-filter" onchange="filterAudit()" style="width:160px;padding:4px 8px;font-size:11px">
+          <option value="">All Events</option>
+          <option value="ZONE">Zone Changes</option>
+          <option value="GATEWAY">Gateway Changes</option>
+          <option value="KEY">Key Events</option>
+          <option value="PAYMENT">Payments</option>
+          <option value="EMERGENCY">Emergency</option>
+        </select>
+      </div>
+    </div>
+    <div id="audit-list">
+      <div class="empty">Loading audit log...</div>
+    </div>
+  </div>
+
+</div>
+
+</div><!-- /canvas -->
+</div><!-- /shell -->
+
+<!-- ═══ MODALS ═══════════════════════════════════════════════ -->
+
+<!-- New Plan -->
+<div class="modal-bg" id="m-newplan">
+  <div class="modal">
+    <div class="modal-ttl">◈ CREATE NEW SALES PLAN ZONE</div>
+    <div class="fg2" style="margin-bottom:12px">
+      <div class="field">
+        <label class="fl">PLAN NAME</label>
+        <input class="fi" id="np-name" placeholder="e.g. Elite, Pro Max...">
+      </div>
+      <div class="field">
+        <label class="fl">PLAN TIER</label>
+        <select class="fs" id="np-tier">
+          <option value="trial">Trial</option>
+          <option value="standard">Standard</option>
+          <option value="pro" selected>Pro</option>
+          <option value="elite">Elite</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg3" style="margin-bottom:12px">
+      <div class="field">
+        <label class="fl">PRICE (USD)</label>
+        <input class="fi" id="np-price" type="number" value="97" min="0">
+      </div>
+      <div class="field">
+        <label class="fl">BILLING</label>
+        <select class="fs" id="np-billing">
+          <option value="3month">3 Months (min)</option>
+          <option value="12month">12 Months (−20%)</option>
+          <option value="one_time">One-time</option>
+          <option value="trial">Trial / Free</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="fl">MAX MACHINES</label>
+        <input class="fi" id="np-machines" type="number" value="1" min="1">
+      </div>
+    </div>
+    <div class="fg2" style="margin-bottom:12px">
+      <div class="field">
+        <label class="fl">KEY QUOTA (0 = unlimited)</label>
+        <input class="fi" id="np-quota" type="number" value="100" min="0">
+      </div>
+      <div class="field">
+        <label class="fl">TRIAL DAYS (0 = none)</label>
+        <input class="fi" id="np-trial" type="number" value="0" min="0">
+      </div>
+    </div>
+    <div class="field" style="margin-bottom:12px">
+      <label class="fl">FEATURES (one per line)</label>
+      <textarea class="fta fi" id="np-features" rows="4" placeholder="EA v3 access&#10;Radar feed 4 assets&#10;Telegram alerts&#10;1 MT5 account"></textarea>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeMdl('m-newplan')">Cancel</button>
+      <button class="btn btn-teal" onclick="createPlan()">Create Zone</button>
+    </div>
+  </div>
+</div>
+
+<!-- Issue Key -->
+<div class="modal-bg" id="m-issuekey">
+  <div class="modal">
+    <div class="modal-ttl">◎ ISSUE LICENSE KEY</div>
+    <div class="fg2" style="margin-bottom:12px">
+      <div class="field">
+        <label class="fl">OWNER NAME</label>
+        <input class="fi" id="ik-name" placeholder="Trader Name">
+      </div>
+      <div class="field">
+        <label class="fl">EMAIL</label>
+        <input class="fi" id="ik-email" type="email" placeholder="email@example.com">
+      </div>
+    </div>
+    <div class="fg3" style="margin-bottom:12px">
+      <div class="field">
+        <label class="fl">PLAN</label>
+        <select class="fs" id="ik-plan">
+          <option value="trial">Trial</option>
+          <option value="standard" selected>Standard</option>
+          <option value="pro">Pro</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="fl">SOURCE / CHANNEL</label>
+        <select class="fs" id="ik-source">
+          <option value="manual">Manual (admin)</option>
+          <option value="stripe">Stripe checkout</option>
+          <option value="payos">PayOS</option>
+          <option value="crypto">Crypto manual</option>
+          <option value="promo">Promotion</option>
+          <option value="partnership">Partnership</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="fl">MAX MACHINES</label>
+        <input class="fi" id="ik-machines" type="number" value="1" min="1">
+      </div>
+    </div>
+    <div class="fg2" style="margin-bottom:12px">
+      <div class="field">
+        <label class="fl">EXPIRES (blank = lifetime)</label>
+        <input class="fi" id="ik-expires" type="date">
+      </div>
+      <div class="field">
+        <label class="fl">NOTE / ORDER REF</label>
+        <input class="fi" id="ik-note" placeholder="Order #, TXN ID...">
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeMdl('m-issuekey')">Cancel</button>
+      <button class="btn btn-teal" onclick="issueKey()">Issue Key</button>
+    </div>
+  </div>
+</div>
+
+<!-- Bulk Generate -->
+<div class="modal-bg" id="m-bulkgen">
+  <div class="modal">
+    <div class="modal-ttl">⚡ BULK GENERATE KEYS — PRE-POOL</div>
+    <div style="margin-bottom:14px;padding:10px 14px;background:var(--amfg);border:1px solid var(--ambr);border-radius:var(--r6);font-size:12px;color:var(--am)">
+      ⚠ Pre-generated keys vào pool UNUSED — chưa gán cho ai. Dùng cho campaigns, bulk deals.
+    </div>
+    <div class="fg3" style="margin-bottom:12px">
+      <div class="field">
+        <label class="fl">PLAN TIER</label>
+        <select class="fs" id="bg-plan">
+          <option value="trial">Trial</option>
+          <option value="standard" selected>Standard</option>
+          <option value="pro">Pro</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="fl">QUANTITY</label>
+        <input class="fi" id="bg-qty" type="number" value="10" min="1" max="500">
+      </div>
+      <div class="field">
+        <label class="fl">EXPIRES (blank = lifetime)</label>
+        <input class="fi" id="bg-expires" type="date">
+      </div>
+    </div>
+    <div class="field" style="margin-bottom:12px">
+      <label class="fl">TAG / CAMPAIGN</label>
+      <input class="fi" id="bg-tag" placeholder="e.g. CAMPAIGN_Q1, PARTNER_XYZ">
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeMdl('m-bulkgen')">Cancel</button>
+      <button class="btn btn-am" onclick="bulkGenerate()">⚡ Generate Keys</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Gateway -->
+<div class="modal-bg" id="m-addgw">
+  <div class="modal">
+    <div class="modal-ttl">⊞ ADD PAYMENT GATEWAY</div>
+    <div class="fg2" style="margin-bottom:12px">
+      <div class="field">
+        <label class="fl">GATEWAY TYPE</label>
+        <select class="fs" id="agw-type">
+          <option>Stripe</option>
+          <option>PayOS</option>
+          <option>MoMo</option>
+          <option>VNPay</option>
+          <option>ZaloPay</option>
+          <option>Crypto / USDT</option>
+          <option>Manual Bank Transfer</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="fl">DISPLAY NAME</label>
+        <input class="fi" id="agw-name" placeholder="e.g. Stripe Live">
+      </div>
+    </div>
+    <div class="field" style="margin-bottom:12px">
+      <label class="fl">API KEY / SECRET (encrypted at rest)</label>
+      <input class="fi" id="agw-key" type="password" placeholder="sk_live_...">
+    </div>
+    <div class="field" style="margin-bottom:12px">
+      <label class="fl">WEBHOOK SECRET</label>
+      <input class="fi" id="agw-webhook" type="password" placeholder="whsec_...">
+    </div>
+    <div class="fg2" style="margin-bottom:12px">
+      <div class="field">
+        <label class="fl">MODE</label>
+        <select class="fs" id="agw-mode">
+          <option value="live">Live</option>
+          <option value="sandbox">Sandbox / Test</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="fl">CURRENCY</label>
+        <select class="fs" id="agw-currency">
+          <option>USD</option><option>VND</option><option>USDT</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeMdl('m-addgw')">Cancel</button>
+      <button class="btn btn-teal" onclick="addGateway()">Add Gateway</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast">
+  <div id="toast-dot"></div>
+  <span id="toast-msg"></span>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   Z·ARMOR ZONE CONTROL — CLIENT ENGINE
+   ══════════════════════════════════════════════════════════ */
+const API = 'http://47.129.243.206:8000';
+let _tok = '';
+function tok() {
+  if (!_tok) {
+    _tok = localStorage.getItem('zc_tok') || '';
+    if (!_tok) { _tok = prompt('🔐 Admin Token:') || ''; if(_tok) localStorage.setItem('zc_tok',_tok); }
+  }
+  return _tok;
+}
+const H = () => ({ 'Content-Type':'application/json', 'X-Admin-Token': tok() });
+
+/* ── UTILS ──────────────────────────────────────────────── */
+const $  = id => document.getElementById(id);
+const $$ = sel => document.querySelectorAll(sel);
+
+let _toastT;
+function toast(msg, type='ok') {
+  const dot = $('toast-dot');
+  const el  = $('toast');
+  const c = { ok:'var(--tl3)', err:'var(--rd3)', warn:'var(--am)', info:'var(--sk3)' };
+  dot.style.background = c[type]||c.ok;
+  $('toast-msg').textContent = msg;
+  el.style.borderColor = c[type]+'33';
+  el.classList.add('on');
+  clearTimeout(_toastT);
+  _toastT = setTimeout(() => el.classList.remove('on'), 3500);
+}
+
+function openMdl(id)  { $(id).classList.add('on'); }
+function closeMdl(id) { $(id).classList.remove('on'); }
+$$('.modal-bg').forEach(m => m.addEventListener('click', e => { if(e.target===m) m.classList.remove('on'); }));
+
+function ago(ts) {
+  if (!ts) return '—';
+  const s = Math.floor((Date.now()-new Date(ts))/1000);
+  if (s<5) return 'just now';
+  if (s<60) return s+'s ago';
+  if (s<3600) return Math.floor(s/60)+'m ago';
+  if (s<86400) return Math.floor(s/3600)+'h ago';
+  return Math.floor(s/86400)+'d ago';
+}
+function fDate(ts) {
+  if (!ts) return '∞';
+  return new Date(ts).toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'2-digit'});
+}
+function usd(n) {
+  return '$'+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+async function api(path, opts={}) {
+  try {
+    const r = await fetch(API+path, {headers:H(), ...opts});
+    if (!r.ok) { console.warn('API',r.status,path); return null; }
+    return await r.json();
+  } catch(e) { console.warn('ERR',path,e.message); return null; }
+}
+
+/* ── CLOCK + SERVER ─────────────────────────────────────── */
+setInterval(() => { $('clock').textContent = new Date().toLocaleTimeString('vi-VN',{hour12:false}); }, 1000);
+$('clock').textContent = new Date().toLocaleTimeString('vi-VN',{hour12:false});
+
+async function pingServer() {
+  const ok = await api('/health');
+  $('srv-led').className = ok!==null ? 'srv-led' : 'srv-led dead';
+  $('srv-txt').textContent = ok!==null ? 'LIVE' : 'OFFLINE';
+  $('srv-txt').style.color = ok!==null ? 'var(--tl3)' : 'var(--rd3)';
+}
+pingServer(); setInterval(pingServer, 30000);
+
+/* ── NAVIGATION ─────────────────────────────────────────── */
+const VIEW_LOADERS = {
+  overview:     loadOverview,
+  zone:         loadZone,
+  gateway:      loadGateway,
+  keys:         loadKeys,
+  transactions: loadTxns,
+  audit:        loadAudit,
+};
+
+function switchView(id, srcEl) {
+  $$('.view').forEach(v => v.classList.remove('on'));
+  $('view-'+id)?.classList.add('on');
+
+  $$('.tb-tab').forEach(b => b.classList.remove('on'));
+  $$('.zone-btn').forEach(b => b.classList.remove('on'));
+
+  if (srcEl) srcEl.classList.add('on');
+  const matchTab = document.querySelector(`.tb-tab[data-view="${id}"]`);
+  const matchZone = document.querySelector(`.zone-btn[data-z="${id}"]`);
+  if (matchTab)  matchTab.classList.add('on');
+  if (matchZone) matchZone.classList.add('on');
+
+  if (VIEW_LOADERS[id]) VIEW_LOADERS[id]();
+}
+
+$$('.tb-tab').forEach(btn => btn.addEventListener('click', () => switchView(btn.dataset.view, btn)));
+
+/* ── MOBILE NAV ─────────────────────────────────── */
+const MOB_VIEWS = {
+  overview: { icon: '⬡', name: 'OVERVIEW' },
+  zone:     { icon: '◈', name: 'ZONE CONTROL' },
+  gateway:  { icon: '⊞', name: 'GATEWAYS' },
+  keys:     { icon: '◎', name: 'KEY INVENTORY' },
+  audit:    { icon: '◉', name: 'AUDIT LOG' },
+};
+
+let mobNavOpen = false;
+
+function toggleMobNav() {
+  mobNavOpen ? closeMobNav() : openMobNav();
+}
+
+function openMobNav() {
+  mobNavOpen = true;
+  document.getElementById('mob-nav').classList.add('open');
+  document.getElementById('mob-backdrop').classList.add('open');
+  document.getElementById('mob-menu-icon').textContent = '✕';
+}
+
+function closeMobNav() {
+  mobNavOpen = false;
+  document.getElementById('mob-nav').classList.remove('open');
+  document.getElementById('mob-backdrop').classList.remove('open');
+  document.getElementById('mob-menu-icon').textContent = '☰';
+}
+
+function mobSwitchView(btn) {
+  const viewId = btn.dataset.view;
+  // Switch view (reuse existing logic)
+  switchView(viewId, document.querySelector(`.tb-tab[data-view="${viewId}"]`) || btn);
+  // Update mobile nav active state
+  document.querySelectorAll('.mob-nav-item').forEach(el => el.classList.remove('on'));
+  btn.classList.add('on');
+  // Update topbar label
+  const v = MOB_VIEWS[viewId] || {};
+  const iconEl = document.getElementById('mob-view-icon');
+  const nameEl = document.getElementById('mob-view-name');
+  if (iconEl) iconEl.textContent = v.icon || '';
+  if (nameEl) nameEl.textContent = v.name || viewId.toUpperCase();
+  // Close nav
+  closeMobNav();
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Sync mobile badges với desktop badges
+function syncMobBadges() {
+  const pairs = [
+    ['ztab-badge',   'mob-ztab-badge'],
+    ['gwtab-badge',  'mob-gwtab-badge'],
+    ['keytab-badge', 'mob-keytab-badge'],
+  ];
+  pairs.forEach(([src, dst]) => {
+    const s = document.getElementById(src);
+    const d = document.getElementById(dst);
+    if (s && d) d.textContent = s.textContent;
+  });
+}
+
+// Patch switchView để sync badges + mobile label
+const _origSwitch = switchView;
+// Override badge updates to also sync mobile
+const _origLoadOverview = typeof loadOverview === 'function' ? loadOverview : null;
+if (_origLoadOverview) {
+  window.loadOverview = async function() {
+    await _origLoadOverview();
+    syncMobBadges();
+  };
+}
+// Close nav on resize to desktop
+window.addEventListener('resize', () => {
+  if (window.innerWidth > 768 && mobNavOpen) closeMobNav();
+});
+$$('.zone-btn').forEach(btn => btn.addEventListener('click', () => switchView(btn.dataset.z, btn)));
+
+/* ══════════════════════════════════════════════════════════
+   LOCAL STATE — Zone definitions (synced to server)
+   ══════════════════════════════════════════════════════════ */
+const DEFAULT_ZONES = [
+  {
+    id: 'radar_trial', name: 'Radar Trial', badge: 'FREE FOREVER', badgeCls: 'b-dim',
+    price: 0, currency: 'USD', billing: 'trial', trialDays: 0,
+    enabled: true, maxMachines: 1,
+    quota: 0, issued: 0, pool: 0,
+    icon: '🔬',
+    features: [
+      'Radar Scan XAUUSD H1 — Regime + Score 0–100',
+      'Regime Detection (TREND / RANGE / VOLATILE)',
+      'EA Template full — tải về, cài MT5, chạy ngay',
+      'Telegram alert khi regime thay đổi',
+      'Regime Fit Optimization — AI advisor',
+      'Opportunity Window Alerts',
+      '✗ Tất cả asset & timeframe [PRO]',
+      '✗ EA Cloud Sync real-time [PRO]',
+    ],
+    featureDisabled: [false,false,false,false,false,false,true,true],
+    note: 'Miễn phí vĩnh viễn · XAUUSD H1 · EA full, không giới hạn',
+  },
+  {
+    id: 'radar_pro_3m', name: 'Radar Pro 3M', badge: 'MIN 3 THÁNG', badgeCls: 'b-tl',
+    price: 147, currency: 'USD', billing: 'one_time', trialDays: 0,
+    billingMonths: 3, pricePerMonth: 49,
+    enabled: true, maxMachines: 1,
+    quota: 300, issued: 0, pool: 300,
+    icon: '⚡',
+    features: ['Full Radar Intelligence','Unlimited Radar Scans realtime','Market Regime Detection','Strategy-Regime Compatibility','Opportunity Window Alerts','Telegram Radar Alerts','EA Template + Radar History'],
+    featureDisabled: [false,false,false,false,false,false,false],
+    note: 'Vốn ≤$10k · Tối thiểu 3 tháng · +$29/tháng mỗi $10k thêm',
+    platforms: ['MT5','cTrader','Binance','OKX'],
+  },
+  {
+    id: 'radar_pro_12m', name: 'Radar Pro 12M', badge: 'SAVE 20%', badgeCls: 'b-am',
+    price: 470, currency: 'USD', billing: 'one_time', trialDays: 0,
+    billingMonths: 12, pricePerMonth: 39,
+    enabled: true, maxMachines: 1,
+    quota: 200, issued: 0, pool: 200,
+    icon: '🚀',
+    features: ['Full Radar Intelligence','Unlimited Radar Scans realtime','Market Regime Detection','Strategy-Regime Compatibility','Opportunity Window Alerts','Telegram Radar Alerts','EA Template + Radar History'],
+    featureDisabled: [false,false,false,false,false,false,false],
+    note: 'Vốn ≤$10k · Thanh toán 1 lần · Giảm 20% so với 3 tháng lẻ',
+    platforms: ['MT5','cTrader','Binance','OKX'],
+  },
+  {
+    id: 'partner_3m', name: 'Strategic Partner 3M', badge: 'LIVE ACCOUNT', badgeCls: 'b-vi',
+    price: 299, currency: 'USD', billing: 'one_time', trialDays: 0,
+    billingMonths: 3,
+    enabled: true, maxMachines: 1,
+    quota: 50, issued: 0, pool: 50,
+    icon: '◈',
+    features: ['Onboarding 1-on-1 (60 phút)','Custom Radar Config','Regime Fit Optimization','AI GuardCenter Setup','Radar Strategy Coaching','Deep Market Analysis (1 báo cáo/tháng)','Quarterly Strategy Review','Telegram riêng 24h'],
+    featureDisabled: [false,false,false,false,false,false,false,false],
+    note: 'Vốn tối thiểu $10,000 live account',
+    platforms: ['MT5','cTrader','Binance','OKX','Other'],
+    minCapital: 10000,
+    requiresApproval: true,
+  },
+  {
+    id: 'partner_12m', name: 'Strategic Partner 12M', badge: 'SAVE 20%', badgeCls: 'b-am',
+    price: 862, currency: 'USD', billing: 'one_time', trialDays: 0,
+    billingMonths: 12,
+    enabled: true, maxMachines: 1,
+    quota: 20, issued: 0, pool: 20,
+    icon: '◈',
+    features: ['Onboarding 1-on-1 (60 phút)','Custom Radar Config','Regime Fit Optimization','AI GuardCenter Setup','Radar Strategy Coaching','Deep Market Analysis (1 báo cáo/tháng)','4× Quarterly Strategy Review','Telegram riêng 24h','Early access beta + feature request priority'],
+    featureDisabled: [false,false,false,false,false,false,false,false,false],
+    note: 'Vốn tối thiểu $10,000 · Tiết kiệm $286 so với 3 tháng lẻ',
+    platforms: ['MT5','cTrader','Binance','OKX','Other'],
+    minCapital: 10000,
+    requiresApproval: true,
+  },
+];
+
+let ZONES = JSON.parse(localStorage.getItem('zc_zones') || 'null') || DEFAULT_ZONES;
+let MASTER_ON = JSON.parse(localStorage.getItem('zc_master') || 'true');
+
+function saveZonesLocal() {
+  localStorage.setItem('zc_zones', JSON.stringify(ZONES));
+  localStorage.setItem('zc_master', JSON.stringify(MASTER_ON));
+}
+
+/* ── GATEWAY STATE ──────────────────────────────────────── */
+const DEFAULT_GWS = [
+  {
+    id: 'stripe', name: 'Stripe', type: 'Card / Wallet', icon: '💳',
+    status: 'live', mode: 'live',
+    revenue24h: 0, txns24h: 0,
+    successRate: 94.2, avgLatency: 340,
+    plans: ['radar_pro_3m','radar_pro_12m','partner_3m','partner_12m'],
+    apiConnected: true,
+    webhookOk: true,
+    checkoutEnabled: true,
+    sandboxMode: false,
+    currencies: ['USD'],
+  },
+  {
+    id: 'payos', name: 'PayOS', type: 'Vietnam Bank / QR', icon: '🏦',
+    status: 'live', mode: 'live',
+    revenue24h: 0, txns24h: 0,
+    successRate: 91.5, avgLatency: 520,
+    plans: ['radar_pro_3m','radar_pro_12m','partner_3m','partner_12m'],
+    apiConnected: true,
+    webhookOk: true,
+    checkoutEnabled: true,
+    sandboxMode: false,
+    currencies: ['VND'],
+  },
+  {
+    id: 'crypto', name: 'Crypto USDT', type: 'Auto / TRC20 + BEP20', icon: '₿',
+    status: 'live', mode: 'auto',
+    revenue24h: 0, txns24h: 0,
+    successRate: 100, avgLatency: 60,
+    plans: ['radar_trial','radar_pro_3m','radar_pro_12m','partner_3m','partner_12m'],
+    apiConnected: true,
+    webhookOk: true,
+    checkoutEnabled: true,
+    sandboxMode: false,
+    currencies: ['USDT'],
+    note: 'Primary — xử lý tự động 60s',
+  },
+];
+
+let GATEWAYS = JSON.parse(localStorage.getItem('zc_gws') || 'null') || DEFAULT_GWS;
+function saveGwsLocal() { localStorage.setItem('zc_gws', JSON.stringify(GATEWAYS)); }
+
+/* ── AUDIT LOG ──────────────────────────────────────────── */
+let AUDIT = JSON.parse(localStorage.getItem('zc_audit') || '[]');
+
+function logAudit(type, msg, detail='') {
+  const entry = { ts: new Date().toISOString(), type, msg, detail, actor: 'ops-admin' };
+  AUDIT.unshift(entry);
+  if (AUDIT.length > 200) AUDIT = AUDIT.slice(0,200);
+  localStorage.setItem('zc_audit', JSON.stringify(AUDIT));
+}
+
+/* ══════════════════════════════════════════════════════════
+   VIEW: OVERVIEW
+   ══════════════════════════════════════════════════════════ */
+async function loadOverview() {
+  // KPIs
+  const stats = await api('/admin/stats');
+  $('ov-k1').textContent = stats?.active ?? '—';
+  $('ov-k1d').textContent = '↑ +' + (stats?.active_delta||0) + ' vs yesterday';
+  $('ov-k3').textContent = stats?.total ?? '—';
+
+  const gLive = GATEWAYS.filter(g => g.status==='live').length;
+  $('ov-k5').textContent = gLive + '/' + GATEWAYS.length;
+
+  const zOn = ZONES.filter(z => z.enabled).length;
+  $('ov-k4').textContent = zOn + '/' + ZONES.length;
+
+  // Revenue estimate (local)
+  const rev = ZONES.reduce((a,z) => a + (z.issued||0) * z.price, 0);
+  $('ov-k2').textContent = usd(rev);
+  $('ov-k2d').textContent = 'from issued keys';
+
+  // Zone panel
+  $('ov-zones').innerHTML = ZONES.map(z => `
+    <div class="master-toggle-row">
+      <div class="mtr-left">
+        <div class="mtr-icon" style="background:rgba(255,255,255,.04);border:1px solid var(--edge)">${z.icon}</div>
+        <div>
+          <div class="mtr-name">${z.name} — ${z.billing==='one_time'?(z.billingMonths?usd(z.price)+'/'+z.billingMonths+'mo':usd(z.price)+' one-time'):z.billing==='trial'?'Free':usd(z.price)+'/mo'}</div>
+          <div class="mtr-desc">${z.issued||0} issued · pool ${z.pool||z.quota} · max ${z.maxMachines} machine</div>
+        </div>
+      </div>
+      <div class="mtr-meta">
+        <div class="mtr-stat">
+          <div class="mtr-stat-val" style="color:var(--tl3)">${z.issued||0}</div>
+          <div class="mtr-stat-lbl">ISSUED</div>
+        </div>
+        <div class="mtr-divider"></div>
+        <div class="mtr-stat">
+          <div class="mtr-stat-val" style="color:var(--sk3)">${z.pool||z.quota}</div>
+          <div class="mtr-stat-lbl">AVAILABLE</div>
+        </div>
+      </div>
+      <div class="toggle-wrap">
+        <span style="font-family:var(--mono);font-size:10px;color:${z.enabled?'var(--tl3)':'var(--mist)'}">
+          ${z.enabled?'LIVE':'OFF'}
+        </span>
+      </div>
+    </div>
+  `).join('');
+
+  // Gateway panel
+  $('ov-gateways').innerHTML = GATEWAYS.map(g => `
+    <div class="master-toggle-row">
+      <div class="mtr-left">
+        <div class="mtr-icon" style="background:rgba(255,255,255,.04);border:1px solid var(--edge)">${g.icon}</div>
+        <div>
+          <div class="mtr-name">${g.name}</div>
+          <div class="mtr-desc">${g.type} · ${g.mode} · ${g.currencies.join(', ')}</div>
+        </div>
+      </div>
+      <div class="mtr-meta">
+        <div class="mtr-stat">
+          <div class="mtr-stat-val" style="color:var(--gn3)">${g.successRate.toFixed(1)}%</div>
+          <div class="mtr-stat-lbl">SUCCESS</div>
+        </div>
+        <div class="mtr-divider"></div>
+        <div class="mtr-stat">
+          <div class="mtr-stat-val" style="color:${g.status==='live'?'var(--tl3)':g.status==='paused'?'var(--am)':'var(--mist)'}">
+            ${g.status.toUpperCase()}
+          </div>
+          <div class="mtr-stat-lbl">STATUS</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  // Revenue by plan
+  $('ov-rev').innerHTML = ZONES.map(z => {
+    const rev = (z.issued||0) * z.price;
+    const maxRev = Math.max(...ZONES.map(x => (x.issued||0)*x.price), 1);
+    const pct = Math.round(rev/maxRev*100);
+    return `<div class="metric-row">
+      <span class="mr-lbl">${z.icon} ${z.name} (${z.issued||0} keys)</span>
+      <div class="mr-bar-bg"><div class="mr-bar" style="width:${pct}%;background:var(--am)"></div></div>
+      <span class="mr-val" style="color:var(--am)">${usd(rev)}</span>
+    </div>`;
+  }).join('');
+
+  // Activity
+  $('ov-activity').innerHTML = AUDIT.slice(0,8).map(a => {
+    const tc = { ZONE:'var(--tl3)', GATEWAY:'var(--sk3)', KEY:'var(--vi3)', PAYMENT:'var(--am)', EMERGENCY:'var(--rd3)' };
+    return `<div class="log-item">
+      <span class="log-time">${new Date(a.ts).toLocaleTimeString('vi-VN',{hour12:false})}</span>
+      <div class="log-dot" style="background:${tc[a.type]||'var(--fog)'}"></div>
+      <div class="log-body">
+        <div class="log-msg">${a.msg}</div>
+        <div class="log-actor">by ${a.actor}</div>
+      </div>
+    </div>`;
+  }).join('') || '<div class="empty">No activity yet</div>';
+}
+
+/* ══════════════════════════════════════════════════════════
+   VIEW: ZONE CONTROL
+   ══════════════════════════════════════════════════════════ */
+function loadZone() {
+  // Master switch
+  const ms = $('master-switch');
+  ms.checked = MASTER_ON;
+  $('master-lbl').textContent = MASTER_ON ? 'ON' : 'OFF';
+  $('ms-today').textContent = usd(ZONES.reduce((a,z)=>a+(z.issued||0)*z.price,0));
+  $('ms-pending').textContent = ZONES.reduce((a,z)=>a+(z.pool||z.quota),0);
+
+  renderPlanZones();
+  renderQuotaSummary();
+}
+
+function renderPlanZones() {
+  $('zone-plans').innerHTML = ZONES.map((z,i) => {
+    const issuedPct = z.quota>0 ? Math.min(100, Math.round((z.issued||0)/z.quota*100)) : 0;
+    const badgeBg = { 'b-tl':'var(--tlfg)', 'b-am':'var(--amfg)', 'b-dim':'rgba(42,79,120,.2)' }[z.badgeCls] || 'var(--tlfg)';
+    const badgeTx = { 'b-tl':'var(--tl3)', 'b-am':'var(--am)', 'b-dim':'var(--fog)' }[z.badgeCls] || 'var(--tl3)';
+
+    return `<div class="plan-card ${z.enabled?'on':''}">
+      <div class="plan-card-hd">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:18px">${z.icon}</span>
+          <span class="plan-name">${z.name}</span>
+        </div>
+        <span class="plan-badge" style="background:${badgeBg};color:${badgeTx}">${z.badge}</span>
+      </div>
+      <div class="plan-card-body">
+        <div class="plan-price">
+          ${z.billing==='trial'
+            ? `<span class="plan-price-val" style="font-size:22px;color:var(--tl3)">FREE</span><span class="plan-price-per"> forever</span>`
+            : `<span class="plan-price-cur">$</span><span class="plan-price-val">${z.price}</span><span class="plan-price-per"> / ${z.billingMonths?z.billingMonths+'mo':'one-time'}${z.pricePerMonth?' · $'+z.pricePerMonth+'/mo':''}</span>`
+          }
+          ${z.note ? `<div style="font-size:10px;color:var(--mist);margin-top:4px;font-family:var(--mono)">${z.note}</div>` : ''}
+          ${z.requiresApproval ? `<div style="display:inline-block;margin-top:4px;padding:2px 8px;background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.3);border-radius:3px;font-size:9px;font-family:var(--mono);color:#a78bfa;letter-spacing:1px;">⬡ REQUIRES APPROVAL</div>` : ''}
+          ${z.platforms ? `<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px">${z.platforms.map(p=>`<span style="font-size:9px;padding:1px 6px;background:var(--edge);border-radius:2px;font-family:var(--mono);color:var(--pale)">${p}</span>`).join('')}</div>` : ''}
+        </div>
+
+        <!-- QUOTA COUNTER -->
+        <div class="plan-quota-row">
+          <span class="plan-quota-lbl">KEY QUOTA</span>
+          <div class="counter">
+            <button class="counter-btn" onclick="adjustQuota(${i},-10)">−</button>
+            <input class="counter-val" id="quota-${z.id}" value="${z.quota}" onchange="setQuota(${i},this.value)">
+            <button class="counter-btn" onclick="adjustQuota(${i},+10)">＋</button>
+          </div>
+        </div>
+
+        <!-- POOL COUNTER (pre-generated pool) -->
+        <div class="plan-quota-row">
+          <span class="plan-quota-lbl">AVAILABLE POOL</span>
+          <div class="counter">
+            <button class="counter-btn" onclick="adjustPool(${i},-5)">−</button>
+            <input class="counter-val" id="pool-${z.id}" value="${z.pool||z.quota}" onchange="setPool(${i},this.value)">
+            <button class="counter-btn" onclick="adjustPool(${i},+5)">＋</button>
+          </div>
+        </div>
+
+        <div class="plan-quota-row">
+          <span class="plan-quota-lbl">ISSUED / MAX MACHINES</span>
+          <span style="font-family:var(--mono);font-size:12px;color:var(--pale)">${z.issued||0} issued · ${z.maxMachines} mach</span>
+        </div>
+
+        <!-- Usage bar -->
+        <div class="plan-bar-row">
+          <div class="plan-bar-lbl">
+            <span>ISSUED ${z.issued||0}/${z.quota}</span>
+            <span style="color:${issuedPct>85?'var(--rd3)':issuedPct>60?'var(--am)':'var(--tl3)'}">${issuedPct}%</span>
+          </div>
+          <div class="plan-bar-bg">
+            <div class="plan-bar-fill" style="width:${issuedPct}%;background:${issuedPct>85?'var(--rd2)':issuedPct>60?'var(--am)':'var(--tl2)'}"></div>
+          </div>
+        </div>
+
+        <div class="plan-features">
+          ${z.features.map((f,fi) => `<div class="plan-feat ${(z.featureDisabled||[])[fi]?'disabled':''}">${f}</div>`).join('')}
+        </div>
+      </div>
+
+      <!-- Footer: master ON/OFF toggle for this plan -->
+      <div class="plan-card-ft">
+        <div style="flex:1">
+          <div style="font-family:var(--mono);font-size:9px;color:var(--mist);letter-spacing:1px;margin-bottom:3px">ZONE SWITCH</div>
+          <div style="font-size:11px;color:${z.enabled?'var(--tl3)':'var(--mist)'}">${z.enabled?'● SELLING LIVE':'○ PAUSED'}</div>
+        </div>
+        <label class="toggle" title="Enable/disable this plan">
+          <input type="checkbox" ${z.enabled?'checked':''} onchange="toggleZone(${i},this.checked)">
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+        <button class="btn btn-ghost btn-xs" onclick="openEditPlan(${i})" style="margin-left:4px">Edit</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderQuotaSummary() {
+  $('quota-summary').innerHTML = `
+    <table>
+      <thead><tr><th>PLAN</th><th>QUOTA</th><th>POOL</th><th>ISSUED</th><th>REMAINING</th><th>UTILIZATION</th><th>ZONE STATUS</th></tr></thead>
+      <tbody>
+        ${ZONES.map(z => {
+          const pct = z.quota>0 ? Math.round((z.issued||0)/z.quota*100) : 0;
+          const rem = z.quota - (z.issued||0);
+          return `<tr>
+            <td><span style="font-size:16px">${z.icon}</span> <strong>${z.name}</strong></td>
+            <td class="mono">${z.quota}</td>
+            <td class="mono" style="color:var(--am)">${z.pool||z.quota}</td>
+            <td class="mono" style="color:var(--tl3)">${z.issued||0}</td>
+            <td class="mono" style="color:${rem<20?'var(--rd3)':rem<50?'var(--am)':'var(--gn3)'}">${rem}</td>
+            <td>
+              <div style="display:flex;align-items:center;gap:8px">
+                <div style="width:80px;height:4px;background:var(--edge);border-radius:2px;overflow:hidden">
+                  <div style="height:100%;width:${pct}%;background:${pct>85?'var(--rd2)':pct>60?'var(--am)':'var(--tl2)'};border-radius:2px"></div>
+                </div>
+                <span class="mono" style="font-size:11px;color:${pct>85?'var(--rd3)':pct>60?'var(--am)':'var(--tl3)'}">${pct}%</span>
+              </div>
+            </td>
+            <td><span class="badge ${z.enabled?'b-tl':'b-dim'}">${z.enabled?'LIVE':'PAUSED'}</span></td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+function adjustQuota(i, delta) {
+  ZONES[i].quota = Math.max(0, (ZONES[i].quota||0) + delta);
+  $(`quota-${ZONES[i].id}`).value = ZONES[i].quota;
+  renderQuotaSummary();
+  logAudit('ZONE', `Quota adjusted: ${ZONES[i].name} → ${ZONES[i].quota}`, '');
+}
+
+function setQuota(i, val) {
+  ZONES[i].quota = Math.max(0, parseInt(val)||0);
+  renderQuotaSummary();
+}
+
+function adjustPool(i, delta) {
+  ZONES[i].pool = Math.max(0, (ZONES[i].pool||ZONES[i].quota) + delta);
+  $(`pool-${ZONES[i].id}`).value = ZONES[i].pool;
+}
+
+function setPool(i, val) { ZONES[i].pool = Math.max(0, parseInt(val)||0); }
+
+function toggleZone(i, on) {
+  ZONES[i].enabled = on;
+  saveZonesLocal();
+  logAudit('ZONE', `Zone ${on?'ENABLED':'DISABLED'}: ${ZONES[i].name}`, 'manual toggle');
+  toast(`${ZONES[i].name} zone ${on?'● LIVE':'○ PAUSED'}`, on?'ok':'warn');
+  syncZoneToServer(ZONES[i]);
+  renderPlanZones();
+  renderQuotaSummary();
+}
+
+function toggleMaster(el) {
+  MASTER_ON = el.checked;
+  $('master-lbl').textContent = MASTER_ON ? 'ON' : 'OFF';
+  saveZonesLocal();
+  logAudit('ZONE', `MASTER SALES SWITCH: ${MASTER_ON?'ON':'OFF'}`, 'emergency');
+  toast(MASTER_ON ? '✓ Sales system ENABLED' : '⚠ Sales system DISABLED — all checkout blocked', MASTER_ON?'ok':'warn');
+  syncMasterToServer(MASTER_ON);
+}
+
+async function syncZoneToServer(zone) {
+  await api('/admin/zones/sync', { method:'POST', body: JSON.stringify({ zone }) });
+}
+
+async function syncMasterToServer(on) {
+  await api('/admin/zones/master', { method:'POST', body: JSON.stringify({ enabled: on }) });
+}
+
+async function saveAllZones() {
+  saveZonesLocal();
+  const r = await api('/admin/zones/save-all', { method:'POST', body: JSON.stringify({ zones: ZONES, master: MASTER_ON }) });
+  logAudit('ZONE', 'All zone configs saved', JSON.stringify(ZONES.map(z=>({id:z.id,quota:z.quota,enabled:z.enabled}))));
+  toast(r ? '✓ All zones saved to server' : '✓ Saved locally (server sync pending)', r?'ok':'warn');
+}
+
+function createPlan() {
+  const newZone = {
+    id: $('np-name').value.toLowerCase().replace(/\s+/g,'_'),
+    name: $('np-name').value,
+    badge: $('np-tier').value.toUpperCase(),
+    badgeCls: 'b-sk',
+    price: parseFloat($('np-price').value)||0,
+    currency: 'USD',
+    billing: $('np-billing').value,
+    trialDays: parseInt($('np-trial').value)||0,
+    enabled: false, maxMachines: parseInt($('np-machines').value)||1,
+    quota: parseInt($('np-quota').value)||100,
+    issued: 0, pool: parseInt($('np-quota').value)||100,
+    icon: '⚡',
+    features: $('np-features').value.split('\n').filter(Boolean),
+    featureDisabled: [],
+  };
+  ZONES.push(newZone);
+  saveZonesLocal();
+  closeMdl('m-newplan');
+  renderPlanZones();
+  renderQuotaSummary();
+  toast('✓ New plan zone created: ' + newZone.name);
+  logAudit('ZONE', 'New plan created: ' + newZone.name, JSON.stringify(newZone));
+}
+
+function openEditPlan(i) {
+  // quick inline — could open edit modal
+  toast('Edit plan: open m-newplan with pre-fill (TODO)', 'info');
+}
+
+function refreshQuotas() {
+  renderQuotaSummary();
+  toast('Quotas refreshed');
+}
+
+/* ══════════════════════════════════════════════════════════
+   VIEW: PAYMENT GATEWAYS
+   ══════════════════════════════════════════════════════════ */
+function loadGateway() {
+  renderGatewayCards();
+  renderTxnHealth();
+  renderWebhooks();
+
+  const live = GATEWAYS.filter(g=>g.status==='live').length;
+  $('gwtab-badge').textContent = live + ' live';
+}
+
+function renderGatewayCards() {
+  $('gw-grid').innerHTML = GATEWAYS.map((g,i) => {
+    const statusColor = { live:'var(--tl3)', paused:'var(--am)', off:'var(--mist)' };
+    const ledColor = { live:'var(--tl2)', paused:'var(--am)', off:'var(--edge3)' };
+    return `<div class="gw-card ${g.status}">
+      <div class="gw-status-bar" style="background:${ledColor[g.status]||'var(--edge)'}"></div>
+      <div class="gw-card-hd">
+        <div class="gw-logo">${g.icon}</div>
+        <div style="flex:1">
+          <div class="gw-name">${g.name}</div>
+          <div class="gw-type">${g.type}</div>
+        </div>
+        <div style="text-align:right">
+          <span class="badge ${g.status==='live'?'b-tl':g.status==='paused'?'b-am':'b-dim'}">${g.status.toUpperCase()}</span>
+          <div style="font-family:var(--mono);font-size:9px;color:var(--mist);margin-top:3px">${g.mode.toUpperCase()}</div>
+        </div>
+      </div>
+
+      <div class="gw-body">
+        <div class="gw-stats">
+          <div class="gw-stat">
+            <div class="gw-stat-lbl">24H REVENUE</div>
+            <div class="gw-stat-val" style="color:var(--am)">${usd(g.revenue24h)}</div>
+          </div>
+          <div class="gw-stat">
+            <div class="gw-stat-lbl">SUCCESS RATE</div>
+            <div class="gw-stat-val" style="color:${g.successRate>95?'var(--gn3)':g.successRate>85?'var(--am)':'var(--rd3)'}">${g.successRate.toFixed(1)}%</div>
+          </div>
+        </div>
+
+        <!-- Mode toggles -->
+        <div class="gw-modes">
+          <div class="gw-mode-row">
+            <div>
+              <div class="gw-mode-lbl">Checkout Enabled</div>
+              <div class="gw-mode-sub">Accept new purchases</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" ${g.checkoutEnabled?'checked':''} onchange="toggleGwFeature(${i},'checkoutEnabled',this.checked)">
+              <div class="toggle-track"></div>
+              <div class="toggle-thumb"></div>
+            </label>
+          </div>
+          <div class="gw-mode-row">
+            <div>
+              <div class="gw-mode-lbl">Sandbox / Test Mode</div>
+              <div class="gw-mode-sub">Route to test environment</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" ${g.sandboxMode?'checked':''} onchange="toggleGwFeature(${i},'sandboxMode',this.checked)">
+              <div class="toggle-track"></div>
+              <div class="toggle-thumb"></div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Applies to plans -->
+        <div style="margin-bottom:8px">
+          <div style="font-family:var(--mono);font-size:9px;color:var(--mist);letter-spacing:1.5px;margin-bottom:5px">APPLIES TO PLANS</div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap">
+            ${ZONES.map(z => `
+              <label style="display:flex;align-items:center;gap:4px;cursor:pointer">
+                <input type="checkbox" ${(g.plans||[]).includes(z.id)?'checked':''} onchange="toggleGwPlan(${i},'${z.id}',this.checked)" style="accent-color:var(--tl2);width:12px;height:12px">
+                <span style="font-size:11px;color:var(--pale)">${z.icon} ${z.name}</span>
+              </label>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+
+      <div class="gw-foot">
+        <div class="gw-health">
+          <div style="width:6px;height:6px;border-radius:50%;background:${g.apiConnected?'var(--gn2)':'var(--rd2)'};margin-right:2px"></div>
+          API ${g.apiConnected?'Connected':'Disconnected'}
+        </div>
+        <div class="gw-health" style="margin-left:auto">
+          <div style="width:6px;height:6px;border-radius:50%;background:${g.webhookOk?'var(--gn2)':'var(--rd2)'};margin-right:2px"></div>
+          Webhook ${g.webhookOk?'OK':'Error'}
+        </div>
+        <!-- Master switch for gateway -->
+        <label class="toggle master" style="margin-left:12px" title="${g.name} master on/off">
+          <input type="checkbox" ${g.status!=='off'?'checked':''} onchange="toggleGwMaster(${i},this.checked)">
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleGwMaster(i, on) {
+  GATEWAYS[i].status = on ? (GATEWAYS[i].sandboxMode ? 'paused' : 'live') : 'off';
+  saveGwsLocal();
+  logAudit('GATEWAY', `Gateway ${on?'ENABLED':'DISABLED'}: ${GATEWAYS[i].name}`, GATEWAYS[i].status);
+  toast(`${GATEWAYS[i].name} ${on?'ENABLED':'DISABLED'}`, on?'ok':'warn');
+  renderGatewayCards();
+  const live = GATEWAYS.filter(g=>g.status==='live').length;
+  $('gwtab-badge').textContent = live + ' live';
+}
+
+function toggleGwFeature(i, key, val) {
+  GATEWAYS[i][key] = val;
+  if (key==='sandboxMode' && val) GATEWAYS[i].status='paused';
+  else if (key==='sandboxMode' && !val) GATEWAYS[i].status='live';
+  saveGwsLocal();
+  logAudit('GATEWAY', `${GATEWAYS[i].name}: ${key} → ${val}`, '');
+  toast(`${GATEWAYS[i].name}: ${key} = ${val}`, 'info');
+  renderGatewayCards();
+}
+
+function toggleGwPlan(i, planId, on) {
+  if (!GATEWAYS[i].plans) GATEWAYS[i].plans = [];
+  if (on) { if (!GATEWAYS[i].plans.includes(planId)) GATEWAYS[i].plans.push(planId); }
+  else   { GATEWAYS[i].plans = GATEWAYS[i].plans.filter(p => p!==planId); }
+  saveGwsLocal();
+  logAudit('GATEWAY', `${GATEWAYS[i].name}: plan ${planId} ${on?'enabled':'disabled'}`, '');
+}
+
+function renderTxnHealth() {
+  $('txn-health').innerHTML = GATEWAYS.map(g => `
+    <div class="metric-row">
+      <div style="display:flex;align-items:center;gap:8px;flex:1">
+        <span style="font-size:14px">${g.icon}</span>
+        <div>
+          <div style="font-size:12px;color:var(--pale)">${g.name}</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--mist)">${g.avgLatency}ms avg</div>
+        </div>
+      </div>
+      <div class="mr-bar-bg"><div class="mr-bar" style="width:${g.successRate}%;background:${g.successRate>95?'var(--gn2)':g.successRate>85?'var(--am)':'var(--rd2)'}"></div></div>
+      <span class="mr-val" style="color:${g.successRate>95?'var(--gn3)':g.successRate>85?'var(--am)':'var(--rd3)'}">${g.successRate.toFixed(1)}%</span>
+    </div>
+  `).join('');
+}
+
+function renderWebhooks() {
+  $('webhook-status').innerHTML = GATEWAYS.map(g => `
+    <div class="metric-row">
+      <div style="display:flex;align-items:center;gap:8px;flex:1">
+        <div style="width:7px;height:7px;border-radius:50%;background:${g.webhookOk?'var(--gn2)':'var(--rd2)'}"></div>
+        <span style="font-size:12px;color:var(--pale)">${g.name}</span>
+      </div>
+      <span class="badge ${g.webhookOk?'b-gn':'b-rd'}">${g.webhookOk?'OK':'FAILING'}</span>
+      <button class="btn btn-ghost btn-xs" onclick="testWebhook('${g.id}')">Test</button>
+    </div>
+  `).join('');
+}
+
+async function testWebhook(gwId) {
+  toast(`Testing webhook: ${gwId}...`, 'info');
+  const r = await api('/admin/gateways/'+gwId+'/test-webhook', {method:'POST'});
+  toast(r?.ok ? `✓ Webhook OK: ${gwId}` : `✗ Webhook FAILED: ${gwId}`, r?.ok?'ok':'err');
+}
+
+function addGateway() {
+  const gw = {
+    id: $('agw-name').value.toLowerCase().replace(/\s+/g,'_'),
+    name: $('agw-name').value,
+    type: $('agw-type').value,
+    icon: '💳',
+    status: 'off', mode: $('agw-mode').value,
+    revenue24h: 0, txns24h: 0,
+    successRate: 0, avgLatency: 0,
+    plans: [], apiConnected: false, webhookOk: false,
+    checkoutEnabled: false, sandboxMode: $('agw-mode').value==='sandbox',
+    currencies: [$('agw-currency').value],
+  };
+  GATEWAYS.push(gw);
+  saveGwsLocal();
+  closeMdl('m-addgw');
+  renderGatewayCards();
+  logAudit('GATEWAY', 'Gateway added: ' + gw.name, JSON.stringify(gw));
+  toast('✓ Gateway added: ' + gw.name);
+}
+
+/* ══════════════════════════════════════════════════════════
+   VIEW: KEY INVENTORY
+   ══════════════════════════════════════════════════════════ */
+let _keys = [];
+
+async function loadKeys() {
+  const data = await api('/admin/licenses');
+  _keys = data || [];
+
+  const active  = _keys.filter(k=>k.status==='ACTIVE').length;
+  const pool    = _keys.filter(k=>k.status==='UNUSED').length;
+  const expired = _keys.filter(k=>k.status==='EXPIRED').length;
+  const revoked = _keys.filter(k=>k.status==='REVOKED').length;
+
+  $('inv-active').textContent = active;
+  $('inv-pool').textContent   = pool;
+  $('inv-exp').textContent    = expired;
+  $('inv-rev').textContent    = revoked;
+
+  $('keytab-badge').textContent = active + ' active';
+  $('zr-keys').textContent = active;
+
+  renderKeyTable(_keys);
+}
+
+function renderKeyTable(data) {
+  const tb = $('key-tb');
+  if (!data.length) { tb.innerHTML='<tr><td colspan="9" class="empty">No keys found</td></tr>'; return; }
+  tb.innerHTML = data.map(k => {
+    const sm = { ACTIVE:'b-tl', UNUSED:'b-am', EXPIRED:'b-rd', REVOKED:'b-dim' };
+    return `<tr>
+      <td class="mono" style="color:var(--tl3);font-size:10px;letter-spacing:.5px">${k.license_key}</td>
+      <td>
+        <div style="font-size:12px">${k.owner_name||'—'}</div>
+        <div style="font-size:10px;color:var(--mist)">${k.buyer_email||''}</div>
+      </td>
+      <td><span class="badge b-sk">${(k.tier||'std').toUpperCase()}</span></td>
+      <td><span class="badge ${sm[k.status]||'b-dim'}">${k.status}</span></td>
+      <td class="mono" style="font-size:10px">${k.bound_mt5_id||'<span style="color:var(--edge3)">—</span>'}</td>
+      <td class="mono">${k.machine_count||0}/${k.max_machines||1}</td>
+      <td style="font-size:11px;color:var(--mist)">${k.source||'manual'}</td>
+      <td style="font-size:10px;color:var(--mist)">${k.expires_at?fDate(k.expires_at):'∞'}</td>
+      <td>
+        <div style="display:flex;gap:4px">
+          ${k.status==='ACTIVE'
+            ? `<button class="btn btn-danger btn-xs" onclick="revokeKey('${k.license_key}')">Revoke</button>`
+            : `<button class="btn btn-ghost btn-xs" style="color:var(--tl3);border-color:var(--tlbr)" onclick="activateKey('${k.license_key}')">Activate</button>`}
+          <button class="btn btn-ghost btn-xs" onclick="copyKey('${k.license_key}')">Copy</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function filterKeys() {
+  const q    = ($('key-q')?.value||'').toLowerCase();
+  const plan = $('key-filter-plan')?.value||'';
+  const stat = $('key-filter-status')?.value||'';
+  renderKeyTable(_keys.filter(k =>
+    (!q || (k.license_key||'').toLowerCase().includes(q) || (k.buyer_email||'').toLowerCase().includes(q) || (k.owner_name||'').toLowerCase().includes(q)) &&
+    (!plan || (k.tier||'')==plan) &&
+    (!stat || k.status==stat)
+  ));
+}
+
+async function revokeKey(key) {
+  if (!confirm('Revoke '+key+'?')) return;
+  const r = await api('/admin/licenses/'+key+'/revoke',{method:'POST'});
+  if (r?.status==='revoked') { toast('Key revoked'); logAudit('KEY','Key revoked: '+key,''); loadKeys(); }
+  else toast('Error','err');
+}
+
+async function activateKey(key) {
+  const r = await api('/admin/licenses/'+key+'/activate',{method:'POST'});
+  if (r?.status==='activated') { toast('✓ Activated'); logAudit('KEY','Key activated: '+key,''); loadKeys(); }
+  else toast('Error','err');
+}
+
+function copyKey(key) {
+  navigator.clipboard.writeText(key).then(() => toast('Key copied to clipboard', 'info'));
+}
+
+async function issueKey() {
+  const p = new URLSearchParams({
+    owner_name:  $('ik-name').value,
+    owner_email: $('ik-email').value,
+    plan:        $('ik-plan').value,
+    source:      $('ik-source').value,
+    max_machines:$('ik-machines').value,
+    expires_at:  $('ik-expires').value||'',
+    note:        $('ik-note').value,
+  });
+  const r = await api('/admin/licenses?'+p, {method:'POST'});
+  if (r?.status==='created') {
+    // Deduct from zone pool
+    const zIdx = ZONES.findIndex(z => z.id===$('ik-plan').value);
+    if (zIdx>=0) { ZONES[zIdx].issued=(ZONES[zIdx].issued||0)+1; ZONES[zIdx].pool=Math.max(0,(ZONES[zIdx].pool||ZONES[zIdx].quota)-1); saveZonesLocal(); }
+    logAudit('KEY', `Key issued: ${r.key} (${$('ik-plan').value}) to ${$('ik-email').value}`, $('ik-source').value);
+    toast('✓ Key issued: ' + r.key);
+    closeMdl('m-issuekey');
+    loadKeys();
+  } else toast('Error issuing key','err');
+}
+
+async function bulkGenerate() {
+  const qty  = parseInt($('bg-qty').value)||1;
+  const plan = $('bg-plan').value;
+  const tag  = $('bg-tag').value;
+  const exp  = $('bg-expires').value||'';
+  const r = await api('/admin/licenses/bulk-generate', {
+    method:'POST',
+    body: JSON.stringify({ plan, quantity: qty, expires_at: exp, tag })
+  });
+  const zIdx = ZONES.findIndex(z=>z.id===plan);
+  if (zIdx>=0) { ZONES[zIdx].pool=(ZONES[zIdx].pool||ZONES[zIdx].quota)+qty; saveZonesLocal(); }
+  logAudit('KEY', `Bulk generated: ${qty} keys for ${plan} (${tag})`, '');
+  toast(r ? `✓ Generated ${qty} keys into pool` : `Pool updated locally (+${qty})`, r?'ok':'warn');
+  closeMdl('m-bulkgen');
+  loadKeys();
+}
+
+function exportKeys() {
+  if (!_keys.length) { toast('No data','warn'); return; }
+  const csv = 'key,owner,email,plan,status,mt5,expires,source\n' +
+    _keys.map(k=>[k.license_key,k.owner_name||'',k.buyer_email||'',k.tier||'',k.status,k.bound_mt5_id||'',k.expires_at||'',k.source||''].join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download=`zarmor_keys_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  toast('CSV exported');
+}
+
+/* ══════════════════════════════════════════════════════════
+   VIEW: TRANSACTIONS
+   ══════════════════════════════════════════════════════════ */
+async function loadTxns() {
+  const data = await api('/admin/transactions?limit=50');
+  const tb = $('txn-tb');
+  if (!data?.length) { tb.innerHTML='<tr><td colspan="8" class="empty">No transactions yet</td></tr>'; return; }
+  tb.innerHTML = data.map(t => {
+    const sm = { completed:'b-tl', pending:'b-am', failed:'b-rd', refunded:'b-vi' };
+    const gw = GATEWAYS.find(g=>g.id===t.gateway)||{icon:'?',name:t.gateway||'—'};
+    return `<tr>
+      <td style="font-size:11px;color:var(--mist)">${ago(t.created_at)}</td>
+      <td class="mono" style="font-size:10px">${t.order_id||'—'}</td>
+      <td>
+        <div style="font-size:12px">${t.customer_name||'—'}</div>
+        <div style="font-size:10px;color:var(--mist)">${t.customer_email||''}</div>
+      </td>
+      <td><span class="badge b-sk">${(t.plan||'—').toUpperCase()}</span></td>
+      <td class="mono" style="color:var(--am);font-weight:700">${usd(t.amount)}</td>
+      <td style="font-size:12px">${gw.icon} ${gw.name}</td>
+      <td><span class="badge ${sm[t.status]||'b-dim'}">${t.status}</span></td>
+      <td>
+        ${t.status==='completed'
+          ? `<button class="btn btn-ghost btn-xs" onclick="refundTxn('${t.order_id}')">Refund</button>`
+          : ''}
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+async function refundTxn(orderId) {
+  if (!confirm('Refund order '+orderId+'?')) return;
+  const r = await api('/admin/transactions/'+orderId+'/refund',{method:'POST'});
+  toast(r?.status==='refunded'?'✓ Refund initiated':'Error','err');
+}
+
+/* ══════════════════════════════════════════════════════════
+   VIEW: AUDIT LOG
+   ══════════════════════════════════════════════════════════ */
+let _auditFilter = '';
+
+function loadAudit() {
+  renderAudit();
+}
+
+function renderAudit() {
+  const filtered = _auditFilter
+    ? AUDIT.filter(a => a.type===_auditFilter)
+    : AUDIT;
+  const typeColors = {
+    ZONE:'var(--tl3)', GATEWAY:'var(--sk3)', KEY:'var(--vi3)',
+    PAYMENT:'var(--am)', EMERGENCY:'var(--rd3)'
+  };
+  $('audit-list').innerHTML = filtered.length ? filtered.map(a => `
+    <div class="log-item">
+      <span class="log-time">${new Date(a.ts).toLocaleTimeString('vi-VN',{hour12:false})}<br><span style="font-size:9px">${new Date(a.ts).toLocaleDateString('vi-VN')}</span></span>
+      <div class="log-dot" style="background:${typeColors[a.type]||'var(--fog)'}"></div>
+      <div class="log-body">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">
+          <span class="badge" style="font-size:8px;padding:1px 5px;background:rgba(255,255,255,.04);color:${typeColors[a.type]||'var(--fog)'}">${a.type}</span>
+        </div>
+        <div class="log-msg">${a.msg}</div>
+        <div class="log-actor">by ${a.actor}${a.detail?' — '+a.detail.substring(0,60):''}</div>
+      </div>
+    </div>
+  `).join('') : '<div class="empty">No audit events</div>';
+}
+
+function filterAudit() {
+  _auditFilter = $('audit-filter').value;
+  renderAudit();
+}
+
+function exportAudit() {
+  const csv = 'time,type,message,actor,detail\n' +
+    AUDIT.map(a=>[a.ts,a.type,(a.msg||'').replace(/,/g,' '),(a.actor||''),(a.detail||'').replace(/,/g,' ')].join(',')).join('\n');
+  const el=document.createElement('a');
+  el.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  el.download=`zarmor_audit_${new Date().toISOString().slice(0,10)}.csv`;
+  el.click();
+  toast('Audit log exported');
+}
+
+/* ══════════════════════════════════════════════════════════
+   GLOBAL REFRESH
+   ══════════════════════════════════════════════════════════ */
+function refreshAll() {
+  const active = document.querySelector('.view.on')?.id?.replace('view-','');
+  if (VIEW_LOADERS[active]) VIEW_LOADERS[active]();
+  pingServer();
+  toast('Refreshed', 'info');
+}
+
+/* ══════════════════════════════════════════════════════════
+   AUTO-REFRESH (overview + gateway health)
+   ══════════════════════════════════════════════════════════ */
+setInterval(() => {
+  const active = document.querySelector('.view.on')?.id?.replace('view-','');
+  if (active==='overview') loadOverview();
+  if (active==='gateway') renderTxnHealth();
+}, 20000);
+
+/* ══════════════════════════════════════════════════════════
+   INIT
+   ══════════════════════════════════════════════════════════ */
+tok(); // prompt for token
+logAudit('ZONE', 'Zone Control Center opened', navigator.userAgent.slice(0,40));
+loadOverview();
+</script>
+</body>
+</html>

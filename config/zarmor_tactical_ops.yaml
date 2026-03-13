@@ -1,0 +1,48 @@
+# =====================================================================
+# Z-ARMOR V7.5: TACTICAL ADVISOR & JUDICIARY OPERATIONS
+# =====================================================================
+meta:
+  version: "7.5.0_SaaS"
+  description: "Giao tiếp UI, Cảnh báo Telegram và Tòa án Phạt Lot (Judiciary)."
+
+# 1. HỆ THỐNG THUẾ TƯ PHÁP (JUDICIARY LOT TAXES)
+judiciary_budget:
+  base_daily_lot_limit: 10.0     # Ngân sách mặc định: 10 Lots / ngày
+  tax_brackets:
+    ABSOLUTE_ZERO: 0.0           # Phạt 0%
+    OPTIMAL_FLOW: 0.0            # Phạt 0%
+    KINETIC_EROSION: 0.40        # Tịch thu 40% đặc quyền Lot để hãm nhiệt
+    TURBULENT_FORCE: 0.80        # Trừng phạt: Tịch thu 80% đặc quyền Lot
+    CRITICAL_BREACH: 1.00        # Tử hình: Tịch thu 100% đặc quyền Lot
+
+# 2. BỘ TỪ ĐIỂN UI & TELEGRAM (MESSAGING DICTIONARY)
+tactical_alerts:
+  ABSOLUTE_ZERO:
+    icon: "🔵"
+    title: "ABSOLUTE ZERO - CAPITAL STAGNATION"
+    ui_desc: "Lack of kinetic energy. Increase exposure to optimize capital efficiency."
+    tele_msg: "💤 Hệ thống đang thiếu động năng (Z-Load < 15%). Lợi nhuận sinh ra không đủ bù đắp chi phí. Khuyến nghị Operator tăng Volume giao dịch!"
+
+  OPTIMAL_FLOW:
+    icon: "🟢"
+    title: "OPTIMAL FLOW - GOLDILOCKS ZONE"
+    ui_desc: "Perfect dynamic equilibrium. 100% engine efficiency."
+    tele_msg: "✅ Động cơ hoạt động 100% công suất (Z-Load 15%-60%). Tỷ lệ chuyển hóa Năng lượng thành Lợi nhuận đạt đỉnh. Có thể tiếp tục nhồi lệnh."
+    
+  KINETIC_EROSION:
+    icon: "🟡"
+    title: "KINETIC EROSION - HEAT WARNING"
+    ui_desc: "Entropy leaking. Damping protocol engaged to preserve core."
+    tele_msg: "⚠️ Cảnh báo sinh nhiệt! Áp suất đã vượt 60%. Hệ thống hãm phanh mềm (bóp 40% Volume lệnh mới) để tản nhiệt bảo vệ cốt lõi."
+    
+  TURBULENT_FORCE:
+    icon: "🔴"
+    title: "TURBULENT FORCE - SHOCK RISK"
+    ui_desc: "Critical pressure. Restrict to micro-allocations only."
+    tele_msg: "🚨 BÁO ĐỘNG ĐỎ: Nguy cơ sốc nhiệt! Áp suất sát ngưỡng đứt gãy. Chỉ được đi lệnh Micro-lot (Bóp 80% Volume). Tránh xa thị trường!"
+    
+  CRITICAL_BREACH:
+    icon: "🚨"
+    title: "CRITICAL BREACH - SCRAM ACTIVATED"
+    ui_desc: "Structural failure. All operations frozen."
+    tele_msg: "☠️ VỠ CẤU TRÚC (Z-Load >= 100%). Cắt toàn bộ cầu dao. HỆ THỐNG ĐÃ BỊ ĐÓNG BĂNG ĐỂ BẢO TOÀN VỐN!"

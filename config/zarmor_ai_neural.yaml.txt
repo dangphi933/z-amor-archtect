@@ -1,0 +1,33 @@
+# =====================================================================
+# Z-ARMOR V7.0: NEURAL COGNITIVE ENGINE (AI TENSOR)
+# =====================================================================
+meta:
+  version: "7.0.0_SaaS"
+  description: "Cấu hình Mạng Nơ-ron (LSTM_PPO) và Cảm biến Entropy."
+
+# 1. CẤU HÌNH LÕI DEEP LEARNING
+neural_core:
+  mode: "HYBRID"                            # HYBRID: Kết hợp ONNX AI và Rule-based
+  weights_path: "models/z_armor_agent.onnx" # Tệp Model weights
+  inference_interval_ms: 500                # Quét 500ms/lần
+  fail_safe_latency_ms: 1000                # Nếu AI nghẽn quá 1s -> Tự động trả về Rule-based
+
+# 2. TRÍCH XUẤT ĐẶC TRƯNG (TENSOR INPUTS)
+tensor_inputs:
+  internal_state: ["current_z_load", "dynamic_capacity_ratio", "consecutive_losses", "margin_level"]
+  market_environment: ["atr_14_normalized", "tick_volume_ma", "spread_variance", "mins_to_red_news"]
+  operator_actions: ["requested_lot_size", "sl_distance_atr", "trade_direction_correlation"]
+
+# 3. ĐẦU RA KỲ VỌNG & PHÁN QUYẾT (PREDICTIONS)
+neural_outputs:
+  fatal_ruin_threshold: 0.85     # Khóa terminal nếu AI tính toán Xác suất cháy (PoR) > 85%
+  min_fit_score_allowed: 40.0    # Ngăn cản vào lệnh nếu độ tự tin của AI < 40%
+
+# 4. HỌC MÁY THÍCH NGHI & PHẦN THƯỞNG (RL REWARDS)
+adaptive_learning:
+  win_streak_bonus: 0.10         # Thắng liên tiếp -> AI nới lỏng Z-Load 10%
+  loss_streak_penalty: 0.15      # Thua liên tiếp -> AI bóp Z-Load sớm 15%
+  rl_rewards:
+    survival_tick: +0.01         # Điểm thưởng duy trì trạng thái Laminar
+    profit_with_low_z: +5.0      # Thưởng lớn: Ăn lãi mà rủi ro thấp
+    sl_with_high_z: -10.0        # Phạt nặng: Nhồi lệnh khi đang Turbulent bị dính SL

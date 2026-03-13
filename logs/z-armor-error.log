@@ -1,0 +1,1819 @@
+2026-03-09 00:00:47: WARNING:  Invalid HTTP request received.
+2026-03-09 00:00:48: WARNING:  Invalid HTTP request received.
+2026-03-09 00:42:20: WARNING:  Invalid HTTP request received.
+2026-03-09 06:34:27: WARNING:  Invalid HTTP request received.
+2026-03-09 06:34:27: WARNING:  Invalid HTTP request received.
+2026-03-09 07:47:48: INFO:     Started server process [1580]
+2026-03-09 07:47:48: INFO:     Waiting for application startup.
+2026-03-09 07:47:48: INFO:     Application startup complete.
+2026-03-09 07:47:48: INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-03-09 08:02:12: WARNING:  Invalid HTTP request received.
+2026-03-09 08:16:53: Traceback (most recent call last):
+2026-03-09 08:16:53:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\ZARMOR_START.py", line 64, in <module>
+2026-03-09 08:16:53:     uvicorn.run(
+2026-03-09 08:16:53:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\main.py", line 577, in run
+2026-03-09 08:16:53:     server.run()
+2026-03-09 08:16:53:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\server.py", line 65, in run
+2026-03-09 08:16:53:     
+2026-03-09 08:16:53: return asyncio.run(self.serve(sockets=sockets))
+2026-03-09 08:16:53: 
+2026-03-09 08:16:53:  
+2026-03-09 08:16:53:           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:16:53: ^
+2026-03-09 08:16:53: ^
+2026-03-09 08:16:53: ^^^
+2026-03-09 08:16:53:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 194, in run
+2026-03-09 08:16:53:     return runner.run(main)
+2026-03-09 08:16:53:            ^^^^^^^^^^^^^^^^
+2026-03-09 08:16:53:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+2026-03-09 08:16:53:     return self._loop.run_until_complete(task)
+2026-03-09 08:16:53:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:16:53:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 687, in run_until_complete
+2026-03-09 08:16:53:     return future.result()
+2026-03-09 08:16:53:            ^^^^^^^^^^^^^^^
+2026-03-09 08:16:53:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\server.py", line 69, in serve
+2026-03-09 08:16:53:     await self._serve(sockets)
+2026-03-09 08:16:53:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\server.py", line 76, in _serve
+2026-03-09 08:16:53:     config.load()
+2026-03-09 08:16:53:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\config.py", line 434, in load
+2026-03-09 08:16:54:     
+2026-03-09 08:16:54: self.loaded_app = import_from_string(self.app)
+2026-03-09 08:16:54: 
+2026-03-09 08:16:54:  
+2026-03-09 08:16:54:  
+2026-03-09 08:16:54:  
+2026-03-09 08:16:54:  
+2026-03-09 08:16:54:  
+2026-03-09 08:16:54:  
+2026-03-09 08:16:54:  
+2026-03-09 08:16:54:                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:16:54:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\importer.py", line 22, in import_from_string
+2026-03-09 08:16:54:     
+2026-03-09 08:16:54: raise exc from None
+2026-03-09 08:16:54: 
+2026-03-09 08:16:54:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\importer.py", line 19, in import_from_string
+2026-03-09 08:16:54:     
+2026-03-09 08:16:54: module = importlib.import_module(module_str)
+2026-03-09 08:16:54: 
+2026-03-09 08:16:54:  
+2026-03-09 08:16:54:  
+2026-03-09 08:16:54:  
+2026-03-09 08:16:54:  
+2026-03-09 08:16:54:  
+2026-03-09 08:16:54:  
+2026-03-09 08:16:54:  
+2026-03-09 08:16:54:  
+2026-03-09 08:16:54:  
+2026-03-09 08:16:54:  
+2026-03-09 08:16:54:  
+2026-03-09 08:16:54:  
+2026-03-09 08:16:54:  
+2026-03-09 08:16:54: ^
+2026-03-09 08:16:54: ^
+2026-03-09 08:16:54: ^
+2026-03-09 08:16:54: ^
+2026-03-09 08:16:54: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:16:54:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\importlib\__init__.py", line 90, in import_module
+2026-03-09 08:16:54:     
+2026-03-09 08:16:54: return _bootstrap._gcd_import(name[level:], package, level)
+2026-03-09 08:16:54: 
+2026-03-09 08:16:54:  
+2026-03-09 08:16:54:  
+2026-03-09 08:16:54:  
+2026-03-09 08:16:54:  
+2026-03-09 08:16:54:  
+2026-03-09 08:16:54:  
+2026-03-09 08:16:54:  
+2026-03-09 08:16:54:  
+2026-03-09 08:16:54:  
+2026-03-09 08:16:54:  
+2026-03-09 08:16:54:  
+2026-03-09 08:16:54: ^
+2026-03-09 08:16:54: ^
+2026-03-09 08:16:54: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:16:54:   File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+2026-03-09 08:16:54:   File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+2026-03-09 08:16:54:   File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+2026-03-09 08:16:54:   File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+2026-03-09 08:16:54:   File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+2026-03-09 08:16:54:   File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+2026-03-09 08:16:54:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\main.py", line 79, in <module>
+2026-03-09 08:16:54:     from performance.router    import router as perf_router
+2026-03-09 08:16:54:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\performance\router.py", line 29, in <module>
+2026-03-09 08:16:54:     
+2026-03-09 08:16:54: from .engine  import compute, compute_all, ASSET_PROFILES, TF_MULT
+2026-03-09 08:16:54: 
+2026-03-09 08:16:54: ModuleNotFoundError
+2026-03-09 08:16:54: : 
+2026-03-09 08:16:54: No module named 'performance.engine'
+2026-03-09 08:16:54: 
+2026-03-09 08:17:00: Traceback (most recent call last):
+2026-03-09 08:17:00:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\ZARMOR_START.py", line 64, in <module>
+2026-03-09 08:17:00:     uvicorn.run(
+2026-03-09 08:17:00:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\main.py", line 577, in run
+2026-03-09 08:17:00:     server.run()
+2026-03-09 08:17:00:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\server.py", line 65, in run
+2026-03-09 08:17:00:     
+2026-03-09 08:17:00: return asyncio.run(self.serve(sockets=sockets))
+2026-03-09 08:17:00: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:17:00:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 194, in run
+2026-03-09 08:17:00:     return runner.run(main)
+2026-03-09 08:17:00:            ^^^^^^^^^^^^^^^^
+2026-03-09 08:17:00:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+2026-03-09 08:17:00:     return self._loop.run_until_complete(task)
+2026-03-09 08:17:00:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:17:00:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 687, in run_until_complete
+2026-03-09 08:17:00:     return future.result()
+2026-03-09 08:17:00:            ^^^^^^^^^^^^^^^
+2026-03-09 08:17:00:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\server.py", line 69, in serve
+2026-03-09 08:17:00:     await self._serve(sockets)
+2026-03-09 08:17:00:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\server.py", line 76, in _serve
+2026-03-09 08:17:00:     config.load()
+2026-03-09 08:17:00:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\config.py", line 434, in load
+2026-03-09 08:17:00:     self.loaded_app = import_from_string(self.app)
+2026-03-09 08:17:00:                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:17:00:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\importer.py", line 22, in import_from_string
+2026-03-09 08:17:00:     raise exc from None
+2026-03-09 08:17:00:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\importer.py", line 19, in import_from_string
+2026-03-09 08:17:00:     module = importlib.import_module(module_str)
+2026-03-09 08:17:00:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:17:00:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\importlib\__init__.py", line 90, in import_module
+2026-03-09 08:17:00:     return _bootstrap._gcd_import(name[level:], package, level)
+2026-03-09 08:17:00:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:17:00:   File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+2026-03-09 08:17:00:   File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+2026-03-09 08:17:00:   File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+2026-03-09 08:17:00:   File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+2026-03-09 08:17:00:   File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+2026-03-09 08:17:00:   File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+2026-03-09 08:17:00:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\main.py", line 79, in <module>
+2026-03-09 08:17:00:     from performance.router    import router as perf_router
+2026-03-09 08:17:00:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\performance\router.py", line 29, in <module>
+2026-03-09 08:17:00:     from .engine  import compute, compute_all, ASSET_PROFILES, TF_MULT
+2026-03-09 08:17:00: ModuleNotFoundError: No module named 'performance.engine'
+2026-03-09 08:17:06: Traceback (most recent call last):
+2026-03-09 08:17:06:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\ZARMOR_START.py", line 64, in <module>
+2026-03-09 08:17:06:     uvicorn.run(
+2026-03-09 08:17:06:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\main.py", line 577, in run
+2026-03-09 08:17:06:     server.run()
+2026-03-09 08:17:06:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\server.py", line 65, in run
+2026-03-09 08:17:06:     return asyncio.run(self.serve(sockets=sockets))
+2026-03-09 08:17:06:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:17:06: ^^^^^^^^
+2026-03-09 08:17:06:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 194, in run
+2026-03-09 08:17:06:     return runner.run(main)
+2026-03-09 08:17:06:            ^^^^^^^^^^^^^^^^
+2026-03-09 08:17:06:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+2026-03-09 08:17:06:     return self._loop.run_until_complete(task)
+2026-03-09 08:17:06:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:17:06:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 687, in run_until_complete
+2026-03-09 08:17:06:     return future.result()
+2026-03-09 08:17:06:            ^^^^^^^^^^^^^^^
+2026-03-09 08:17:06:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\server.py", line 69, in serve
+2026-03-09 08:17:06:     await self._serve(sockets)
+2026-03-09 08:17:06:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\server.py", line 76, in _serve
+2026-03-09 08:17:06:     config.load()
+2026-03-09 08:17:06:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\config.py", line 434, in load
+2026-03-09 08:17:06:     self.loaded_app = import_from_string(self.app)
+2026-03-09 08:17:06:                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:17:06:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\importer.py", line 22, in import_from_string
+2026-03-09 08:17:06:     raise exc from None
+2026-03-09 08:17:06:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\importer.py", line 19, in import_from_string
+2026-03-09 08:17:06:     module = importlib.import_module(module_str)
+2026-03-09 08:17:06: ^
+2026-03-09 08:17:06: ^
+2026-03-09 08:17:06: ^
+2026-03-09 08:17:06: ^
+2026-03-09 08:17:06: ^
+2026-03-09 08:17:06: ^
+2026-03-09 08:17:06: ^
+2026-03-09 08:17:06: ^
+2026-03-09 08:17:06: ^
+2026-03-09 08:17:06: ^
+2026-03-09 08:17:06: ^
+2026-03-09 08:17:06: ^
+2026-03-09 08:17:06: ^
+2026-03-09 08:17:06: ^
+2026-03-09 08:17:06: ^
+2026-03-09 08:17:06: ^
+2026-03-09 08:17:06: ^^^
+2026-03-09 08:17:06:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\importlib\__init__.py", line 90, in import_module
+2026-03-09 08:17:06:     return _bootstrap._gcd_import(name[level:], package, level)
+2026-03-09 08:17:06:            ^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:17:06: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:17:06:   File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+2026-03-09 08:17:06:   File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+2026-03-09 08:17:06:   File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+2026-03-09 08:17:06:   File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+2026-03-09 08:17:06:   File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+2026-03-09 08:17:06:   File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+2026-03-09 08:17:06:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\main.py", line 79, in <module>
+2026-03-09 08:17:06:     from performance.router    import router as perf_router
+2026-03-09 08:17:06:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\performance\router.py", line 29, in <module>
+2026-03-09 08:17:06:     from .engine  import compute, compute_all, ASSET_PROFILES, TF_MULT
+2026-03-09 08:17:06: ModuleNotFoundError: No module named 'performance.engine'
+2026-03-09 08:17:12: Traceback (most recent call last):
+2026-03-09 08:17:12:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\ZARMOR_START.py", line 64, in <module>
+2026-03-09 08:17:12:     uvicorn.run(
+2026-03-09 08:17:12:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\main.py", line 577, in run
+2026-03-09 08:17:12:     
+2026-03-09 08:17:12: server.run()
+2026-03-09 08:17:12:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\server.py", line 65, in run
+2026-03-09 08:17:12:     return asyncio.run(self.serve(sockets=sockets))
+2026-03-09 08:17:12:            ^^^^^^^^^^^^^^^^^^
+2026-03-09 08:17:12: ^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:17:12:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 194, in run
+2026-03-09 08:17:12:     return runner.run(main)
+2026-03-09 08:17:12:            ^^^^^^^^^^^^^^^^
+2026-03-09 08:17:12:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+2026-03-09 08:17:12:     return self._loop.run_until_complete(task)
+2026-03-09 08:17:12:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:17:12:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 687, in run_until_complete
+2026-03-09 08:17:12:     return future.result()
+2026-03-09 08:17:12:            ^^^^^^^^^^^^^^^
+2026-03-09 08:17:12:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\server.py", line 69, in serve
+2026-03-09 08:17:12:     await self._serve(sockets)
+2026-03-09 08:17:12:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\server.py", line 76, in _serve
+2026-03-09 08:17:12:     config.load()
+2026-03-09 08:17:12:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\config.py", line 434, in load
+2026-03-09 08:17:12:     self.loaded_app = import_from_string(self.app)
+2026-03-09 08:17:12:                       ^^^^^^^^^^^^^^^^
+2026-03-09 08:17:12: ^^^^^^^^^^^^
+2026-03-09 08:17:12:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\importer.py", line 22, in import_from_string
+2026-03-09 08:17:12:     raise exc from None
+2026-03-09 08:17:12:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\importer.py", line 19, in import_from_string
+2026-03-09 08:17:12:     module = importlib.import_module(module_str)
+2026-03-09 08:17:12: 
+2026-03-09 08:17:12:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:17:12:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\importlib\__init__.py", line 90, in import_module
+2026-03-09 08:17:12:     return _bootstrap._gcd_import(name[level:], package, level)
+2026-03-09 08:17:12:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:17:12: ^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:17:12:   File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+2026-03-09 08:17:12:   File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+2026-03-09 08:17:12:   File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+2026-03-09 08:17:12:   File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+2026-03-09 08:17:12:   File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+2026-03-09 08:17:12:   File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+2026-03-09 08:17:12:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\main.py", line 79, in <module>
+2026-03-09 08:17:12:     from performance.router    import router as perf_router
+2026-03-09 08:17:12:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\performance\router.py", line 29, in <module>
+2026-03-09 08:17:12:     from .engine  import compute, compute_all, ASSET_PROFILES, TF_MULT
+2026-03-09 08:17:12: ModuleNotFoundError: No module named 'performance.engine'
+2026-03-09 08:17:17: Traceback (most recent call last):
+2026-03-09 08:17:17:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\ZARMOR_START.py", line 64, in <module>
+2026-03-09 08:17:17:     uvicorn.run(
+2026-03-09 08:17:17:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\main.py", line 577, in run
+2026-03-09 08:17:17:     server.run()
+2026-03-09 08:17:17:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\server.py", line 65, in run
+2026-03-09 08:17:17:     
+2026-03-09 08:17:17: return asyncio.run(self.serve(sockets=sockets))
+2026-03-09 08:17:17: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:17:17:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 194, in run
+2026-03-09 08:17:17:     return runner.run(main)
+2026-03-09 08:17:17:            ^^^^^^^^^^^^^^^^
+2026-03-09 08:17:17:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+2026-03-09 08:17:17:     return self._loop.run_until_complete(task)
+2026-03-09 08:17:17:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:17:17:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 687, in run_until_complete
+2026-03-09 08:17:17:     return future.result()
+2026-03-09 08:17:17:            ^^^^^^^^^^^^^^^
+2026-03-09 08:17:17:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\server.py", line 69, in serve
+2026-03-09 08:17:17:     await self._serve(sockets)
+2026-03-09 08:17:17:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\server.py", line 76, in _serve
+2026-03-09 08:17:17:     config.load()
+2026-03-09 08:17:17:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\config.py", line 434, in load
+2026-03-09 08:17:17:     self.loaded_app = import_from_string(self.app)
+2026-03-09 08:17:17:                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:17:17:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\importer.py", line 22, in import_from_string
+2026-03-09 08:17:17:     raise exc from None
+2026-03-09 08:17:17:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\importer.py", line 19, in import_from_string
+2026-03-09 08:17:17:     module = importlib.import_module(module_str)
+2026-03-09 08:17:17: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:17:17:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\importlib\__init__.py", line 90, in import_module
+2026-03-09 08:17:17:     return _bootstrap._gcd_import(name[level:], package, level)
+2026-03-09 08:17:17:            ^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:17:17: ^^^^^
+2026-03-09 08:17:17: ^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:17:17:   File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+2026-03-09 08:17:17:   File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+2026-03-09 08:17:17:   File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+2026-03-09 08:17:17:   File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+2026-03-09 08:17:17:   File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+2026-03-09 08:17:17:   File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+2026-03-09 08:17:17:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\main.py", line 79, in <module>
+2026-03-09 08:17:17:     from performance.router    import router as perf_router
+2026-03-09 08:17:17:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\performance\router.py", line 29, in <module>
+2026-03-09 08:17:17:     
+2026-03-09 08:17:17: from .engine  import compute, compute_all, ASSET_PROFILES, TF_MULT
+2026-03-09 08:17:17: 
+2026-03-09 08:17:17: ModuleNotFoundError
+2026-03-09 08:17:17: : 
+2026-03-09 08:17:17: No module named 'performance.engine'
+2026-03-09 08:18:18: Traceback (most recent call last):
+2026-03-09 08:18:18:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\ZARMOR_START.py", line 64, in <module>
+2026-03-09 08:18:18:     uvicorn.run(
+2026-03-09 08:18:18:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\main.py", line 577, in run
+2026-03-09 08:18:18:     server.run()
+2026-03-09 08:18:18:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\server.py", line 65, in run
+2026-03-09 08:18:18:     return asyncio.run(self.serve(sockets=sockets))
+2026-03-09 08:18:18:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:18:18: ^^^^
+2026-03-09 08:18:18:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 194, in run
+2026-03-09 08:18:18:     
+2026-03-09 08:18:18: return runner.run(main)
+2026-03-09 08:18:18: 
+2026-03-09 08:18:18:  
+2026-03-09 08:18:18:           ^^^^^^^^^^^^^^^^
+2026-03-09 08:18:18:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+2026-03-09 08:18:18:     return self._loop.run_until_complete(task)
+2026-03-09 08:18:18:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:18:18: 
+2026-03-09 08:18:18:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 687, in run_until_complete
+2026-03-09 08:18:18:     
+2026-03-09 08:18:18: return future.result()
+2026-03-09 08:18:18: 
+2026-03-09 08:18:18:  
+2026-03-09 08:18:18:           ^^^^^^^
+2026-03-09 08:18:18: ^^^^^^^^
+2026-03-09 08:18:18:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\server.py", line 69, in serve
+2026-03-09 08:18:18:     await self._serve(sockets)
+2026-03-09 08:18:18:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\server.py", line 76, in _serve
+2026-03-09 08:18:18:     config.load()
+2026-03-09 08:18:18: 
+2026-03-09 08:18:18:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\config.py", line 434, in load
+2026-03-09 08:18:18:     self.loaded_app = import_from_string(self.app)
+2026-03-09 08:18:18:                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:18:18:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\importer.py", line 22, in import_from_string
+2026-03-09 08:18:18:     raise exc from None
+2026-03-09 08:18:18:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\importer.py", line 19, in import_from_string
+2026-03-09 08:18:18:     module = importlib.import_module(module_str)
+2026-03-09 08:18:18:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:18:18: ^
+2026-03-09 08:18:18: ^^^^^^^
+2026-03-09 08:18:18:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\importlib\__init__.py", line 90, in import_module
+2026-03-09 08:18:18:     
+2026-03-09 08:18:18: return _bootstrap._gcd_import(name[level:], package, level)
+2026-03-09 08:18:18: 
+2026-03-09 08:18:18:     
+2026-03-09 08:18:18:  
+2026-03-09 08:18:18:  
+2026-03-09 08:18:18:  
+2026-03-09 08:18:18:  
+2026-03-09 08:18:18:  
+2026-03-09 08:18:18:   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:18:18: ^
+2026-03-09 08:18:18: ^^^^
+2026-03-09 08:18:18:   File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+2026-03-09 08:18:18:   File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+2026-03-09 08:18:18:   File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+2026-03-09 08:18:18:   File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+2026-03-09 08:18:18:   File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+2026-03-09 08:18:18:   File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+2026-03-09 08:18:18:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\main.py", line 79, in <module>
+2026-03-09 08:18:18:     from performance.router    import router as perf_router
+2026-03-09 08:18:18:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\performance\router.py", line 29, in <module>
+2026-03-09 08:18:18:     
+2026-03-09 08:18:18: from .engine  import compute, compute_all, ASSET_PROFILES, TF_MULT
+2026-03-09 08:18:18: 
+2026-03-09 08:18:18: ModuleNotFoundError
+2026-03-09 08:18:18: : 
+2026-03-09 08:18:18: No module named 'performance.engine'
+2026-03-09 08:18:18: 
+2026-03-09 08:18:24: Traceback (most recent call last):
+2026-03-09 08:18:24:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\ZARMOR_START.py", line 64, in <module>
+2026-03-09 08:18:24:     uvicorn.run(
+2026-03-09 08:18:24:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\main.py", line 577, in run
+2026-03-09 08:18:24:     
+2026-03-09 08:18:24: server.run()
+2026-03-09 08:18:24: 
+2026-03-09 08:18:24:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\server.py", line 65, in run
+2026-03-09 08:18:24:     return asyncio.run(self.serve(sockets=sockets))
+2026-03-09 08:18:24:  
+2026-03-09 08:18:24:           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:18:24:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 194, in run
+2026-03-09 08:18:24:     return runner.run(main)
+2026-03-09 08:18:24:            ^^^^^^
+2026-03-09 08:18:24: ^
+2026-03-09 08:18:24: ^
+2026-03-09 08:18:24: ^
+2026-03-09 08:18:24: ^
+2026-03-09 08:18:24: ^
+2026-03-09 08:18:24: ^^^^^
+2026-03-09 08:18:24:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+2026-03-09 08:18:24:     
+2026-03-09 08:18:24: return self._loop.run_until_complete(task)
+2026-03-09 08:18:24:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:18:24:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 687, in run_until_complete
+2026-03-09 08:18:24:     
+2026-03-09 08:18:24: return future.result()
+2026-03-09 08:18:24: 
+2026-03-09 08:18:24:    
+2026-03-09 08:18:24: ^^^^^^^
+2026-03-09 08:18:24: ^^^^^^^^
+2026-03-09 08:18:24:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\server.py", line 69, in serve
+2026-03-09 08:18:24:     await self._serve(sockets)
+2026-03-09 08:18:24:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\server.py", line 76, in _serve
+2026-03-09 08:18:24:     config.load()
+2026-03-09 08:18:24:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\config.py", line 434, in load
+2026-03-09 08:18:24:     
+2026-03-09 08:18:24: self.loaded_app = import_from_string(self.app)
+2026-03-09 08:18:24: ^
+2026-03-09 08:18:24: ^^^
+2026-03-09 08:18:24:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\importer.py", line 22, in import_from_string
+2026-03-09 08:18:24:     raise exc from None
+2026-03-09 08:18:24:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\importer.py", line 19, in import_from_string
+2026-03-09 08:18:24:     module = importlib.import_module(module_str)
+2026-03-09 08:18:24:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:18:24:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\importlib\__init__.py", line 90, in import_module
+2026-03-09 08:18:24:     
+2026-03-09 08:18:24: return _bootstrap._gcd_import(name[level:], package, level)
+2026-03-09 08:18:24: 
+2026-03-09 08:18:24:  
+2026-03-09 08:18:24:  
+2026-03-09 08:18:24:  
+2026-03-09 08:18:24:  
+2026-03-09 08:18:24:  
+2026-03-09 08:18:24:  
+2026-03-09 08:18:24:  
+2026-03-09 08:18:24:  
+2026-03-09 08:18:24:  
+2026-03-09 08:18:24:  
+2026-03-09 08:18:24:  
+2026-03-09 08:18:24: ^
+2026-03-09 08:18:24: ^
+2026-03-09 08:18:24: ^
+2026-03-09 08:18:24: ^
+2026-03-09 08:18:24: ^
+2026-03-09 08:18:24: ^
+2026-03-09 08:18:24: ^
+2026-03-09 08:18:24: ^
+2026-03-09 08:18:24: ^
+2026-03-09 08:18:24: ^
+2026-03-09 08:18:24: ^
+2026-03-09 08:18:24: ^
+2026-03-09 08:18:24: ^
+2026-03-09 08:18:24: ^
+2026-03-09 08:18:24: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:18:24:   File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+2026-03-09 08:18:24:   File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+2026-03-09 08:18:24:   File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+2026-03-09 08:18:24:   File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+2026-03-09 08:18:24:   File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+2026-03-09 08:18:24:   File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+2026-03-09 08:18:24:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\main.py", line 79, in <module>
+2026-03-09 08:18:24:     
+2026-03-09 08:18:24: from performance.router    import router as perf_router
+2026-03-09 08:18:24:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\performance\router.py", line 29, in <module>
+2026-03-09 08:18:24:     
+2026-03-09 08:18:24: from .engine  import compute, compute_all, ASSET_PROFILES, TF_MULT
+2026-03-09 08:18:24: 
+2026-03-09 08:18:24: ModuleNotFoundError
+2026-03-09 08:18:24: : 
+2026-03-09 08:18:24: No module named 'performance.engine'
+2026-03-09 08:18:24: 
+2026-03-09 08:18:30: Traceback (most recent call last):
+2026-03-09 08:18:30:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\ZARMOR_START.py", line 64, in <module>
+2026-03-09 08:18:30:     uvicorn.run(
+2026-03-09 08:18:30:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\main.py", line 577, in run
+2026-03-09 08:18:30:     
+2026-03-09 08:18:30: server.run()
+2026-03-09 08:18:30: 
+2026-03-09 08:18:30:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\server.py", line 65, in run
+2026-03-09 08:18:30:     return asyncio.run(self.serve(sockets=sockets))
+2026-03-09 08:18:30:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:18:30: 
+2026-03-09 08:18:30:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 194, in run
+2026-03-09 08:18:30:     return runner.run(main)
+2026-03-09 08:18:30:            ^^^^^^^^^^^^^^^^
+2026-03-09 08:18:30:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+2026-03-09 08:18:30:     return self._loop.run_until_complete(task)
+2026-03-09 08:18:30:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:18:30: 
+2026-03-09 08:18:30:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 687, in run_until_complete
+2026-03-09 08:18:30:     
+2026-03-09 08:18:30: return future.result()
+2026-03-09 08:18:30: 
+2026-03-09 08:18:30:            ^^^^^^^^^^^^^^^
+2026-03-09 08:18:30:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\server.py", line 69, in serve
+2026-03-09 08:18:30:     await self._serve(sockets)
+2026-03-09 08:18:30:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\server.py", line 76, in _serve
+2026-03-09 08:18:30:     config.load()
+2026-03-09 08:18:30:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\config.py", line 434, in load
+2026-03-09 08:18:30:     self.loaded_app = import_from_string(self.app)
+2026-03-09 08:18:30:                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:18:30:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\importer.py", line 22, in import_from_string
+2026-03-09 08:18:30:     raise exc from None
+2026-03-09 08:18:30:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\importer.py", line 19, in import_from_string
+2026-03-09 08:18:30:     module = importlib.import_module(module_str)
+2026-03-09 08:18:30:       
+2026-03-09 08:18:30:       ^^^^^^^
+2026-03-09 08:18:30: ^^
+2026-03-09 08:18:30: ^
+2026-03-09 08:18:30: ^
+2026-03-09 08:18:30: ^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:18:30:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\importlib\__init__.py", line 90, in import_module
+2026-03-09 08:18:30:     
+2026-03-09 08:18:30: return _bootstrap._gcd_import(name[level:], package, level)
+2026-03-09 08:18:30: 
+2026-03-09 08:18:30:  
+2026-03-09 08:18:30:  
+2026-03-09 08:18:30:          ^^^^^^^^^^^^
+2026-03-09 08:18:30: ^
+2026-03-09 08:18:30: ^
+2026-03-09 08:18:30: ^^^^^^^^^^^^^^^
+2026-03-09 08:18:30: ^^^^^^^^^^^^
+2026-03-09 08:18:30: ^^^^^^^^^^^
+2026-03-09 08:18:30:   File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+2026-03-09 08:18:30:   File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+2026-03-09 08:18:30:   File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+2026-03-09 08:18:30:   File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+2026-03-09 08:18:30:   File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+2026-03-09 08:18:30:   File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+2026-03-09 08:18:30:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\main.py", line 79, in <module>
+2026-03-09 08:18:30:     from performance.router    import router as perf_router
+2026-03-09 08:18:30:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\performance\router.py", line 29, in <module>
+2026-03-09 08:18:30:     from .engine  import compute, compute_all, ASSET_PROFILES, TF_MULT
+2026-03-09 08:18:30: ModuleNotFoundError: No module named 'performance.engine'
+2026-03-09 08:18:36: Traceback (most recent call last):
+2026-03-09 08:18:36:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\ZARMOR_START.py", line 64, in <module>
+2026-03-09 08:18:36:     uvicorn.run(
+2026-03-09 08:18:36:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\main.py", line 577, in run
+2026-03-09 08:18:36:     server.run()
+2026-03-09 08:18:36:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\server.py", line 65, in run
+2026-03-09 08:18:36:     return asyncio.run(self.serve(sockets=sockets))
+2026-03-09 08:18:36:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:18:36:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 194, in run
+2026-03-09 08:18:36:     return runner.run(main)
+2026-03-09 08:18:36:            ^^^^^^^^
+2026-03-09 08:18:36: ^^^^
+2026-03-09 08:18:36: ^
+2026-03-09 08:18:36: ^
+2026-03-09 08:18:36: ^^
+2026-03-09 08:18:36:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+2026-03-09 08:18:36:     return self._loop.run_until_complete(task)
+2026-03-09 08:18:36:            ^^^^^^^^^^^^^^^^^^
+2026-03-09 08:18:36: ^
+2026-03-09 08:18:36: ^
+2026-03-09 08:18:36: ^
+2026-03-09 08:18:36: ^
+2026-03-09 08:18:36: ^^^^^^^^^^
+2026-03-09 08:18:36: ^
+2026-03-09 08:18:36: ^
+2026-03-09 08:18:36: ^
+2026-03-09 08:18:36: 
+2026-03-09 08:18:36:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 687, in run_until_complete
+2026-03-09 08:18:36:     return future.result()
+2026-03-09 08:18:36:            ^^^^^^^^^^^^^^^
+2026-03-09 08:18:36:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\server.py", line 69, in serve
+2026-03-09 08:18:36:     await self._serve(sockets)
+2026-03-09 08:18:36:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\server.py", line 76, in _serve
+2026-03-09 08:18:36:     config.load()
+2026-03-09 08:18:36:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\config.py", line 434, in load
+2026-03-09 08:18:36:     self.loaded_app = import_from_string(self.app)
+2026-03-09 08:18:36:                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:18:36:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\importer.py", line 22, in import_from_string
+2026-03-09 08:18:36:     raise exc from None
+2026-03-09 08:18:36:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\importer.py", line 19, in import_from_string
+2026-03-09 08:18:36:     module = importlib.import_module(module_str)
+2026-03-09 08:18:36:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:18:36:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\importlib\__init__.py", line 90, in import_module
+2026-03-09 08:18:36:     return _bootstrap._gcd_import(name[level:], package, level)
+2026-03-09 08:18:36:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:18:36:   File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+2026-03-09 08:18:36:   File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+2026-03-09 08:18:36:   File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+2026-03-09 08:18:36:   File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+2026-03-09 08:18:36:   File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+2026-03-09 08:18:36:   File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+2026-03-09 08:18:36:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\main.py", line 79, in <module>
+2026-03-09 08:18:36:     from performance.router    import router as perf_router
+2026-03-09 08:18:36:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\performance\router.py", line 29, in <module>
+2026-03-09 08:18:36:     from .engine  import compute, compute_all, ASSET_PROFILES, TF_MULT
+2026-03-09 08:18:36: ModuleNotFoundError: No module named 'performance.engine'
+2026-03-09 08:18:42: Traceback (most recent call last):
+2026-03-09 08:18:42:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\ZARMOR_START.py", line 64, in <module>
+2026-03-09 08:18:42:     
+2026-03-09 08:18:42: uvicorn.run(
+2026-03-09 08:18:42: 
+2026-03-09 08:18:42:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\main.py", line 577, in run
+2026-03-09 08:18:42:     
+2026-03-09 08:18:42: server.run()
+2026-03-09 08:18:42: 
+2026-03-09 08:18:42:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\server.py", line 65, in run
+2026-03-09 08:18:42:     
+2026-03-09 08:18:42: return asyncio.run(self.serve(sockets=sockets))
+2026-03-09 08:18:42:  
+2026-03-09 08:18:42:       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:18:42:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 194, in run
+2026-03-09 08:18:42:     return runner.run(main)
+2026-03-09 08:18:42:            ^^^^^^^^^^^^^^^^
+2026-03-09 08:18:42:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+2026-03-09 08:18:42:     return self._loop.run_until_complete(task)
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: 
+2026-03-09 08:18:42:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 687, in run_until_complete
+2026-03-09 08:18:42:     
+2026-03-09 08:18:42: return future.result()
+2026-03-09 08:18:42: 
+2026-03-09 08:18:42:  
+2026-03-09 08:18:42:  
+2026-03-09 08:18:42:  
+2026-03-09 08:18:42:  
+2026-03-09 08:18:42:  
+2026-03-09 08:18:42:  
+2026-03-09 08:18:42:  
+2026-03-09 08:18:42:  
+2026-03-09 08:18:42:  
+2026-03-09 08:18:42:  
+2026-03-09 08:18:42:  
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^^^^^
+2026-03-09 08:18:42:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\server.py", line 69, in serve
+2026-03-09 08:18:42:     await self._serve(sockets)
+2026-03-09 08:18:42:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\server.py", line 76, in _serve
+2026-03-09 08:18:42:     config.load()
+2026-03-09 08:18:42:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\config.py", line 434, in load
+2026-03-09 08:18:42:     self.loaded_app = import_from_string(self.app)
+2026-03-09 08:18:42:                       ^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: 
+2026-03-09 08:18:42:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\importer.py", line 22, in import_from_string
+2026-03-09 08:18:42:     
+2026-03-09 08:18:42: raise exc from None
+2026-03-09 08:18:42: 
+2026-03-09 08:18:42:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\uvicorn\importer.py", line 19, in import_from_string
+2026-03-09 08:18:42:     
+2026-03-09 08:18:42: module = importlib.import_module(module_str)
+2026-03-09 08:18:42: 
+2026-03-09 08:18:42:  
+2026-03-09 08:18:42:  
+2026-03-09 08:18:42:  
+2026-03-09 08:18:42:  
+2026-03-09 08:18:42:  
+2026-03-09 08:18:42:  
+2026-03-09 08:18:42:  
+2026-03-09 08:18:42:  
+2026-03-09 08:18:42:  
+2026-03-09 08:18:42:  
+2026-03-09 08:18:42:  
+2026-03-09 08:18:42:  
+2026-03-09 08:18:42:  
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: ^
+2026-03-09 08:18:42: 
+2026-03-09 08:18:42:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\importlib\__init__.py", line 90, in import_module
+2026-03-09 08:18:42:     
+2026-03-09 08:18:42: return _bootstrap._gcd_import(name[level:], package, level)
+2026-03-09 08:18:42:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 08:18:42:   File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+2026-03-09 08:18:42:   File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+2026-03-09 08:18:42:   File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+2026-03-09 08:18:42:   File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+2026-03-09 08:18:42:   File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+2026-03-09 08:18:42:   File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+2026-03-09 08:18:42:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\main.py", line 79, in <module>
+2026-03-09 08:18:42:     from performance.router    import router as perf_router
+2026-03-09 08:18:42: 
+2026-03-09 08:18:42:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\performance\router.py", line 29, in <module>
+2026-03-09 08:18:42:     from .engine  import compute, compute_all, ASSET_PROFILES, TF_MULT
+2026-03-09 08:18:42: ModuleNotFoundError: No module named 'performance.engine'
+2026-03-09 08:22:43: INFO:     Started server process [6476]
+2026-03-09 08:22:43: INFO:     Waiting for application startup.
+2026-03-09 08:22:43: [PERF] snapshot save failed: Textual SQL expression '\n            INSERT INTO ...' should be explicitly declared as text('\n            INSERT INTO ...')
+2026-03-09 08:22:43: INFO:     Application startup complete.
+2026-03-09 08:22:43: INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-03-09 08:22:43: [PERF] snapshot save failed: Textual SQL expression '\n            INSERT INTO ...' should be explicitly declared as text('\n            INSERT INTO ...')
+2026-03-09 08:22:44: [PERF] snapshot save failed: Textual SQL expression '\n            INSERT INTO ...' should be explicitly declared as text('\n            INSERT INTO ...')
+2026-03-09 08:22:44: [PERF] snapshot save failed: Textual SQL expression '\n            INSERT INTO ...' should be explicitly declared as text('\n            INSERT INTO ...')
+2026-03-09 08:22:44: [PERF] snapshot save failed: Textual SQL expression '\n            INSERT INTO ...' should be explicitly declared as text('\n            INSERT INTO ...')
+2026-03-09 08:22:44: [PERF] snapshot save failed: Textual SQL expression '\n            INSERT INTO ...' should be explicitly declared as text('\n            INSERT INTO ...')
+2026-03-09 08:22:44: [PERF] snapshot save failed: Textual SQL expression '\n            INSERT INTO ...' should be explicitly declared as text('\n            INSERT INTO ...')
+2026-03-09 08:22:44: [PERF] snapshot save failed: Textual SQL expression '\n            INSERT INTO ...' should be explicitly declared as text('\n            INSERT INTO ...')
+2026-03-09 08:22:44: [PERF] snapshot save failed: Textual SQL expression '\n            INSERT INTO ...' should be explicitly declared as text('\n            INSERT INTO ...')
+2026-03-09 08:28:36: INFO:     Started server process [4632]
+2026-03-09 08:28:36: INFO:     Waiting for application startup.
+2026-03-09 08:28:36: [PERF] snapshot save failed: (psycopg2.errors.SyntaxError) syntax error at or near ":"
+2026-03-09 08:28:36: LINE 10:                0, 0, :sym_bd::jsonb, :daily_rets::jsonb,
+2026-03-09 08:28:36:                               ^
+2026-03-09 08:28:36: 
+2026-03-09 08:28:36: [SQL: 
+2026-03-09 08:28:36:             INSERT INTO performance_snapshots
+2026-03-09 08:28:36:               (account_id, period_days, sharpe, sortino, calmar, max_drawdown,
+2026-03-09 08:28:36:                win_rate, avg_rr, profit_factor, expectancy, annual_return,
+2026-03-09 08:28:36:                total_trades, total_pnl, symbol_breakdown, daily_returns,
+2026-03-09 08:28:36:                grades, computed_at)
+2026-03-09 08:28:36:             VALUES
+2026-03-09 08:28:36:               (%(account_id)s, %(period_days)s, %(sharpe)s, %(sortino)s, %(calmar)s, %(max_dd)s,
+2026-03-09 08:28:36:                %(win_rate)s, %(avg_rr)s, %(pf)s, %(expectancy)s, %(ann_return)s,
+2026-03-09 08:28:36:                %(total_trades)s, %(total_pnl)s, :sym_bd::jsonb, :daily_rets::jsonb,
+2026-03-09 08:28:36:                :grades::jsonb, NOW())
+2026-03-09 08:28:36:             ON CONFLICT (account_id, period_days)
+2026-03-09 08:28:36:             DO UPDATE SET
+2026-03-09 08:28:36:               sharpe           = EXCLUDED.sharpe,
+2026-03-09 08:28:36:               sortino          = EXCLUDED.sortino,
+2026-03-09 08:28:36:               calmar           = EXCLUDED.calmar,
+2026-03-09 08:28:36:               max_drawdown     = EXCLUDED.max_drawdown,
+2026-03-09 08:28:36:               win_rate         = EXCLUDED.win_rate,
+2026-03-09 08:28:36:               avg_rr           = EXCLUDED.avg_rr,
+2026-03-09 08:28:36:               profit_factor    = EXCLUDED.profit_factor,
+2026-03-09 08:28:36:               expectancy       = EXCLUDED.expectancy,
+2026-03-09 08:28:36:               annual_return    = EXCLUDED.annual_return,
+2026-03-09 08:28:36:               total_trades     = EXCLUDED.total_trades,
+2026-03-09 08:28:36:               total_pnl        = EXCLUDED.total_pnl,
+2026-03-09 08:28:36:               symbol_breakdown = EXCLUDED.symbol_breakdown,
+2026-03-09 08:28:36:               daily_returns    = EXCLUDED.daily_returns,
+2026-03-09 08:28:36:               grades           = EXCLUDED.grades,
+2026-03-09 08:28:36:               computed_at      = NOW()
+2026-03-09 08:28:36:         ]
+2026-03-09 08:28:36: [parameters: {'account_id': '413408416', 'period_days': 7, 'sharpe': None, 'sortino': None, 'calmar': None, 'max_dd': None, 'win_rate': None, 'avg_rr': None, 'pf': None, 'expectancy': None, 'ann_return': None, 'total_trades': 0, 'total_pnl': 0}]
+2026-03-09 08:28:36: (Background on this error at: https://sqlalche.me/e/20/f405)
+2026-03-09 08:28:36: INFO:     Application startup complete.
+2026-03-09 08:28:36: INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-03-09 08:28:36: [PERF] snapshot save failed: (psycopg2.errors.SyntaxError) syntax error at or near ":"
+2026-03-09 08:28:36: LINE 10:                0, 0, :sym_bd::jsonb, :daily_rets::jsonb,
+2026-03-09 08:28:36:                               ^
+2026-03-09 08:28:36: 
+2026-03-09 08:28:36: [SQL: 
+2026-03-09 08:28:36:             INSERT INTO performance_snapshots
+2026-03-09 08:28:36:               (account_id, period_days, sharpe, sortino, calmar, max_drawdown,
+2026-03-09 08:28:36:                win_rate, avg_rr, profit_factor, expectancy, annual_return,
+2026-03-09 08:28:36:                total_trades, total_pnl, symbol_breakdown, daily_returns,
+2026-03-09 08:28:36:                grades, computed_at)
+2026-03-09 08:28:36:             VALUES
+2026-03-09 08:28:36:               (%(account_id)s, %(period_days)s, %(sharpe)s, %(sortino)s, %(calmar)s, %(max_dd)s,
+2026-03-09 08:28:36:                %(win_rate)s, %(avg_rr)s, %(pf)s, %(expectancy)s, %(ann_return)s,
+2026-03-09 08:28:36:                %(total_trades)s, %(total_pnl)s, :sym_bd::jsonb, :daily_rets::jsonb,
+2026-03-09 08:28:36:                :grades::jsonb, NOW())
+2026-03-09 08:28:36:             ON CONFLICT (account_id, period_days)
+2026-03-09 08:28:36:             DO UPDATE SET
+2026-03-09 08:28:36:               sharpe           = EXCLUDED.sharpe,
+2026-03-09 08:28:36:               sortino          = EXCLUDED.sortino,
+2026-03-09 08:28:36:               calmar           = EXCLUDED.calmar,
+2026-03-09 08:28:36:               max_drawdown     = EXCLUDED.max_drawdown,
+2026-03-09 08:28:36:               win_rate         = EXCLUDED.win_rate,
+2026-03-09 08:28:36:               avg_rr           = EXCLUDED.avg_rr,
+2026-03-09 08:28:36:               profit_factor    = EXCLUDED.profit_factor,
+2026-03-09 08:28:36:               expectancy       = EXCLUDED.expectancy,
+2026-03-09 08:28:36:               annual_return    = EXCLUDED.annual_return,
+2026-03-09 08:28:36:               total_trades     = EXCLUDED.total_trades,
+2026-03-09 08:28:36:               total_pnl        = EXCLUDED.total_pnl,
+2026-03-09 08:28:36:               symbol_breakdown = EXCLUDED.symbol_breakdown,
+2026-03-09 08:28:36:               daily_returns    = EXCLUDED.daily_returns,
+2026-03-09 08:28:36:               grades           = EXCLUDED.grades,
+2026-03-09 08:28:36:               computed_at      = NOW()
+2026-03-09 08:28:36:         ]
+2026-03-09 08:28:36: [parameters: {'account_id': '413408416', 'period_days': 30, 'sharpe': None, 'sortino': None, 'calmar': None, 'max_dd': None, 'win_rate': None, 'avg_rr': None, 'pf': None, 'expectancy': None, 'ann_return': None, 'total_trades': 0, 'total_pnl': 0}]
+2026-03-09 08:28:36: (Background on this error at: https://sqlalche.me/e/20/f405)
+2026-03-09 08:28:36: [PERF] snapshot save failed: (psycopg2.errors.SyntaxError) syntax error at or near ":"
+2026-03-09 08:28:36: LINE 10:                0, 0, :sym_bd::jsonb, :daily_rets::jsonb,
+2026-03-09 08:28:36:                               ^
+2026-03-09 08:28:36: 
+2026-03-09 08:28:36: [SQL: 
+2026-03-09 08:28:36:             INSERT INTO performance_snapshots
+2026-03-09 08:28:36:               (account_id, period_days, sharpe, sortino, calmar, max_drawdown,
+2026-03-09 08:28:36:                win_rate, avg_rr, profit_factor, expectancy, annual_return,
+2026-03-09 08:28:36:                total_trades, total_pnl, symbol_breakdown, daily_returns,
+2026-03-09 08:28:36:                grades, computed_at)
+2026-03-09 08:28:36:             VALUES
+2026-03-09 08:28:36:               (%(account_id)s, %(period_days)s, %(sharpe)s, %(sortino)s, %(calmar)s, %(max_dd)s,
+2026-03-09 08:28:36:                %(win_rate)s, %(avg_rr)s, %(pf)s, %(expectancy)s, %(ann_return)s,
+2026-03-09 08:28:36:                %(total_trades)s, %(total_pnl)s, :sym_bd::jsonb, :daily_rets::jsonb,
+2026-03-09 08:28:36:                :grades::jsonb, NOW())
+2026-03-09 08:28:36:             ON CONFLICT (account_id, period_days)
+2026-03-09 08:28:36:             DO UPDATE SET
+2026-03-09 08:28:36:               sharpe           = EXCLUDED.sharpe,
+2026-03-09 08:28:36:               sortino          = EXCLUDED.sortino,
+2026-03-09 08:28:36:               calmar           = EXCLUDED.calmar,
+2026-03-09 08:28:36:               max_drawdown     = EXCLUDED.max_drawdown,
+2026-03-09 08:28:36:               win_rate         = EXCLUDED.win_rate,
+2026-03-09 08:28:36:               avg_rr           = EXCLUDED.avg_rr,
+2026-03-09 08:28:36:               profit_factor    = EXCLUDED.profit_factor,
+2026-03-09 08:28:36:               expectancy       = EXCLUDED.expectancy,
+2026-03-09 08:28:36:               annual_return    = EXCLUDED.annual_return,
+2026-03-09 08:28:36:               total_trades     = EXCLUDED.total_trades,
+2026-03-09 08:28:36:               total_pnl        = EXCLUDED.total_pnl,
+2026-03-09 08:28:36:               symbol_breakdown = EXCLUDED.symbol_breakdown,
+2026-03-09 08:28:36:               daily_returns    = EXCLUDED.daily_returns,
+2026-03-09 08:28:36:               grades           = EXCLUDED.grades,
+2026-03-09 08:28:36:               computed_at      = NOW()
+2026-03-09 08:28:36:         ]
+2026-03-09 08:28:36: [parameters: {'account_id': '413408416', 'period_days': 90, 'sharpe': None, 'sortino': None, 'calmar': None, 'max_dd': None, 'win_rate': None, 'avg_rr': None, 'pf': None, 'expectancy': None, 'ann_return': None, 'total_trades': 0, 'total_pnl': 0}]
+2026-03-09 08:28:36: (Background on this error at: https://sqlalche.me/e/20/f405)
+2026-03-09 08:28:36: [PERF] snapshot save failed: (psycopg2.errors.SyntaxError) syntax error at or near ":"
+2026-03-09 08:28:36: LINE 10:                0, 0, :sym_bd::jsonb, :daily_rets::jsonb,
+2026-03-09 08:28:36:                               ^
+2026-03-09 08:28:36: 
+2026-03-09 08:28:36: [SQL: 
+2026-03-09 08:28:36:             INSERT INTO performance_snapshots
+2026-03-09 08:28:36:               (account_id, period_days, sharpe, sortino, calmar, max_drawdown,
+2026-03-09 08:28:36:                win_rate, avg_rr, profit_factor, expectancy, annual_return,
+2026-03-09 08:28:36:                total_trades, total_pnl, symbol_breakdown, daily_returns,
+2026-03-09 08:28:36:                grades, computed_at)
+2026-03-09 08:28:36:             VALUES
+2026-03-09 08:28:36:               (%(account_id)s, %(period_days)s, %(sharpe)s, %(sortino)s, %(calmar)s, %(max_dd)s,
+2026-03-09 08:28:36:                %(win_rate)s, %(avg_rr)s, %(pf)s, %(expectancy)s, %(ann_return)s,
+2026-03-09 08:28:36:                %(total_trades)s, %(total_pnl)s, :sym_bd::jsonb, :daily_rets::jsonb,
+2026-03-09 08:28:36:                :grades::jsonb, NOW())
+2026-03-09 08:28:36:             ON CONFLICT (account_id, period_days)
+2026-03-09 08:28:36:             DO UPDATE SET
+2026-03-09 08:28:36:               sharpe           = EXCLUDED.sharpe,
+2026-03-09 08:28:36:               sortino          = EXCLUDED.sortino,
+2026-03-09 08:28:36:               calmar           = EXCLUDED.calmar,
+2026-03-09 08:28:36:               max_drawdown     = EXCLUDED.max_drawdown,
+2026-03-09 08:28:36:               win_rate         = EXCLUDED.win_rate,
+2026-03-09 08:28:36:               avg_rr           = EXCLUDED.avg_rr,
+2026-03-09 08:28:36:               profit_factor    = EXCLUDED.profit_factor,
+2026-03-09 08:28:36:               expectancy       = EXCLUDED.expectancy,
+2026-03-09 08:28:36:               annual_return    = EXCLUDED.annual_return,
+2026-03-09 08:28:36:               total_trades     = EXCLUDED.total_trades,
+2026-03-09 08:28:36:               total_pnl        = EXCLUDED.total_pnl,
+2026-03-09 08:28:36:               symbol_breakdown = EXCLUDED.symbol_breakdown,
+2026-03-09 08:28:36:               daily_returns    = EXCLUDED.daily_returns,
+2026-03-09 08:28:36:               grades           = EXCLUDED.grades,
+2026-03-09 08:28:36:               computed_at      = NOW()
+2026-03-09 08:28:36:         ]
+2026-03-09 08:28:36: [parameters: {'account_id': '413408816', 'period_days': 7, 'sharpe': None, 'sortino': None, 'calmar': None, 'max_dd': None, 'win_rate': None, 'avg_rr': None, 'pf': None, 'expectancy': None, 'ann_return': None, 'total_trades': 0, 'total_pnl': 0}]
+2026-03-09 08:28:36: (Background on this error at: https://sqlalche.me/e/20/f405)
+2026-03-09 08:28:36: [PERF] snapshot save failed: (psycopg2.errors.SyntaxError) syntax error at or near ":"
+2026-03-09 08:28:36: LINE 10:                0, 0, :sym_bd::jsonb, :daily_rets::jsonb,
+2026-03-09 08:28:36:                               ^
+2026-03-09 08:28:36: 
+2026-03-09 08:28:36: [SQL: 
+2026-03-09 08:28:36:             INSERT INTO performance_snapshots
+2026-03-09 08:28:36:               (account_id, period_days, sharpe, sortino, calmar, max_drawdown,
+2026-03-09 08:28:36:                win_rate, avg_rr, profit_factor, expectancy, annual_return,
+2026-03-09 08:28:36:                total_trades, total_pnl, symbol_breakdown, daily_returns,
+2026-03-09 08:28:36:                grades, computed_at)
+2026-03-09 08:28:36:             VALUES
+2026-03-09 08:28:36:               (%(account_id)s, %(period_days)s, %(sharpe)s, %(sortino)s, %(calmar)s, %(max_dd)s,
+2026-03-09 08:28:36:                %(win_rate)s, %(avg_rr)s, %(pf)s, %(expectancy)s, %(ann_return)s,
+2026-03-09 08:28:36:                %(total_trades)s, %(total_pnl)s, :sym_bd::jsonb, :daily_rets::jsonb,
+2026-03-09 08:28:36:                :grades::jsonb, NOW())
+2026-03-09 08:28:36:             ON CONFLICT (account_id, period_days)
+2026-03-09 08:28:36:             DO UPDATE SET
+2026-03-09 08:28:36:               sharpe           = EXCLUDED.sharpe,
+2026-03-09 08:28:36:               sortino          = EXCLUDED.sortino,
+2026-03-09 08:28:36:               calmar           = EXCLUDED.calmar,
+2026-03-09 08:28:36:               max_drawdown     = EXCLUDED.max_drawdown,
+2026-03-09 08:28:36:               win_rate         = EXCLUDED.win_rate,
+2026-03-09 08:28:36:               avg_rr           = EXCLUDED.avg_rr,
+2026-03-09 08:28:36:               profit_factor    = EXCLUDED.profit_factor,
+2026-03-09 08:28:36:               expectancy       = EXCLUDED.expectancy,
+2026-03-09 08:28:36:               annual_return    = EXCLUDED.annual_return,
+2026-03-09 08:28:36:               total_trades     = EXCLUDED.total_trades,
+2026-03-09 08:28:36:               total_pnl        = EXCLUDED.total_pnl,
+2026-03-09 08:28:36:               symbol_breakdown = EXCLUDED.symbol_breakdown,
+2026-03-09 08:28:36:               daily_returns    = EXCLUDED.daily_returns,
+2026-03-09 08:28:36:               grades           = EXCLUDED.grades,
+2026-03-09 08:28:36:               computed_at      = NOW()
+2026-03-09 08:28:36:         ]
+2026-03-09 08:28:36: [parameters: {'account_id': '413408816', 'period_days': 30, 'sharpe': None, 'sortino': None, 'calmar': None, 'max_dd': None, 'win_rate': None, 'avg_rr': None, 'pf': None, 'expectancy': None, 'ann_return': None, 'total_trades': 0, 'total_pnl': 0}]
+2026-03-09 08:28:36: (Background on this error at: https://sqlalche.me/e/20/f405)
+2026-03-09 08:28:36: [PERF] snapshot save failed: (psycopg2.errors.SyntaxError) syntax error at or near ":"
+2026-03-09 08:28:36: LINE 10:                0, 0, :sym_bd::jsonb, :daily_rets::jsonb,
+2026-03-09 08:28:36:                               ^
+2026-03-09 08:28:36: 
+2026-03-09 08:28:36: [SQL: 
+2026-03-09 08:28:36:             INSERT INTO performance_snapshots
+2026-03-09 08:28:36:               (account_id, period_days, sharpe, sortino, calmar, max_drawdown,
+2026-03-09 08:28:36:                win_rate, avg_rr, profit_factor, expectancy, annual_return,
+2026-03-09 08:28:36:                total_trades, total_pnl, symbol_breakdown, daily_returns,
+2026-03-09 08:28:36:                grades, computed_at)
+2026-03-09 08:28:36:             VALUES
+2026-03-09 08:28:36:               (%(account_id)s, %(period_days)s, %(sharpe)s, %(sortino)s, %(calmar)s, %(max_dd)s,
+2026-03-09 08:28:36:                %(win_rate)s, %(avg_rr)s, %(pf)s, %(expectancy)s, %(ann_return)s,
+2026-03-09 08:28:36:                %(total_trades)s, %(total_pnl)s, :sym_bd::jsonb, :daily_rets::jsonb,
+2026-03-09 08:28:36:                :grades::jsonb, NOW())
+2026-03-09 08:28:36:             ON CONFLICT (account_id, period_days)
+2026-03-09 08:28:36:             DO UPDATE SET
+2026-03-09 08:28:36:               sharpe           = EXCLUDED.sharpe,
+2026-03-09 08:28:36:               sortino          = EXCLUDED.sortino,
+2026-03-09 08:28:36:               calmar           = EXCLUDED.calmar,
+2026-03-09 08:28:36:               max_drawdown     = EXCLUDED.max_drawdown,
+2026-03-09 08:28:36:               win_rate         = EXCLUDED.win_rate,
+2026-03-09 08:28:36:               avg_rr           = EXCLUDED.avg_rr,
+2026-03-09 08:28:36:               profit_factor    = EXCLUDED.profit_factor,
+2026-03-09 08:28:36:               expectancy       = EXCLUDED.expectancy,
+2026-03-09 08:28:36:               annual_return    = EXCLUDED.annual_return,
+2026-03-09 08:28:36:               total_trades     = EXCLUDED.total_trades,
+2026-03-09 08:28:36:               total_pnl        = EXCLUDED.total_pnl,
+2026-03-09 08:28:36:               symbol_breakdown = EXCLUDED.symbol_breakdown,
+2026-03-09 08:28:36:               daily_returns    = EXCLUDED.daily_returns,
+2026-03-09 08:28:36:               grades           = EXCLUDED.grades,
+2026-03-09 08:28:36:               computed_at      = NOW()
+2026-03-09 08:28:36:         ]
+2026-03-09 08:28:36: [parameters: {'account_id': '413408816', 'period_days': 90, 'sharpe': None, 'sortino': None, 'calmar': None, 'max_dd': None, 'win_rate': None, 'avg_rr': None, 'pf': None, 'expectancy': None, 'ann_return': None, 'total_trades': 0, 'total_pnl': 0}]
+2026-03-09 08:28:36: (Background on this error at: https://sqlalche.me/e/20/f405)
+2026-03-09 08:28:37: [PERF] snapshot save failed: (psycopg2.errors.SyntaxError) syntax error at or near ":"
+2026-03-09 08:28:37: LINE 10:                0, 0, :sym_bd::jsonb, :daily_rets::jsonb,
+2026-03-09 08:28:37:                               ^
+2026-03-09 08:28:37: 
+2026-03-09 08:28:37: [SQL: 
+2026-03-09 08:28:37:             INSERT INTO performance_snapshots
+2026-03-09 08:28:37:               (account_id, period_days, sharpe, sortino, calmar, max_drawdown,
+2026-03-09 08:28:37:                win_rate, avg_rr, profit_factor, expectancy, annual_return,
+2026-03-09 08:28:37:                total_trades, total_pnl, symbol_breakdown, daily_returns,
+2026-03-09 08:28:37:                grades, computed_at)
+2026-03-09 08:28:37:             VALUES
+2026-03-09 08:28:37:               (%(account_id)s, %(period_days)s, %(sharpe)s, %(sortino)s, %(calmar)s, %(max_dd)s,
+2026-03-09 08:28:37:                %(win_rate)s, %(avg_rr)s, %(pf)s, %(expectancy)s, %(ann_return)s,
+2026-03-09 08:28:37:                %(total_trades)s, %(total_pnl)s, :sym_bd::jsonb, :daily_rets::jsonb,
+2026-03-09 08:28:37:                :grades::jsonb, NOW())
+2026-03-09 08:28:37:             ON CONFLICT (account_id, period_days)
+2026-03-09 08:28:37:             DO UPDATE SET
+2026-03-09 08:28:37:               sharpe           = EXCLUDED.sharpe,
+2026-03-09 08:28:37:               sortino          = EXCLUDED.sortino,
+2026-03-09 08:28:37:               calmar           = EXCLUDED.calmar,
+2026-03-09 08:28:37:               max_drawdown     = EXCLUDED.max_drawdown,
+2026-03-09 08:28:37:               win_rate         = EXCLUDED.win_rate,
+2026-03-09 08:28:37:               avg_rr           = EXCLUDED.avg_rr,
+2026-03-09 08:28:37:               profit_factor    = EXCLUDED.profit_factor,
+2026-03-09 08:28:37:               expectancy       = EXCLUDED.expectancy,
+2026-03-09 08:28:37:               annual_return    = EXCLUDED.annual_return,
+2026-03-09 08:28:37:               total_trades     = EXCLUDED.total_trades,
+2026-03-09 08:28:37:               total_pnl        = EXCLUDED.total_pnl,
+2026-03-09 08:28:37:               symbol_breakdown = EXCLUDED.symbol_breakdown,
+2026-03-09 08:28:37:               daily_returns    = EXCLUDED.daily_returns,
+2026-03-09 08:28:37:               grades           = EXCLUDED.grades,
+2026-03-09 08:28:37:               computed_at      = NOW()
+2026-03-09 08:28:37:         ]
+2026-03-09 08:28:37: [parameters: {'account_id': '413408813', 'period_days': 7, 'sharpe': None, 'sortino': None, 'calmar': None, 'max_dd': None, 'win_rate': None, 'avg_rr': None, 'pf': None, 'expectancy': None, 'ann_return': None, 'total_trades': 0, 'total_pnl': 0}]
+2026-03-09 08:28:37: (Background on this error at: https://sqlalche.me/e/20/f405)
+2026-03-09 08:28:37: [PERF] snapshot save failed: (psycopg2.errors.SyntaxError) syntax error at or near ":"
+2026-03-09 08:28:37: LINE 10:                0, 0, :sym_bd::jsonb, :daily_rets::jsonb,
+2026-03-09 08:28:37:                               ^
+2026-03-09 08:28:37: 
+2026-03-09 08:28:37: [SQL: 
+2026-03-09 08:28:37:             INSERT INTO performance_snapshots
+2026-03-09 08:28:37:               (account_id, period_days, sharpe, sortino, calmar, max_drawdown,
+2026-03-09 08:28:37:                win_rate, avg_rr, profit_factor, expectancy, annual_return,
+2026-03-09 08:28:37:                total_trades, total_pnl, symbol_breakdown, daily_returns,
+2026-03-09 08:28:37:                grades, computed_at)
+2026-03-09 08:28:37:             VALUES
+2026-03-09 08:28:37:               (%(account_id)s, %(period_days)s, %(sharpe)s, %(sortino)s, %(calmar)s, %(max_dd)s,
+2026-03-09 08:28:37:                %(win_rate)s, %(avg_rr)s, %(pf)s, %(expectancy)s, %(ann_return)s,
+2026-03-09 08:28:37:                %(total_trades)s, %(total_pnl)s, :sym_bd::jsonb, :daily_rets::jsonb,
+2026-03-09 08:28:37:                :grades::jsonb, NOW())
+2026-03-09 08:28:37:             ON CONFLICT (account_id, period_days)
+2026-03-09 08:28:37:             DO UPDATE SET
+2026-03-09 08:28:37:               sharpe           = EXCLUDED.sharpe,
+2026-03-09 08:28:37:               sortino          = EXCLUDED.sortino,
+2026-03-09 08:28:37:               calmar           = EXCLUDED.calmar,
+2026-03-09 08:28:37:               max_drawdown     = EXCLUDED.max_drawdown,
+2026-03-09 08:28:37:               win_rate         = EXCLUDED.win_rate,
+2026-03-09 08:28:37:               avg_rr           = EXCLUDED.avg_rr,
+2026-03-09 08:28:37:               profit_factor    = EXCLUDED.profit_factor,
+2026-03-09 08:28:37:               expectancy       = EXCLUDED.expectancy,
+2026-03-09 08:28:37:               annual_return    = EXCLUDED.annual_return,
+2026-03-09 08:28:37:               total_trades     = EXCLUDED.total_trades,
+2026-03-09 08:28:37:               total_pnl        = EXCLUDED.total_pnl,
+2026-03-09 08:28:37:               symbol_breakdown = EXCLUDED.symbol_breakdown,
+2026-03-09 08:28:37:               daily_returns    = EXCLUDED.daily_returns,
+2026-03-09 08:28:37:               grades           = EXCLUDED.grades,
+2026-03-09 08:28:37:               computed_at      = NOW()
+2026-03-09 08:28:37:         ]
+2026-03-09 08:28:37: [parameters: {'account_id': '413408813', 'period_days': 30, 'sharpe': None, 'sortino': None, 'calmar': None, 'max_dd': None, 'win_rate': None, 'avg_rr': None, 'pf': None, 'expectancy': None, 'ann_return': None, 'total_trades': 0, 'total_pnl': 0}]
+2026-03-09 08:28:37: (Background on this error at: https://sqlalche.me/e/20/f405)
+2026-03-09 08:28:37: [PERF] snapshot save failed: (psycopg2.errors.SyntaxError) syntax error at or near ":"
+2026-03-09 08:28:37: LINE 10:                0, 0, :sym_bd::jsonb, :daily_rets::jsonb,
+2026-03-09 08:28:37:                               ^
+2026-03-09 08:28:37: 
+2026-03-09 08:28:37: [SQL: 
+2026-03-09 08:28:37:             INSERT INTO performance_snapshots
+2026-03-09 08:28:37:               (account_id, period_days, sharpe, sortino, calmar, max_drawdown,
+2026-03-09 08:28:37:                win_rate, avg_rr, profit_factor, expectancy, annual_return,
+2026-03-09 08:28:37:                total_trades, total_pnl, symbol_breakdown, daily_returns,
+2026-03-09 08:28:37:                grades, computed_at)
+2026-03-09 08:28:37:             VALUES
+2026-03-09 08:28:37:               (%(account_id)s, %(period_days)s, %(sharpe)s, %(sortino)s, %(calmar)s, %(max_dd)s,
+2026-03-09 08:28:37:                %(win_rate)s, %(avg_rr)s, %(pf)s, %(expectancy)s, %(ann_return)s,
+2026-03-09 08:28:37:                %(total_trades)s, %(total_pnl)s, :sym_bd::jsonb, :daily_rets::jsonb,
+2026-03-09 08:28:37:                :grades::jsonb, NOW())
+2026-03-09 08:28:37:             ON CONFLICT (account_id, period_days)
+2026-03-09 08:28:37:             DO UPDATE SET
+2026-03-09 08:28:37:               sharpe           = EXCLUDED.sharpe,
+2026-03-09 08:28:37:               sortino          = EXCLUDED.sortino,
+2026-03-09 08:28:37:               calmar           = EXCLUDED.calmar,
+2026-03-09 08:28:37:               max_drawdown     = EXCLUDED.max_drawdown,
+2026-03-09 08:28:37:               win_rate         = EXCLUDED.win_rate,
+2026-03-09 08:28:37:               avg_rr           = EXCLUDED.avg_rr,
+2026-03-09 08:28:37:               profit_factor    = EXCLUDED.profit_factor,
+2026-03-09 08:28:37:               expectancy       = EXCLUDED.expectancy,
+2026-03-09 08:28:37:               annual_return    = EXCLUDED.annual_return,
+2026-03-09 08:28:37:               total_trades     = EXCLUDED.total_trades,
+2026-03-09 08:28:37:               total_pnl        = EXCLUDED.total_pnl,
+2026-03-09 08:28:37:               symbol_breakdown = EXCLUDED.symbol_breakdown,
+2026-03-09 08:28:37:               daily_returns    = EXCLUDED.daily_returns,
+2026-03-09 08:28:37:               grades           = EXCLUDED.grades,
+2026-03-09 08:28:37:               computed_at      = NOW()
+2026-03-09 08:28:37:         ]
+2026-03-09 08:28:37: [parameters: {'account_id': '413408813', 'period_days': 90, 'sharpe': None, 'sortino': None, 'calmar': None, 'max_dd': None, 'win_rate': None, 'avg_rr': None, 'pf': None, 'expectancy': None, 'ann_return': None, 'total_trades': 0, 'total_pnl': 0}]
+2026-03-09 08:28:37: (Background on this error at: https://sqlalche.me/e/20/f405)
+2026-03-09 08:34:51: INFO:     Started server process [6840]
+2026-03-09 08:34:51: INFO:     Waiting for application startup.
+2026-03-09 08:34:52: INFO:     Application startup complete.
+2026-03-09 08:34:52: INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-03-09 08:48:45: INFO:     Started server process [1844]
+2026-03-09 08:48:45: INFO:     Waiting for application startup.
+2026-03-09 08:48:45: INFO:     Application startup complete.
+2026-03-09 08:48:45: INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-03-09 09:18:47: [LABELER] Pipeline error: (psycopg2.errors.UndefinedColumn) column rs.user_email does not exist
+2026-03-09 09:18:47: LINE 4: ...      rs.confidence, rs.breakdown, rs.created_at, rs.user_em...
+2026-03-09 09:18:47:                                                              ^
+2026-03-09 09:18:47: 
+2026-03-09 09:18:47: [SQL: 
+2026-03-09 09:18:47:             SELECT rs.scan_id, rs.asset, rs.timeframe,
+2026-03-09 09:18:47:                    rs.utc_hour, rs.utc_dow, rs.score, rs.regime,
+2026-03-09 09:18:47:                    rs.confidence, rs.breakdown, rs.created_at, rs.user_email
+2026-03-09 09:18:47:             FROM radar_scans rs
+2026-03-09 09:18:47:             LEFT JOIN labeled_scans ls ON rs.scan_id = ls.scan_id
+2026-03-09 09:18:47:             WHERE ls.scan_id IS NULL
+2026-03-09 09:18:47:               AND rs.created_at < NOW() - INTERVAL '3 hours'  -- đủ thời gian để trade có outcome
+2026-03-09 09:18:47:             ORDER BY rs.created_at DESC
+2026-03-09 09:18:47:             LIMIT %(limit)s
+2026-03-09 09:18:47:         ]
+2026-03-09 09:18:47: [parameters: {'limit': 1000}]
+2026-03-09 09:18:47: (Background on this error at: https://sqlalche.me/e/20/f405)
+2026-03-09 09:18:47: Traceback (most recent call last):
+2026-03-09 09:18:47:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+2026-03-09 09:18:47:     self.dialect.do_execute(
+2026-03-09 09:18:47:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\sqlalchemy\engine\default.py", line 941, in do_execute
+2026-03-09 09:18:47:     cursor.execute(statement, parameters)
+2026-03-09 09:18:47: psycopg2.errors.UndefinedColumn: column rs.user_email does not exist
+2026-03-09 09:18:47: LINE 4: ...      rs.confidence, rs.breakdown, rs.created_at, rs.user_em...
+2026-03-09 09:18:47:                                                              ^
+2026-03-09 09:18:47: 
+2026-03-09 09:18:47: 
+2026-03-09 09:18:47: The above exception was the direct cause of the following exception:
+2026-03-09 09:18:47: 
+2026-03-09 09:18:47: Traceback (most recent call last):
+2026-03-09 09:18:47:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\ml\labeler.py", line 57, in label_unlabeled_scans
+2026-03-09 09:18:47:     rows = db.execute(text("""
+2026-03-09 09:18:47:            ^^^^^^^^^^^^^^^^^^^
+2026-03-09 09:18:47:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\sqlalchemy\orm\session.py", line 2362, in execute
+2026-03-09 09:18:47:     return self._execute_internal(
+2026-03-09 09:18:47:            ^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 09:18:47:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\sqlalchemy\orm\session.py", line 2256, in _execute_internal
+2026-03-09 09:18:47:     result = conn.execute(
+2026-03-09 09:18:47:              ^^^^^^^^^^^^^
+2026-03-09 09:18:47:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\sqlalchemy\engine\base.py", line 1418, in execute
+2026-03-09 09:18:47:     return meth(
+2026-03-09 09:18:47:            ^^^^^
+2026-03-09 09:18:47:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\sqlalchemy\sql\elements.py", line 515, in _execute_on_connection
+2026-03-09 09:18:47:     return connection._execute_clauseelement(
+2026-03-09 09:18:47:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 09:18:47:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\sqlalchemy\engine\base.py", line 1640, in _execute_clauseelement
+2026-03-09 09:18:47:     ret = self._execute_context(
+2026-03-09 09:18:47:           ^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 09:18:47:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+2026-03-09 09:18:47:     return self._exec_single_context(
+2026-03-09 09:18:47:            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 09:18:47:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+2026-03-09 09:18:47:     self._handle_dbapi_exception(
+2026-03-09 09:18:47:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\sqlalchemy\engine\base.py", line 2355, in _handle_dbapi_exception
+2026-03-09 09:18:47:     raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+2026-03-09 09:18:47:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+2026-03-09 09:18:47:     self.dialect.do_execute(
+2026-03-09 09:18:47:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\sqlalchemy\engine\default.py", line 941, in do_execute
+2026-03-09 09:18:47:     cursor.execute(statement, parameters)
+2026-03-09 09:18:47: sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column rs.user_email does not exist
+2026-03-09 09:18:47: LINE 4: ...      rs.confidence, rs.breakdown, rs.created_at, rs.user_em...
+2026-03-09 09:18:47:                                                              ^
+2026-03-09 09:18:47: 
+2026-03-09 09:18:47: [SQL: 
+2026-03-09 09:18:47:             SELECT rs.scan_id, rs.asset, rs.timeframe,
+2026-03-09 09:18:47:                    rs.utc_hour, rs.utc_dow, rs.score, rs.regime,
+2026-03-09 09:18:47:                    rs.confidence, rs.breakdown, rs.created_at, rs.user_email
+2026-03-09 09:18:47:             FROM radar_scans rs
+2026-03-09 09:18:47:             LEFT JOIN labeled_scans ls ON rs.scan_id = ls.scan_id
+2026-03-09 09:18:47:             WHERE ls.scan_id IS NULL
+2026-03-09 09:18:47:               AND rs.created_at < NOW() - INTERVAL '3 hours'  -- đủ thời gian để trade có outcome
+2026-03-09 09:18:47:             ORDER BY rs.created_at DESC
+2026-03-09 09:18:47:             LIMIT %(limit)s
+2026-03-09 09:18:47:         ]
+2026-03-09 09:18:47: [parameters: {'limit': 1000}]
+2026-03-09 09:18:47: (Background on this error at: https://sqlalche.me/e/20/f405)
+2026-03-09 09:18:47: [TRAINER] Not enough labeled data: 0 samples (need 50)
+2026-03-09 10:27:36: WARNING:  Invalid HTTP request received.
+2026-03-09 10:29:09: WARNING:  Invalid HTTP request received.
+2026-03-09 10:29:36: WARNING:  Invalid HTTP request received.
+2026-03-09 10:33:19: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 10:33:19: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 10:33:19: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 10:33:19: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 10:33:19: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 10:33:19: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 10:33:19: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 10:33:19: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 10:33:19: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 10:33:19: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 10:33:19: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 10:33:19: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 10:33:28: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 10:33:28: [RADAR] DB insert failed: Textual SQL expression '\n            INSERT INTO ...' should be explicitly declared as text('\n            INSERT INTO ...')
+2026-03-09 10:33:29: Task exception was never retrieved
+2026-03-09 10:33:29: future: <Task finished name='Task-651' coro=<send_radar_report_email() done, defined at C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\email_service.py:175> exception=ValueError("invalid literal for int() with base 10: 'fallback'")>
+2026-03-09 10:33:29: Traceback (most recent call last):
+2026-03-09 10:33:29:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\email_service.py", line 227, in send_radar_report_email
+2026-03-09 10:33:29:     bd_rows = "".join(
+2026-03-09 10:33:29:               ^^^^^^^^
+2026-03-09 10:33:29:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\email_service.py", line 231, in <genexpr>
+2026-03-09 10:33:29:     f"border-bottom:1px solid #0d0f14;'>{int(v)}/100</td></tr>"
+2026-03-09 10:33:29:                                          ^^^^^^
+2026-03-09 10:33:29: ValueError: invalid literal for int() with base 10: 'fallback'
+2026-03-09 11:04:18: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 11:04:18: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 11:04:18: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 11:04:18: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 11:04:18: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 11:04:18: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 11:04:18: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 11:04:18: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 11:04:18: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 11:04:18: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 11:04:18: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 11:04:18: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 11:41:32: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 11:41:32: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 11:41:32: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 11:41:32: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 11:41:32: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 11:41:32: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 11:41:32: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 11:41:32: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 11:41:32: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 11:41:32: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 11:41:32: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 11:41:32: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 11:51:32: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 11:51:32: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 11:51:32: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 11:51:32: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 11:51:32: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 11:51:32: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 11:51:32: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 11:51:32: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 11:51:32: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 11:51:32: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 11:51:32: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 11:51:32: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 12:01:32: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 12:01:32: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 12:01:32: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 12:01:32: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 12:01:32: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 12:01:32: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 12:01:32: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 12:01:32: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 12:01:32: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 12:01:32: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 12:01:32: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 12:01:32: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 12:11:32: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 12:11:32: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 12:11:32: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 12:11:32: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 12:11:32: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 12:11:32: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 12:11:32: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 12:11:32: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 12:11:32: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 12:11:32: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 12:11:32: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 12:11:32: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 12:14:02: INFO:     Started server process [6508]
+2026-03-09 12:14:02: INFO:     Waiting for application startup.
+2026-03-09 12:14:02: INFO:     Started server process [5560]
+2026-03-09 12:14:02: INFO:     Waiting for application startup.
+2026-03-09 12:14:03: INFO:     Application startup complete.
+2026-03-09 12:14:03: INFO:     Application startup complete.
+2026-03-09 12:14:03: INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-03-09 12:14:03: ERROR:    [Errno 10048] error while attempting to bind on address ('0.0.0.0', 8000): [winerror 10048] only one usage of each socket address (protocol/network address/port) is normally permitted
+2026-03-09 12:14:03: INFO:     Waiting for application shutdown.
+2026-03-09 12:14:03: INFO:     Application shutdown complete.
+2026-03-09 12:14:09: INFO:     Started server process [6952]
+2026-03-09 12:14:09: INFO:     Waiting for application startup.
+2026-03-09 12:14:09: INFO:     Application startup complete.
+2026-03-09 12:14:09: ERROR:    [Errno 10048] error while attempting to bind on address ('0.0.0.0', 8000): [winerror 10048] only one usage of each socket address (protocol/network address/port) is normally permitted
+2026-03-09 12:14:09: INFO:     Waiting for application shutdown.
+2026-03-09 12:14:09: INFO:     Application shutdown complete.
+2026-03-09 12:14:14: INFO:     Started server process [6744]
+2026-03-09 12:14:14: INFO:     Waiting for application startup.
+2026-03-09 12:14:15: INFO:     Application startup complete.
+2026-03-09 12:14:15: ERROR:    [Errno 10048] error while attempting to bind on address ('0.0.0.0', 8000): [winerror 10048] only one usage of each socket address (protocol/network address/port) is normally permitted
+2026-03-09 12:14:15: INFO:     Waiting for application shutdown.
+2026-03-09 12:14:15: INFO:     Application shutdown complete.
+2026-03-09 12:14:20: INFO:     Started server process [3332]
+2026-03-09 12:14:20: INFO:     Waiting for application startup.
+2026-03-09 12:14:20: INFO:     Application startup complete.
+2026-03-09 12:14:20: ERROR:    [Errno 10048] error while attempting to bind on address ('0.0.0.0', 8000): [winerror 10048] only one usage of each socket address (protocol/network address/port) is normally permitted
+2026-03-09 12:14:20: INFO:     Waiting for application shutdown.
+2026-03-09 12:14:20: INFO:     Application shutdown complete.
+2026-03-09 12:20:08: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 12:20:08: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 12:20:08: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 12:20:08: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 12:20:08: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 12:20:08: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 12:20:08: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 12:20:08: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 12:20:08: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 12:20:08: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 12:20:08: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 12:20:08: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 12:20:14: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 12:20:14: [RADAR] DB insert failed: Textual SQL expression '\n            INSERT INTO ...' should be explicitly declared as text('\n            INSERT INTO ...')
+2026-03-09 12:20:14: Task exception was never retrieved
+2026-03-09 12:20:14: future: <Task finished name='Task-55' coro=<send_radar_report_email() done, defined at C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\email_service.py:175> exception=ValueError("invalid literal for int() with base 10: 'fallback'")>
+2026-03-09 12:20:14: Traceback (most recent call last):
+2026-03-09 12:20:14:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\email_service.py", line 227, in send_radar_report_email
+2026-03-09 12:20:14:     bd_rows = "".join(
+2026-03-09 12:20:14:               ^^^^^^^^
+2026-03-09 12:20:14:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\email_service.py", line 231, in <genexpr>
+2026-03-09 12:20:14:     f"border-bottom:1px solid #0d0f14;'>{int(v)}/100</td></tr>"
+2026-03-09 12:20:14:                                          ^^^^^^
+2026-03-09 12:20:14: ValueError: invalid literal for int() with base 10: 'fallback'
+2026-03-09 12:26:28: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 12:26:28: [RADAR] DB insert failed: Textual SQL expression '\n            INSERT INTO ...' should be explicitly declared as text('\n            INSERT INTO ...')
+2026-03-09 12:26:28: Task exception was never retrieved
+2026-03-09 12:26:28: future: <Task finished name='Task-99' coro=<send_radar_report_email() done, defined at C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\email_service.py:175> exception=ValueError("invalid literal for int() with base 10: 'fallback'")>
+2026-03-09 12:26:28: Traceback (most recent call last):
+2026-03-09 12:26:28:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\email_service.py", line 227, in send_radar_report_email
+2026-03-09 12:26:28:     bd_rows = "".join(
+2026-03-09 12:26:28:               ^^^^^^^^
+2026-03-09 12:26:28:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\email_service.py", line 231, in <genexpr>
+2026-03-09 12:26:28:     f"border-bottom:1px solid #0d0f14;'>{int(v)}/100</td></tr>"
+2026-03-09 12:26:28:                                          ^^^^^^
+2026-03-09 12:26:28: ValueError: invalid literal for int() with base 10: 'fallback'
+2026-03-09 12:30:09: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 12:30:09: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 12:30:09: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 12:30:09: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 12:30:09: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 12:30:09: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 12:30:09: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 12:30:09: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 12:30:09: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 12:30:09: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 12:30:09: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 12:30:09: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 12:44:04: [LABELER] Pipeline error: (psycopg2.errors.UndefinedColumn) column rs.user_email does not exist
+2026-03-09 12:44:04: LINE 4: ...      rs.confidence, rs.breakdown, rs.created_at, rs.user_em...
+2026-03-09 12:44:04:                                                              ^
+2026-03-09 12:44:04: 
+2026-03-09 12:44:04: [SQL: 
+2026-03-09 12:44:04:             SELECT rs.scan_id, rs.asset, rs.timeframe,
+2026-03-09 12:44:04:                    rs.utc_hour, rs.utc_dow, rs.score, rs.regime,
+2026-03-09 12:44:04:                    rs.confidence, rs.breakdown, rs.created_at, rs.user_email
+2026-03-09 12:44:04:             FROM radar_scans rs
+2026-03-09 12:44:04:             LEFT JOIN labeled_scans ls ON rs.scan_id = ls.scan_id
+2026-03-09 12:44:04:             WHERE ls.scan_id IS NULL
+2026-03-09 12:44:04:               AND rs.created_at < NOW() - INTERVAL '3 hours'  -- đủ thời gian để trade có outcome
+2026-03-09 12:44:04:             ORDER BY rs.created_at DESC
+2026-03-09 12:44:04:             LIMIT %(limit)s
+2026-03-09 12:44:04:         ]
+2026-03-09 12:44:04: [parameters: {'limit': 1000}]
+2026-03-09 12:44:04: (Background on this error at: https://sqlalche.me/e/20/f405)
+2026-03-09 12:44:04: Traceback (most recent call last):
+2026-03-09 12:44:04:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+2026-03-09 12:44:04:     self.dialect.do_execute(
+2026-03-09 12:44:04:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\sqlalchemy\engine\default.py", line 941, in do_execute
+2026-03-09 12:44:04:     cursor.execute(statement, parameters)
+2026-03-09 12:44:04: psycopg2.errors.UndefinedColumn: column rs.user_email does not exist
+2026-03-09 12:44:04: LINE 4: ...      rs.confidence, rs.breakdown, rs.created_at, rs.user_em...
+2026-03-09 12:44:04:                                                              ^
+2026-03-09 12:44:04: 
+2026-03-09 12:44:04: 
+2026-03-09 12:44:04: The above exception was the direct cause of the following exception:
+2026-03-09 12:44:04: 
+2026-03-09 12:44:04: Traceback (most recent call last):
+2026-03-09 12:44:04:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\ml\labeler.py", line 57, in label_unlabeled_scans
+2026-03-09 12:44:04:     rows = db.execute(text("""
+2026-03-09 12:44:04:            ^^^^^^^^^^^^^^^^^^^
+2026-03-09 12:44:04:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\sqlalchemy\orm\session.py", line 2362, in execute
+2026-03-09 12:44:04:     return self._execute_internal(
+2026-03-09 12:44:04:            ^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 12:44:04:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\sqlalchemy\orm\session.py", line 2256, in _execute_internal
+2026-03-09 12:44:04:     result = conn.execute(
+2026-03-09 12:44:04:              ^^^^^^^^^^^^^
+2026-03-09 12:44:04:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\sqlalchemy\engine\base.py", line 1418, in execute
+2026-03-09 12:44:04:     return meth(
+2026-03-09 12:44:04:            ^^^^^
+2026-03-09 12:44:04:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\sqlalchemy\sql\elements.py", line 515, in _execute_on_connection
+2026-03-09 12:44:04:     return connection._execute_clauseelement(
+2026-03-09 12:44:04:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 12:44:04:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\sqlalchemy\engine\base.py", line 1640, in _execute_clauseelement
+2026-03-09 12:44:04:     ret = self._execute_context(
+2026-03-09 12:44:04:           ^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 12:44:04:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+2026-03-09 12:44:04:     return self._exec_single_context(
+2026-03-09 12:44:04:            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-03-09 12:44:04:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+2026-03-09 12:44:04:     self._handle_dbapi_exception(
+2026-03-09 12:44:04:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\sqlalchemy\engine\base.py", line 2355, in _handle_dbapi_exception
+2026-03-09 12:44:04:     raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+2026-03-09 12:44:04:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+2026-03-09 12:44:04:     self.dialect.do_execute(
+2026-03-09 12:44:04:   File "C:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\sqlalchemy\engine\default.py", line 941, in do_execute
+2026-03-09 12:44:04:     cursor.execute(statement, parameters)
+2026-03-09 12:44:04: sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column rs.user_email does not exist
+2026-03-09 12:44:04: LINE 4: ...      rs.confidence, rs.breakdown, rs.created_at, rs.user_em...
+2026-03-09 12:44:04:                                                              ^
+2026-03-09 12:44:04: 
+2026-03-09 12:44:04: [SQL: 
+2026-03-09 12:44:04:             SELECT rs.scan_id, rs.asset, rs.timeframe,
+2026-03-09 12:44:04:                    rs.utc_hour, rs.utc_dow, rs.score, rs.regime,
+2026-03-09 12:44:04:                    rs.confidence, rs.breakdown, rs.created_at, rs.user_email
+2026-03-09 12:44:04:             FROM radar_scans rs
+2026-03-09 12:44:04:             LEFT JOIN labeled_scans ls ON rs.scan_id = ls.scan_id
+2026-03-09 12:44:04:             WHERE ls.scan_id IS NULL
+2026-03-09 12:44:04:               AND rs.created_at < NOW() - INTERVAL '3 hours'  -- đủ thời gian để trade có outcome
+2026-03-09 12:44:04:             ORDER BY rs.created_at DESC
+2026-03-09 12:44:04:             LIMIT %(limit)s
+2026-03-09 12:44:04:         ]
+2026-03-09 12:44:04: [parameters: {'limit': 1000}]
+2026-03-09 12:44:04: (Background on this error at: https://sqlalche.me/e/20/f405)
+2026-03-09 12:44:04: [TRAINER] Not enough labeled data: 0 samples (need 50)
+2026-03-09 13:04:17: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 13:04:17: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 13:04:17: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 13:04:17: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 13:04:17: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 13:04:17: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 13:04:17: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 13:04:17: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 13:04:17: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 13:04:17: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 13:04:17: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 13:04:17: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 13:14:19: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 13:14:19: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 13:14:19: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 13:14:19: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 13:14:19: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 13:14:19: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 13:14:19: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 13:14:19: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 13:14:19: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 13:14:19: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 13:14:19: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 13:14:19: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 13:24:16: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 13:24:16: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 13:24:16: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 13:24:16: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 13:24:16: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 13:24:16: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 13:24:16: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 13:24:16: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 13:24:16: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 13:24:16: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 13:24:16: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 13:24:16: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 13:55:31: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 13:55:31: [RADAR] DB insert failed: Textual SQL expression '\n            INSERT INTO ...' should be explicitly declared as text('\n            INSERT INTO ...')
+2026-03-09 13:55:31: Task exception was never retrieved
+2026-03-09 13:55:31: future: <Task finished name='Task-1114' coro=<send_radar_report_email() done, defined at C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\email_service.py:175> exception=ValueError("invalid literal for int() with base 10: 'fallback'")>
+2026-03-09 13:55:31: Traceback (most recent call last):
+2026-03-09 13:55:31:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\email_service.py", line 227, in send_radar_report_email
+2026-03-09 13:55:31:     bd_rows = "".join(
+2026-03-09 13:55:31:               ^^^^^^^^
+2026-03-09 13:55:31:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\email_service.py", line 231, in <genexpr>
+2026-03-09 13:55:31:     f"border-bottom:1px solid #0d0f14;'>{int(v)}/100</td></tr>"
+2026-03-09 13:55:31:                                          ^^^^^^
+2026-03-09 13:55:31: ValueError: invalid literal for int() with base 10: 'fallback'
+2026-03-09 13:56:31: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 13:56:31: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 13:56:31: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 13:56:31: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 13:56:31: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 13:56:31: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 13:56:31: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 13:56:31: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 13:56:31: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 13:56:31: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 13:56:31: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 13:56:31: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 14:06:31: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 14:06:31: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 14:06:31: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 14:06:31: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 14:06:31: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 14:06:31: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 14:06:31: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 14:06:31: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 14:06:31: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 14:06:31: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 14:06:31: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 14:06:31: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 14:16:31: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 14:16:31: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 14:16:31: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 14:16:31: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 14:16:31: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 14:16:31: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 14:16:31: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 14:16:31: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 14:16:31: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 14:16:31: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 14:16:31: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 14:16:31: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 14:21:13: WARNING:  Invalid HTTP request received.
+2026-03-09 14:26:31: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 14:26:31: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 14:26:31: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 14:26:31: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 14:26:31: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 14:26:31: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 14:26:31: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 14:26:31: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 14:26:31: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 14:26:31: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 14:26:31: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 14:26:31: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 14:36:31: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 14:36:31: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 14:36:31: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 14:36:31: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 14:36:31: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 14:36:31: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 14:36:31: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 14:36:31: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 14:36:31: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 14:36:31: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 14:36:31: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 14:36:31: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 14:46:31: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 14:46:31: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 14:46:31: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 14:46:31: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 14:46:31: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 14:46:31: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 14:46:31: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 14:46:31: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 14:46:31: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 14:46:31: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 14:46:31: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 14:46:31: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 14:56:32: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 14:56:32: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 14:56:32: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 14:56:32: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 14:56:32: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 14:56:32: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 14:56:32: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 14:56:32: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 14:56:32: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 14:56:32: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 14:56:32: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 14:56:32: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 15:06:31: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 15:06:31: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 15:06:31: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 15:06:31: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 15:06:31: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 15:06:31: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 15:06:31: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 15:06:31: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 15:06:31: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 15:06:31: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 15:06:31: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 15:06:31: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 15:16:31: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 15:16:31: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 15:16:31: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 15:16:31: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 15:16:31: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 15:16:31: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 15:16:31: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 15:16:31: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 15:16:31: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 15:16:31: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 15:16:31: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 15:16:31: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 15:26:31: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 15:26:31: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 15:26:31: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 15:26:31: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 15:26:31: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 15:26:31: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 15:26:31: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 15:26:31: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 15:26:31: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 15:26:31: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 15:26:31: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 15:26:31: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 15:36:31: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 15:36:31: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 15:36:31: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 15:36:31: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 15:36:31: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 15:36:31: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 15:36:31: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 15:36:31: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 15:36:31: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 15:36:31: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 15:36:31: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 15:36:31: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 15:40:34: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 15:40:34: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 15:40:34: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 15:40:34: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 15:40:34: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 15:40:34: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 15:40:34: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 15:40:34: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 15:40:34: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 15:40:34: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 15:40:34: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 15:40:34: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 15:40:38: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 15:40:38: [RADAR] DB insert failed: Textual SQL expression '\n            INSERT INTO ...' should be explicitly declared as text('\n            INSERT INTO ...')
+2026-03-09 15:40:38: Task exception was never retrieved
+2026-03-09 15:40:38: future: <Task finished name='Task-2627' coro=<send_radar_report_email() done, defined at C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\email_service.py:175> exception=ValueError("invalid literal for int() with base 10: 'fallback'")>
+2026-03-09 15:40:38: Traceback (most recent call last):
+2026-03-09 15:40:38:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\email_service.py", line 227, in send_radar_report_email
+2026-03-09 15:40:38:     bd_rows = "".join(
+2026-03-09 15:40:38:               ^^^^^^^^
+2026-03-09 15:40:38:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\email_service.py", line 231, in <genexpr>
+2026-03-09 15:40:38:     f"border-bottom:1px solid #0d0f14;'>{int(v)}/100</td></tr>"
+2026-03-09 15:40:38:                                          ^^^^^^
+2026-03-09 15:40:38: ValueError: invalid literal for int() with base 10: 'fallback'
+2026-03-09 15:50:34: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 15:50:34: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 15:50:34: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 15:50:34: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 15:50:34: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 15:50:34: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 15:50:34: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 15:50:34: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 15:50:34: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 15:50:34: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 15:50:34: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 15:50:34: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 16:00:35: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 16:00:35: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 16:00:35: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 16:00:35: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 16:00:35: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 16:00:35: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 16:00:35: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 16:00:35: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 16:00:35: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 16:00:35: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 16:00:35: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 16:00:35: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 16:10:35: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 16:10:35: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 16:10:35: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 16:10:35: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 16:10:35: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 16:10:35: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 16:10:35: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 16:10:35: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 16:10:35: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 16:10:35: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 16:10:35: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 16:10:35: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 16:20:35: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 16:20:35: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 16:20:35: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 16:20:35: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 16:20:35: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 16:20:35: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 16:20:35: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 16:20:35: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 16:20:35: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 16:20:35: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 16:20:35: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 16:20:35: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 16:25:42: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 16:25:42: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 16:25:42: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 16:25:42: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 16:25:42: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 16:25:42: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 16:25:42: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 16:25:42: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 16:25:42: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 16:25:42: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 16:25:42: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 16:25:42: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 16:35:43: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 16:35:43: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 16:35:43: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 16:35:43: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 16:35:43: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 16:35:43: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 16:35:43: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 16:35:43: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 16:35:43: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 16:35:43: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 16:35:43: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 16:35:43: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 16:45:43: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 16:45:43: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 16:45:43: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 16:45:43: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 16:45:43: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 16:45:43: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 16:45:43: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 16:45:43: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 16:45:43: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 16:45:43: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 16:45:43: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 16:45:43: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 16:55:43: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 16:55:43: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 16:55:43: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 16:55:43: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 16:55:43: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 16:55:43: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 16:55:43: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 16:55:43: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 16:55:43: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 16:55:43: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 16:55:43: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 16:55:43: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 16:56:36: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 16:56:36: [RADAR] DB insert failed: Textual SQL expression '\n            INSERT INTO ...' should be explicitly declared as text('\n            INSERT INTO ...')
+2026-03-09 16:56:37: Task exception was never retrieved
+2026-03-09 16:56:37: future: <Task finished name='Task-3109' coro=<send_radar_report_email() done, defined at C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\email_service.py:175> exception=ValueError("invalid literal for int() with base 10: 'fallback'")>
+2026-03-09 16:56:37: Traceback (most recent call last):
+2026-03-09 16:56:37:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\email_service.py", line 227, in send_radar_report_email
+2026-03-09 16:56:37:     bd_rows = "".join(
+2026-03-09 16:56:37:               ^^^^^^^^
+2026-03-09 16:56:37:   File "C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\email_service.py", line 231, in <genexpr>
+2026-03-09 16:56:37:     f"border-bottom:1px solid #0d0f14;'>{int(v)}/100</td></tr>"
+2026-03-09 16:56:37:                                          ^^^^^^
+2026-03-09 16:56:37: ValueError: invalid literal for int() with base 10: 'fallback'
+2026-03-09 17:05:43: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 17:05:43: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 17:05:43: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 17:05:43: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 17:05:43: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 17:05:43: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 17:05:43: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 17:05:43: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 17:05:43: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 17:05:43: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 17:05:43: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 17:05:43: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 17:15:43: [OHLCV] fetch error GOLD/M5: No module named 'requests'
+2026-03-09 17:15:43: [OHLCV] fetch error GOLD/M15: No module named 'requests'
+2026-03-09 17:15:43: [OHLCV] fetch error GOLD/H1: No module named 'requests'
+2026-03-09 17:15:43: [OHLCV] fetch error EURUSD/M5: No module named 'requests'
+2026-03-09 17:15:43: [OHLCV] fetch error EURUSD/M15: No module named 'requests'
+2026-03-09 17:15:43: [OHLCV] fetch error EURUSD/H1: No module named 'requests'
+2026-03-09 17:15:43: [OHLCV] fetch error BTC/M5: No module named 'requests'
+2026-03-09 17:15:43: [OHLCV] fetch error BTC/M15: No module named 'requests'
+2026-03-09 17:15:43: [OHLCV] fetch error BTC/H1: No module named 'requests'
+2026-03-09 17:15:43: [OHLCV] fetch error NASDAQ/M5: No module named 'requests'
+2026-03-09 17:15:43: [OHLCV] fetch error NASDAQ/M15: No module named 'requests'
+2026-03-09 17:15:43: [OHLCV] fetch error NASDAQ/H1: No module named 'requests'
+2026-03-09 17:20:06: INFO:     Started server process [3304]
+2026-03-09 17:20:06: INFO:     Waiting for application startup.
+2026-03-09 17:20:06: [OHLCV_CACHE] Warm-up error: Textual SQL expression '\n            SELECT asset...' should be explicitly declared as text('\n            SELECT asset...')
+2026-03-09 17:20:06: [RADAR SCHEDULER] Refresh loop error: cannot import name 'get_cached_radar' from 'radar.router' (C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\radar\router.py)
+2026-03-09 17:20:06: INFO:     Application startup complete.
+2026-03-09 17:20:06: ERROR:    [Errno 10048] error while attempting to bind on address ('0.0.0.0', 8000): [winerror 10048] only one usage of each socket address (protocol/network address/port) is normally permitted
+2026-03-09 17:20:06: INFO:     Waiting for application shutdown.
+2026-03-09 17:20:06: INFO:     Application shutdown complete.
+2026-03-09 17:20:15: INFO:     Started server process [5820]
+2026-03-09 17:20:15: INFO:     Waiting for application startup.
+2026-03-09 17:20:15: [OHLCV_CACHE] Warm-up error: Textual SQL expression '\n            SELECT asset...' should be explicitly declared as text('\n            SELECT asset...')
+2026-03-09 17:20:15: [RADAR SCHEDULER] Refresh loop error: cannot import name 'get_cached_radar' from 'radar.router' (C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\radar\router.py)
+2026-03-09 17:20:15: INFO:     Application startup complete.
+2026-03-09 17:20:15: ERROR:    [Errno 10048] error while attempting to bind on address ('0.0.0.0', 8000): [winerror 10048] only one usage of each socket address (protocol/network address/port) is normally permitted
+2026-03-09 17:20:15: INFO:     Waiting for application shutdown.
+2026-03-09 17:20:15: INFO:     Application shutdown complete.
+2026-03-09 17:20:21: INFO:     Started server process [6992]
+2026-03-09 17:20:21: INFO:     Waiting for application startup.
+2026-03-09 17:20:21: [OHLCV_CACHE] Warm-up error: Textual SQL expression '\n            SELECT asset...' should be explicitly declared as text('\n            SELECT asset...')
+2026-03-09 17:20:21: [RADAR SCHEDULER] Refresh loop error: cannot import name 'get_cached_radar' from 'radar.router' (C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\radar\router.py)
+2026-03-09 17:20:21: INFO:     Application startup complete.
+2026-03-09 17:20:21: ERROR:    [Errno 10048] error while attempting to bind on address ('0.0.0.0', 8000): [winerror 10048] only one usage of each socket address (protocol/network address/port) is normally permitted
+2026-03-09 17:20:21: INFO:     Waiting for application shutdown.
+2026-03-09 17:20:21: INFO:     Application shutdown complete.
+2026-03-09 17:20:26: INFO:     Started server process [3376]
+2026-03-09 17:20:26: INFO:     Waiting for application startup.
+2026-03-09 17:20:26: [OHLCV_CACHE] Warm-up error: Textual SQL expression '\n            SELECT asset...' should be explicitly declared as text('\n            SELECT asset...')
+2026-03-09 17:20:26: [RADAR SCHEDULER] Refresh loop error: cannot import name 'get_cached_radar' from 'radar.router' (C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\radar\router.py)
+2026-03-09 17:20:26: INFO:     Application startup complete.
+2026-03-09 17:20:26: ERROR:    [Errno 10048] error while attempting to bind on address ('0.0.0.0', 8000): [winerror 10048] only one usage of each socket address (protocol/network address/port) is normally permitted
+2026-03-09 17:20:26: INFO:     Waiting for application shutdown.
+2026-03-09 17:20:26: INFO:     Application shutdown complete.
+2026-03-09 17:20:32: INFO:     Started server process [5024]
+2026-03-09 17:20:32: INFO:     Waiting for application startup.
+2026-03-09 17:20:32: [OHLCV_CACHE] Warm-up error: Textual SQL expression '\n            SELECT asset...' should be explicitly declared as text('\n            SELECT asset...')
+2026-03-09 17:20:32: [RADAR SCHEDULER] Refresh loop error: cannot import name 'get_cached_radar' from 'radar.router' (C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\radar\router.py)
+2026-03-09 17:20:32: INFO:     Application startup complete.
+2026-03-09 17:20:32: ERROR:    [Errno 10048] error while attempting to bind on address ('0.0.0.0', 8000): [winerror 10048] only one usage of each socket address (protocol/network address/port) is normally permitted
+2026-03-09 17:20:32: INFO:     Waiting for application shutdown.
+2026-03-09 17:20:32: INFO:     Application shutdown complete.
+2026-03-09 22:40:59: INFO:     Started server process [2356]
+2026-03-09 22:40:59: INFO:     Waiting for application startup.
+2026-03-09 22:40:59: [OHLCV_CACHE] Warm-up error: Textual SQL expression '\n            SELECT asset...' should be explicitly declared as text('\n            SELECT asset...')
+2026-03-09 22:40:59: [RADAR SCHEDULER] Refresh loop error: cannot import name 'get_cached_radar' from 'radar.router' (C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\radar\router.py)
+2026-03-09 22:40:59: INFO:     Application startup complete.
+2026-03-09 22:40:59: ERROR:    [Errno 10048] error while attempting to bind on address ('0.0.0.0', 8000): [winerror 10048] only one usage of each socket address (protocol/network address/port) is normally permitted
+2026-03-09 22:40:59: INFO:     Waiting for application shutdown.
+2026-03-09 22:40:59: INFO:     Application shutdown complete.
+2026-03-09 22:41:06: INFO:     Started server process [1736]
+2026-03-09 22:41:06: INFO:     Waiting for application startup.
+2026-03-09 22:41:06: [OHLCV_CACHE] Warm-up error: Textual SQL expression '\n            SELECT asset...' should be explicitly declared as text('\n            SELECT asset...')
+2026-03-09 22:41:06: [RADAR SCHEDULER] Refresh loop error: cannot import name 'get_cached_radar' from 'radar.router' (C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\radar\router.py)
+2026-03-09 22:41:06: INFO:     Application startup complete.
+2026-03-09 22:41:06: ERROR:    [Errno 10048] error while attempting to bind on address ('0.0.0.0', 8000): [winerror 10048] only one usage of each socket address (protocol/network address/port) is normally permitted
+2026-03-09 22:41:06: INFO:     Waiting for application shutdown.
+2026-03-09 22:41:06: INFO:     Application shutdown complete.
+2026-03-09 22:41:13: INFO:     Started server process [928]
+2026-03-09 22:41:13: INFO:     Waiting for application startup.
+2026-03-09 22:41:13: [OHLCV_CACHE] Warm-up error: Textual SQL expression '\n            SELECT asset...' should be explicitly declared as text('\n            SELECT asset...')
+2026-03-09 22:41:13: [RADAR SCHEDULER] Refresh loop error: cannot import name 'get_cached_radar' from 'radar.router' (C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\radar\router.py)
+2026-03-09 22:41:13: INFO:     Application startup complete.
+2026-03-09 22:41:13: ERROR:    [Errno 10048] error while attempting to bind on address ('0.0.0.0', 8000): [winerror 10048] only one usage of each socket address (protocol/network address/port) is normally permitted
+2026-03-09 22:41:13: INFO:     Waiting for application shutdown.
+2026-03-09 22:41:13: INFO:     Application shutdown complete.
+2026-03-09 22:41:20: INFO:     Started server process [6532]
+2026-03-09 22:41:20: INFO:     Waiting for application startup.
+2026-03-09 22:41:20: [OHLCV_CACHE] Warm-up error: Textual SQL expression '\n            SELECT asset...' should be explicitly declared as text('\n            SELECT asset...')
+2026-03-09 22:41:20: [RADAR SCHEDULER] Refresh loop error: cannot import name 'get_cached_radar' from 'radar.router' (C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\radar\router.py)
+2026-03-09 22:41:20: INFO:     Application startup complete.
+2026-03-09 22:41:20: ERROR:    [Errno 10048] error while attempting to bind on address ('0.0.0.0', 8000): [winerror 10048] only one usage of each socket address (protocol/network address/port) is normally permitted
+2026-03-09 22:41:20: INFO:     Waiting for application shutdown.
+2026-03-09 22:41:20: INFO:     Application shutdown complete.
+2026-03-09 22:41:26: INFO:     Started server process [2092]
+2026-03-09 22:41:26: INFO:     Waiting for application startup.
+2026-03-09 22:41:26: [OHLCV_CACHE] Warm-up error: Textual SQL expression '\n            SELECT asset...' should be explicitly declared as text('\n            SELECT asset...')
+2026-03-09 22:41:26: [RADAR SCHEDULER] Refresh loop error: cannot import name 'get_cached_radar' from 'radar.router' (C:\Users\Administrator\Desktop\Z-ARMOR-CLOUD\radar\router.py)
+2026-03-09 22:41:26: INFO:     Application startup complete.
+2026-03-09 22:41:26: ERROR:    [Errno 10048] error while attempting to bind on address ('0.0.0.0', 8000): [winerror 10048] only one usage of each socket address (protocol/network address/port) is normally permitted
+2026-03-09 22:41:26: INFO:     Waiting for application shutdown.
+2026-03-09 22:41:26: INFO:     Application shutdown complete.

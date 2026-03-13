@@ -1,0 +1,66 @@
+# 🧠 Z-ARMOR CLOUD: AGENTIC NEURAL LINK ARCHITECTURE
+
+**Phiên bản:** 1.0.0
+**Ngày cập nhật:** 2024
+**Mục tiêu:** Nâng cấp khu vực "Cloud Neural Link" từ một bảng hiển thị Log tĩnh thành một Hệ thống Trợ lý AI Đa tác vụ (Agentic Workflow) có khả năng **Đọc (Observe) -> Suy luận (Reason) -> Hành động (Act)**.
+
+---
+
+## 🏗️ 1. CẤU TRÚC 4 LỚP (4-LAYER STACK)
+
+### Layer 1: Giao diện Terminal (Frontend Preact)
+* Nằm tại file `web/RightColumn.js`.
+* Thiết kế dạng cửa sổ Terminal (Hacker Theme).
+* Bắt sự kiện người dùng gõ lệnh (tự nhiên hoặc `/slash_commands`) và gửi API POST dạng JSON: `{"prompt": "Cắt hết lệnh đi"}`.
+
+### Layer 2: Bộ cấy Ngữ cảnh Lượng tử (Context Injector - Python)
+* Trí tuệ của AI phụ thuộc vào dữ liệu nó được cung cấp.
+* Khi Backend nhận `prompt` từ Frontend, nó KHÔNG gửi ngay cho ChatGPT. Nó sẽ đóng gói kèm **System State** hiện tại.
+* **Gói Context bao gồm:**
+  * `z_pressure`, `base_pressure`, `margin_mass`.
+  * Danh sách `open_trades` (Giá vào, Stoploss, Đang âm/dương bao nhiêu).
+  * `budget_capacity` hiện tại.
+
+### Layer 3: Lõi Suy luận & Điều phối (LLM Router - Python)
+* Sử dụng **OpenAI API (Model: gpt-4o-mini)**.
+* Kích hoạt chế độ **Function Calling (Tools)**.
+* Khi Prompt + Context được đưa vào, LLM tự quyết định:
+  * Trả lời bằng chữ (Ví dụ: Lời khuyên, phân tích).
+  * Gọi Hàm thực thi (Ví dụ: Hàm cắt lệnh).
+
+### Layer 4: Động cơ Thực thi (Action Tools)
+Các hàm Python gắn quyền truy cập trực tiếp vào MT5 và Database:
+1. `execute_scram()`: Kích hoạt ngủ đông, đóng băng toàn bộ.
+2. `snipe_losing_trades()`: Quét và cắt các lệnh vi phạm kỷ luật.
+3. `update_budget(amount)`: Ghi đè ngân sách tử thủ vào Cơ sở dữ liệu.
+4. `generate_risk_report()`: Xuất báo cáo chẩn đoán trạng thái hệ thống.
+
+---
+
+## ⚙️ 2. LUỒNG HOẠT ĐỘNG (WORKFLOW)
+
+1. **User (Sếp):** Gõ `Đánh giá rủi ro hiện tại` trên Web.
+2. **Frontend:** Bắn API `/api/neural-command` lên `main.py`.
+3. **Backend (`main.py` -> `ai_agent.py`):**
+   * Mở RAM Cache lấy `physics_data` và `open_trades`.
+   * Tiêm vào System Prompt: *"Mày là Z-Armor Quant AI. Đây là dữ liệu Live: {json_data}. Trả lời lệnh sau: {prompt}"*
+4. **LLM (OpenAI):** Xử lý và phân tích số liệu.
+5. **Backend:** Trả String kết quả về cho Frontend.
+6. **Frontend:** Render dòng text màu Xanh lá `[AI] ...` lên màn hình Terminal.
+
+---
+
+## 🚀 3. LỘ TRÌNH TRIỂN KHAI (ROADMAP)
+
+### Phase 1: Mắt Thần Khai Mở (Diagnostic Mode - Read Only)
+* Dựng API nhận Prompt.
+* Setup kết nối OpenAI SDK.
+* Bơm dữ liệu JSON vào và để AI "Bình luận/Khuyên bảo" (Không can thiệp lệnh).
+
+### Phase 2: Bàn Tay Phán Xét (Execution Mode - Read & Write)
+* Viết các hàm Tool_Call.
+* Cho phép AI gửi tín hiệu ra lệnh Cắt lệnh xuống EA MT5.
+* **Quy tắc an toàn (Human-in-the-loop):** Trước khi AI thực sự cắt lệnh, nó phải hỏi lại Frontend: *"Tôi định cắt 2 lệnh XAUUSD, Sếp có cho phép không (Y/N)?"*.
+
+---
+*Tài liệu thuộc khuôn khổ Đám mây Lượng tử Z-Armor.*
