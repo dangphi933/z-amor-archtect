@@ -40,7 +40,7 @@ from database import (
     EaSession, TradeHistory
 )
 from api.config_manager import get_all_units, update_unit_from_payload
-from telegram_engine import push_to_telegram, send_defcon1_scram, send_defcon3_silent
+from app.telegram_engine.engine import push_to_telegram, send_defcon1_scram, send_defcon3_silent
 
 # [FIX] Debounce disconnect alerts — max 1 alert per account per 5 minutes
 _disconnect_alert_last = {}  # account_id -> last alert timestamp
