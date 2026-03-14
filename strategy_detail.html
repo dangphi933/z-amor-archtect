@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Z-ARMOR · Strategy Detail</title>
+<title>Z-ARMOR · Chi Tiết Chiến Lược</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -383,12 +383,12 @@ body::after {
 .cr-warn .cr-icon { color: var(--orange); }
 .cr-err  .cr-icon { color: var(--red); }
 .cr-name  { color: var(--dim); }
-.cr-local { color: #778899; text-align: right; font-size: 10px; }
+.cr-cục bộ { color: #778899; text-align: right; font-size: 10px; }
 .cr-arrow { color: var(--dimmer); text-align: center; }
-.cr-advice { font-size: 10px; }
-.cr-ok   .cr-advice { color: var(--green); }
-.cr-warn .cr-advice { color: var(--orange); }
-.cr-err  .cr-advice { color: var(--red); }
+.cr-gợi ý { font-size: 10px; }
+.cr-ok   .cr-gợi ý { color: var(--green); }
+.cr-warn .cr-gợi ý { color: var(--orange); }
+.cr-err  .cr-gợi ý { color: var(--red); }
 
 .health-bar-row {
   display: flex; align-items: center; gap: 10px;
@@ -647,7 +647,7 @@ body::after {
 .flow-sub-row span { color: var(--text); }
 .flow-sub-row .fsr-sep { color: var(--dimmer); }
 
-/* ── ENTRY ZONE CHART ── */
+/* ── VÀO LỆNH ZONE CHART ── */
 .entry-canvas-wrap {
   position: relative;
   background: var(--surface);
@@ -712,6 +712,154 @@ body::after {
   padding: 6px 10px; font-size: 10px; pointer-events: none;
   z-index: 200; opacity: 0; transition: opacity .15s; white-space: nowrap;
 }
+
+/* ════════════════════════════════════════════════════════════════
+   SECTION E — DOMAIN MATCH ZONE
+   Thể hiện vấn đề khớp lệnh giữa 3 miền:
+     Domain 1 (ZCloud Radar) ↔ Domain 2 (Chiến lược Profile) ↔ Domain 3 (EA Kernel)
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── Domain track layout ── */
+.dm-zone { padding: 0 2px; }
+
+.dm-header-grid {
+  display: grid;
+  grid-template-columns: 1fr 36px 1fr 36px 1fr;
+  align-items: start;
+  gap: 0;
+  margin-bottom: 6px;
+}
+.dm-domain-col {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 10px 12px;
+  text-align: center;
+}
+.dm-domain-badge {
+  font-size: 8px; letter-spacing: 2px; font-weight: 700;
+  text-transform: uppercase; margin-bottom: 4px;
+}
+.dm-domain-name {
+  font-family: var(--sans); font-size: 13px; font-weight: 700;
+  line-height: 1.2;
+}
+.dm-domain-sub { font-size: 9px; color: var(--dim); margin-top: 3px; }
+.dm-bridge-col {
+  display: flex; align-items: center; justify-content: center;
+  padding-top: 20px;
+  font-size: 18px; color: var(--dimmer);
+  position: relative;
+}
+.dm-bridge-col.ok   { color: var(--green); }
+.dm-bridge-col.warn { color: var(--orange); }
+.dm-bridge-col.err  { color: var(--red); }
+
+/* ── Match rows table ── */
+.dm-table-wrap {
+  background: rgba(5,8,16,0.6);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+.dm-table-head {
+  display: grid;
+  grid-template-columns: 140px 1fr 24px 1fr 24px 1fr 80px;
+  gap: 0;
+  background: rgba(0,0,0,0.4);
+  border-bottom: 1px solid var(--border);
+  padding: 5px 10px;
+}
+.dm-th {
+  font-size: 8px; letter-spacing: 1.5px; color: var(--dimmer);
+  text-transform: uppercase;
+  padding: 0 4px;
+}
+.dm-th:first-child { padding-left: 0; }
+
+.dm-row {
+  display: grid;
+  grid-template-columns: 140px 1fr 24px 1fr 24px 1fr 80px;
+  gap: 0;
+  padding: 6px 10px;
+  border-bottom: 1px solid rgba(28,43,58,0.4);
+  align-items: center;
+  transition: background .15s;
+}
+.dm-row:last-child { border-bottom: none; }
+.dm-row:hover { background: rgba(0,180,216,0.03); }
+.dm-row.row-ok   { border-left: 3px solid var(--green);  padding-left: 7px; }
+.dm-row.row-warn { border-left: 3px solid var(--orange); padding-left: 7px; }
+.dm-row.row-err  { border-left: 3px solid var(--red);    padding-left: 7px; }
+.dm-row.row-na   { border-left: 3px solid var(--dimmer); padding-left: 7px; opacity: .6; }
+
+.dm-tham số  { font-size: 10px; color: var(--dim); }
+.dm-cell   { font-size: 10px; font-weight: 600; padding: 0 4px; }
+.dm-bridge { font-size: 13px; text-align: center; padding: 0; }
+.dm-bridge.ok   { color: var(--green); }
+.dm-bridge.warn { color: var(--orange); }
+.dm-bridge.err  { color: var(--red); }
+.dm-bridge.na   { color: var(--dimmer); }
+.dm-status-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 9px; font-weight: 700; letter-spacing: .5px;
+  padding: 2px 7px; border-radius: 2px;
+  white-space: nowrap;
+}
+.dsb-ok   { background: rgba(0,200,117,0.12); color: var(--green);  border: 1px solid rgba(0,200,117,0.25); }
+.dsb-warn { background: rgba(255,165,0,0.10); color: var(--orange); border: 1px solid rgba(255,165,0,0.25); }
+.dsb-err  { background: rgba(229,57,53,0.10); color: var(--red);    border: 1px solid rgba(229,57,53,0.2); }
+.dsb-na   { background: rgba(42,58,74,0.5);   color: #668899;       border: 1px solid var(--border); }
+
+/* ── Issue pills strip ── */
+.dm-issues {
+  margin-top: 8px;
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.dm-issue-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 10px; border-radius: 20px;
+  font-size: 9px; letter-spacing: .5px;
+  cursor: default;
+}
+.dip-warn { background: rgba(255,165,0,0.08); color: var(--orange); border: 1px solid rgba(255,165,0,0.2); }
+.dip-err  { background: rgba(229,57,53,0.08); color: var(--red);    border: 1px solid rgba(229,57,53,0.2); }
+.dip-ok   { background: rgba(0,200,117,0.06); color: var(--green);  border: 1px solid rgba(0,200,117,0.15); }
+.dip-icon { font-size: 10px; }
+
+/* ── Match score donut ── */
+.dm-score-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 10px 10px 8px;
+  background: rgba(0,0,0,0.2);
+  border-top: 1px solid var(--border);
+}
+.dm-donut-wrap { position: relative; flex-shrink: 0; }
+.dm-donut-label {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+.dm-donut-pct { font-size: 14px; font-weight: 700; font-family: var(--sans); }
+.dm-donut-sub { font-size: 8px; color: var(--dim); letter-spacing: 1px; }
+.dm-score-detail { flex: 1; }
+.dm-score-title { font-size: 10px; font-weight: 700; margin-bottom: 4px; }
+.dm-score-body  { font-size: 10px; color: var(--dim); line-height: 1.6; }
+
+/* ── Attention banner ── */
+.dm-attention {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: rgba(229,57,53,0.06);
+  border: 1px solid rgba(229,57,53,0.2);
+  border-radius: 3px;
+  font-size: 10px; color: var(--red);
+  display: none;
+}
+.dm-attention.visible { display: block; }
+.dm-attention strong  { font-weight: 700; }
+
 </style>
 </head>
 <body>
@@ -719,14 +867,14 @@ body::after {
 <!-- Loading -->
 <div class="loading-overlay" id="loadingOverlay">
   <div class="loading-spinner"></div>
-  <div class="loading-text">FETCHING STRATEGY PROFILE...</div>
+  <div class="loading-text">ĐANG TẢI HỒ SƠ CHIẾN LƯỢC...</div>
 </div>
 
 <!-- Top bar -->
 <div class="topbar">
   <div class="topbar-left">
     <div class="logo">Z-<span>ARMOR</span></div>
-    <div class="topbar-tag">Strategy Detail</div>
+    <div class="topbar-tag">Chi Tiết Chiến Lược</div>
   </div>
   <div class="topbar-right">
     <span class="live-dot"></span>
@@ -740,36 +888,124 @@ body::after {
   <!-- Page header -->
   <div class="page-header">
     <div class="page-header-left">
-      <div class="profile-badge" id="profileBadge">CLOUD CONNECTED</div>
-      <div class="page-title">Strategy <span id="strategyIdTitle">--</span></div>
-      <div class="page-subtitle" id="profileNameSub">Loading profile...</div>
+      <div class="profile-badge" id="profileBadge">ĐÃ KẾT NỐI CLOUD</div>
+      <div class="page-title">Chiến lược <span id="strategyIdTitle">--</span></div>
+      <div class="page-subtitle" id="profileNameSub">Đang tải hồ sơ...</div>
     </div>
     <a class="switch-btn" href="javascript:void(0)" onclick="scrollToSwitcher()">
-      <span class="icon">⇄</span> Switch Strategy
+      <span class="icon">⇄</span> Đổi Chiến Lược
     </a>
   </div>
 
-  <!-- Profile Hero -->
+  <!-- ═══════════════════════════════════════════
+       SECTION E — DOMAIN MATCH ZONE
+       Vấn đề khớp lệnh giữa 3 miền
+  ═══════════════════════════════════════════ -->
+  <div class="card" style="border-color:var(--border); position:relative; overflow:visible;">
+    <div class="card::before" style="background:linear-gradient(90deg,transparent,#9C27B0,transparent);"></div>
+    <div class="card-header" style="border-color:rgba(156,39,176,0.3);">
+      <div class="card-dot" style="background:#9C27B0;"></div>
+      <div class="card-title" style="color:#9C27B0;">E — KHỚP LỆNH 3 MIỀN</div>
+      <div style="margin-left:auto; font-size:9px; color:var(--dim);">
+        Miền 1 · 2 · 3
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="dm-zone">
+
+        <!-- Domain header strip -->
+        <div class="dm-header-grid">
+          <div class="dm-domain-col">
+            <div class="dm-domain-badge" style="color:var(--cyan);">Miền 1</div>
+            <div class="dm-domain-name" style="color:var(--cyan);">ZCloud Radar</div>
+            <div class="dm-domain-sub">Score · Regime · EA tham sốs</div>
+          </div>
+          <div class="dm-bridge-col" id="dmBridge1">→</div>
+          <div class="dm-domain-col">
+            <div class="dm-domain-badge" style="color:var(--orange);">Miền 2</div>
+            <div class="dm-domain-name" style="color:var(--orange);">Chiến lược Profile</div>
+            <div class="dm-domain-sub">kiểu vào · score min · rr</div>
+          </div>
+          <div class="dm-bridge-col" id="dmBridge2">→</div>
+          <div class="dm-domain-col">
+            <div class="dm-domain-badge" style="color:var(--green);">Miền 3</div>
+            <div class="dm-domain-name" style="color:var(--green);">EA Kernel</div>
+            <div class="dm-domain-sub">Tính size · Thực thi</div>
+          </div>
+        </div>
+
+        <!-- Match rows table -->
+        <div class="dm-table-wrap">
+          <div class="dm-table-head">
+            <div class="dm-th">Tham số</div>
+            <div class="dm-th">M1 — ZCloud</div>
+            <div class="dm-th"></div>
+            <div class="dm-th">M2 — Profile</div>
+            <div class="dm-th"></div>
+            <div class="dm-th">M3 — EA</div>
+            <div class="dm-th">Trạng thái</div>
+          </div>
+          <div id="dmRows">
+            <!-- populated by JS -->
+          </div>
+        </div>
+
+        <!-- Issue pills -->
+        <div class="dm-issues" id="dmIssues"></div>
+
+        <!-- Attention banner (shown when critical issues) -->
+        <div class="dm-attention" id="dmAttention">
+          <strong>⚠ Phát hiện xung đột:</strong>
+          <span id="dmAttentionText"></span>
+        </div>
+
+        <!-- Match score footer -->
+        <div class="dm-score-row">
+          <div class="dm-donut-wrap">
+            <svg width="64" height="64" viewBox="0 0 64 64">
+              <circle cx="32" cy="32" r="26" fill="none" stroke="var(--border)" stroke-width="6"/>
+              <circle cx="32" cy="32" r="26" fill="none" id="dmDonutArc"
+                stroke="var(--green)" stroke-width="6"
+                stroke-dasharray="0 164" stroke-dashoffset="-41"
+                stroke-linecap="round"
+                style="transition:stroke-dasharray 1s cubic-bezier(.4,0,.2,1)"/>
+            </svg>
+            <div class="dm-donut-label">
+              <div class="dm-donut-pct" id="dmDonutPct" style="color:var(--green)">--</div>
+              <div class="dm-donut-sub">KHỚP</div>
+            </div>
+          </div>
+          <div class="dm-score-detail">
+            <div class="dm-score-title" id="dmScoreTitle">Đang tính toán...</div>
+            <div class="dm-score-body"  id="dmScoreBody"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+    <!-- Profile Hero -->
   <div class="profile-hero" id="profileHero">
     <div class="hero-cell">
-      <div class="hero-label">Entry Mode</div>
-      <div class="hero-value blue" id="hEntry"><span class="skel"></span></div>
-      <div class="hero-sub" id="hEntryDir">--</div>
+      <div class="hero-label">Kiểu Vào Lệnh</div>
+      <div class="hero-value blue" id="hKiểu vào"><span class="skel"></span></div>
+      <div class="hero-sub" id="hKiểu vàoDir">--</div>
     </div>
     <div class="hero-cell">
-      <div class="hero-label">Min Score</div>
+      <div class="hero-label">Score Tối Thiểu</div>
       <div class="hero-value orange" id="hMinScore"><span class="skel"></span></div>
-      <div class="hero-sub" id="hScoreLive">live: --</div>
+      <div class="hero-sub" id="hScoreLive"'live: --'/div>
     </div>
     <div class="hero-cell">
-      <div class="hero-label">Risk/Reward</div>
+      <div class="hero-label">Rủi Ro / Lợi Nhuận</div>
       <div class="hero-value white" id="hRR"><span class="skel"></span></div>
-      <div class="hero-sub" id="hRiskMode">--</div>
+      <div class="hero-sub" id="hRủi roMode">--</div>
     </div>
     <div class="hero-cell">
-      <div class="hero-label">Session</div>
+      <div class="hero-label">Phiên giao dịch</div>
       <div class="hero-value green" id="hSession"><span class="skel"></span></div>
-      <div class="hero-sub">optimal window</div>
+      <div class="hero-sub">cửa sổ tối ưu</div>
     </div>
   </div>
 
@@ -779,33 +1015,33 @@ body::after {
   <div class="card blue-accent">
     <div class="card-header">
       <div class="card-dot dot-blue"></div>
-      <div class="card-title">◈ Strategy Flow Model</div>
+      <div class="card-title">◈ Chiến lược Flow Model</div>
     </div>
     <div class="card-body">
-      <div class="flow-title">Signal processing pipeline — left to right</div>
+      <div class="flow-title">Luồng xử lý tín hiệu — từ trái sang phải</div>
       <div class="flow-wrap" style="padding:12px 8px; margin:0;">
         <div class="flow-diagram">
           <!-- Row 1 -->
           <div class="flow-row">
             <div class="flow-node fn-cloud">ZCloud<br>Score</div>
             <div class="flow-arrow">+</div>
-            <div class="flow-node fn-dir" id="fl_dir">Direction<br>Mode</div>
+            <div class="flow-node fn-dir" id="fl_dir">Hướng<br>Giao Dịch</div>
             <div class="flow-arrow">→</div>
-            <div class="flow-node fn-filter" id="fl_gate">Gate<br>Filter</div>
+            <div class="flow-node fn-filter" id="fl_gate">Bộ Lọc<br>Gate</div>
             <div class="flow-arrow">→</div>
-            <div class="flow-node fn-safety">Safety<br>Net</div>
+            <div class="flow-node fn-safety">Lưới<br>An Toàn</div>
             <div class="flow-arrow">→</div>
-            <div class="flow-node fn-size">Sizer</div>
+            <div class="flow-node fn-size">Tính Size</div>
             <div class="flow-arrow">→</div>
-            <div class="flow-node fn-exec">ORDER</div>
+            <div class="flow-node fn-exec">ĐẶT LỆNH</div>
           </div>
           <!-- Row 2 -->
           <div class="flow-row" style="padding-left:78px;">
-            <div class="flow-node fn-sess" id="fl_sess">Session<br>+ MinScore</div>
+            <div class="flow-node fn-sess" id="fl_sess">Phiên giao dịch<br>+ Score Min</div>
             <div class="flow-arrow">↗</div>
             <div style="flex:1; font-size:9px; color:var(--dimmer); padding-left:8px;">
-              profile.entry_type = <span id="fl_entry_type" style="color:var(--blue)">--</span>
-              &nbsp;·&nbsp; min_score = <span id="fl_min_score" style="color:var(--orange)">--</span>
+              kiểu vào = <span id="fl_entry_type" style="color:var(--blue)">--</span>
+              &nbsp;·&nbsp; score min = <span id="fl_min_score" style="color:var(--orange)">--</span>
             </div>
           </div>
           <!-- Live strip -->
@@ -815,11 +1051,11 @@ body::after {
               <span class="strip-val" id="strip_gate" style="color:var(--green)">--</span>
             </div>
             <div class="strip-cell">
-              <span class="strip-lbl">Pos%</span>
+              <span class="strip-lbl">Vị thế %</span>
               <span class="strip-val" id="strip_pos" style="color:var(--cyan)">--</span>
             </div>
             <div class="strip-cell">
-              <span class="strip-lbl">SL mult</span>
+              <span class="strip-lbl">SL Mult</span>
               <span class="strip-val" id="strip_sl" style="color:var(--text)">--</span>
             </div>
             <div class="strip-cell">
@@ -833,33 +1069,33 @@ body::after {
   </div>
 
   <!-- ═══════════════════════════════════════════
-       SECTION A — REGIME & ENTRY
+       SECTION A — REGIME & VÀO LỆNH
   ═══════════════════════════════════════════ -->
   <div class="card green-accent">
     <div class="card-header">
       <div class="card-dot dot-green"></div>
-      <div class="card-title">A — Regime & Entry</div>
+      <div class="card-title">A — Chế Độ Thị Trường & Vào Lệnh</div>
     </div>
     <div class="card-body">
       <div class="data-rows">
         <div class="data-row">
-          <div class="dr-label">Entry type</div>
+          <div class="dr-label">Kiểu vào lệnh</div>
           <div class="dr-value blue"><span id="a_entry" class="badge b-blue">--</span></div>
         </div>
         <div class="data-row">
-          <div class="dr-label">Direction</div>
+          <div class="dr-label">Hướng giao dịch</div>
           <div class="dr-value" id="a_dir">--</div>
         </div>
         <div class="data-row">
-          <div class="dr-label">Session</div>
+          <div class="dr-label">Phiên giao dịch</div>
           <div class="dr-value" id="a_session">--</div>
         </div>
         <div class="data-row">
-          <div class="dr-label">Min score</div>
+          <div class="dr-label">Score tối thiểu</div>
           <div style="display:flex; align-items:center; gap:12px; flex:1;">
             <span class="dr-value orange" id="a_min_score">--</span>
             <span style="font-size:10px; color:var(--dim)">
-              current: <span id="a_live_score" style="color:var(--green); font-weight:700">--</span>
+              hiện tại: <span id="a_live_score" style="color:var(--green); font-weight:700">--</span>
               <span id="a_score_status"></span>
             </span>
           </div>
@@ -874,16 +1110,16 @@ body::after {
   <div class="card blue-accent">
     <div class="card-header">
       <div class="card-dot dot-blue"></div>
-      <div class="card-title">B — Sizing & Risk</div>
+      <div class="card-title">B — Kích Thước Lệnh &amp; Rủi Ro</div>
     </div>
     <div class="card-body">
       <div class="data-rows">
         <div class="data-row">
-          <div class="dr-label">Risk mode</div>
+          <div class="dr-label">Chế độ rủi ro</div>
           <div><span id="b_risk_mode" class="badge b-orange">--</span></div>
         </div>
         <div class="data-row">
-          <div class="dr-label">Gate → Pos%</div>
+          <div class="dr-label">Gate → Vị thế %</div>
           <div style="flex:1; display:flex; flex-direction:column; gap:4px;">
             <div class="pos-bar-wrap">
               <div class="pos-bar">
@@ -899,15 +1135,15 @@ body::after {
           </div>
         </div>
         <div class="data-row">
-          <div class="dr-label">Eff. lot factor</div>
-          <div class="dr-value" style="color:var(--dim); font-size:10px;" id="b_eff_lot">pos × damping × exposure</div>
+          <div class="dr-label">Hệ số lot hiệu dụng</div>
+          <div class="dr-value" style="color:var(--dim); font-size:10px;" id="b_eff_lot">pos × damping × phơi nhiễm</div>
         </div>
         <div class="data-row">
-          <div class="dr-label">SL multiplier</div>
+          <div class="dr-label">Hệ số SL</div>
           <div class="dr-value white" id="b_sl">-- × ATR</div>
         </div>
         <div class="data-row">
-          <div class="dr-label">RR ratio</div>
+          <div class="dr-label">Tỷ lệ RR</div>
           <div class="dr-value white" id="b_rr">1 : --</div>
         </div>
         <div class="data-row">
@@ -924,21 +1160,21 @@ body::after {
   <div class="card orange-accent">
     <div class="card-header">
       <div class="card-dot dot-orange"></div>
-      <div class="card-title">C — Input vs Cloud Check</div>
+      <div class="card-title">C — Kiểm Tra Tham Số Cục Bộ vs Cloud</div>
     </div>
     <div class="card-body">
       <div style="display:grid; grid-template-columns:20px 1fr 70px 16px 1fr; gap:6px; padding:0 8px; margin-bottom:6px;">
         <div></div>
-        <div style="font-size:9px; color:var(--dimmer);">param</div>
-        <div style="font-size:9px; color:var(--dimmer); text-align:right;">local</div>
+        <div style="font-size:9px; color:var(--dimmer);">tham số</div>
+        <div style="font-size:9px; color:var(--dimmer); text-align:right;">cục bộ</div>
         <div></div>
-        <div style="font-size:9px; color:var(--dimmer);">advice</div>
+        <div style="font-size:9px; color:var(--dimmer);">gợi ý</div>
       </div>
       <div class="check-rows" id="checkRows">
         <!-- populated by JS -->
       </div>
       <div class="health-bar-row">
-        <span class="health-lbl">Config health</span>
+        <span class="health-lbl">Sức khỏe cấu hình</span>
         <div class="health-bar"><div class="health-fill" id="healthFill" style="width:0%"></div></div>
         <span class="health-val" id="healthVal">--</span>
       </div>
@@ -951,33 +1187,34 @@ body::after {
   <div class="card cyan-accent">
     <div class="card-header">
       <div class="card-dot dot-cyan"></div>
-      <div class="card-title">D — Execution Scope</div>
+      <div class="card-title">D — Phạm Vi Thực Thi</div>
     </div>
     <div class="card-body">
       <div class="scope-grid">
         <div class="scope-cell">
-          <div class="scope-lbl">Symbols</div>
+          <div class="scope-lbl">Cặp tiền</div>
           <div class="scope-val" id="d_symbols">--</div>
-          <div class="scope-note">from EA input</div>
+          <div class="scope-note">từ input EA</div>
         </div>
         <div class="scope-cell">
-          <div class="scope-lbl">Timeframe (local)</div>
-          <div class="scope-val" id="d_tf_local">--</div>
-          <div class="scope-note" id="d_tf_note">checking radar match...</div>
+          <div class="scope-lbl">Timeframe (cục bộ)</div>
+          <div class="scope-val" id="d_tf_cục bộ">--</div>
+          <div class="scope-note" id="d_tf_note">đang kiểm tra khớp radar...</div>
         </div>
         <div class="scope-cell">
           <div class="scope-lbl">Radar TF</div>
           <div class="scope-val" id="d_tf_radar">--</div>
-          <div class="scope-note">from cloud heartbeat</div>
+          <div class="scope-note">từ heartbeat cloud</div>
         </div>
         <div class="scope-cell">
-          <div class="scope-lbl">Strategy ID</div>
+          <div class="scope-lbl">Chiến lược ID</div>
           <div class="scope-val" id="d_strat_id">--</div>
-          <div class="scope-note">bound to license</div>
+          <div class="scope-note">gắn với license</div>
         </div>
       </div>
     </div>
   </div>
+
 
   <!-- ═══════════════════════════════════════════
        VISUAL MODEL SECTION
@@ -987,21 +1224,21 @@ body::after {
   <div class="visual-section">
     <div class="visual-section-header">
       <div class="vs-dot" style="background:var(--cyan)"></div>
-      <div class="vs-title" style="color:var(--cyan)">SIGNAL FLOW — LIVE STATE</div>
+      <div class="vs-title" style="color:var(--cyan)">LUỒNG TÍN HIỆU — TRẠNG THÁI THỰC</div>
     </div>
     <div class="vs-body">
       <div class="flow-nodes" id="vizFlowNodes">
         <!-- score -->
         <div class="fn-box fn-active" id="vfn-score" style="--fn-c:var(--cyan)">
-          <div class="fn-lbl">CLOUD SCORE</div>
+          <div class="fn-lbl">ĐIỂM CLOUD</div>
           <div class="fn-val" id="vfv-score">--</div>
-          <div class="fn-sub" id="vfs-score">from ZCloud radar</div>
+          <div class="fn-sub" id="vfs-score">từ radar ZCloud</div>
           <div class="fn-bar"><div class="fn-bar-fill" id="vfb-score" style="width:0%"></div></div>
         </div>
         <div class="fn-arrow" id="varr1">→</div>
         <!-- gate -->
         <div class="fn-box fn-active" id="vfn-gate" style="--fn-c:var(--green)">
-          <div class="fn-lbl">GATE FILTER</div>
+          <div class="fn-lbl">BỘ LỌC GATE</div>
           <div class="fn-val" id="vfv-gate">--</div>
           <div class="fn-sub" id="vfs-gate">score vs min</div>
           <div class="fn-bar"><div class="fn-bar-fill" id="vfb-gate" style="width:0%"></div></div>
@@ -1009,7 +1246,7 @@ body::after {
         <div class="fn-arrow" id="varr2">→</div>
         <!-- safety -->
         <div class="fn-box fn-active" id="vfn-safety" style="--fn-c:var(--blue)">
-          <div class="fn-lbl">SAFETY NET</div>
+          <div class="fn-lbl">LƯỚI AN TOÀN</div>
           <div class="fn-val" id="vfv-safety">--</div>
           <div class="fn-sub" id="vfs-safety">circuit breaker</div>
           <div class="fn-bar"><div class="fn-bar-fill" id="vfb-safety" style="width:0%"></div></div>
@@ -1017,7 +1254,7 @@ body::after {
         <div class="fn-arrow" id="varr3">→</div>
         <!-- sizer -->
         <div class="fn-box fn-active" id="vfn-sizer" style="--fn-c:var(--gold)">
-          <div class="fn-lbl">SIZER</div>
+          <div class="fn-lbl">TÍNH SIZE</div>
           <div class="fn-val" id="vfv-sizer">--</div>
           <div class="fn-sub" id="vfs-sizer">pos% × damping</div>
           <div class="fn-bar"><div class="fn-bar-fill" id="vfb-sizer" style="width:0%"></div></div>
@@ -1025,19 +1262,19 @@ body::after {
         <div class="fn-arrow" id="varr4">→</div>
         <!-- order -->
         <div class="fn-box fn-active" id="vfn-order" style="--fn-c:var(--green)">
-          <div class="fn-lbl">ORDER</div>
+          <div class="fn-lbl">ĐẶT LỆNH</div>
           <div class="fn-val" id="vfv-order">--</div>
-          <div class="fn-sub" id="vfs-order">direction · symbol</div>
+          <div class="fn-sub" id="vfs-order">hướng · cặp tiền</div>
           <div class="fn-bar"><div class="fn-bar-fill" id="vfb-order" style="width:0%"></div></div>
         </div>
       </div>
       <!-- sub row: session + min score -->
       <div class="flow-sub-row">
-        <span>Session:</span> <span id="vizSession">--</span>
+        <span>Phiên:</span> <span id="vizSession">--</span>
         <span class="fsr-sep">·</span>
-        <span>Min Score:</span> <span id="vizMinScore">--</span>
+        <span>Score Tối Thiểu:</span> <span id="vizMinScore">--</span>
         <span class="fsr-sep">·</span>
-        <span>Pos%:</span> <span id="vizPosPct">--</span>
+        <span>Vị thế %:</span> <span id="vizPosPct">--</span>
         <span class="fsr-sep">·</span>
         <span>SL:</span> <span id="vizSL">--</span>× ATR
         <span class="fsr-sep">·</span>
@@ -1048,15 +1285,15 @@ body::after {
     </div>
   </div>
 
-  <!-- 2. ENTRY ZONE + RADAR + TIMELINE -->
+  <!-- 2. VÀO LỆNH ZONE + RADAR + TIMELINE -->
   <div class="visual-section">
     <div class="visual-section-header">
       <div class="vs-dot" style="background:var(--orange)"></div>
-      <div class="vs-title" style="color:var(--orange)">ENTRY MODEL · RADAR · REGIME TIMELINE</div>
+      <div class="vs-title" style="color:var(--orange)">MÔ HÌNH VÀO LỆNH · RADAR · LỊCH SỬ CHẾ ĐỘ</div>
     </div>
     <div class="vs-body">
 
-      <!-- Entry zone chart -->
+      <!-- Kiểu vào zone chart -->
       <div class="entry-canvas-wrap" id="entryCanvas">
         <svg id="entrySvg" viewBox="0 0 560 180" preserveAspectRatio="none"></svg>
       </div>
@@ -1070,12 +1307,12 @@ body::after {
 
         <!-- Timeline + Compare -->
         <div>
-          <div class="tl-title">LỆNH THEO REGIME — 14 NGÀY (mô phỏng)</div>
+          <div class="tl-title">LỆNH THEO CHẾ ĐỘ — 14 NGÀY (mô phỏng)</div>
           <div class="tl-bars" id="tlBars"></div>
           <div class="tl-days" id="tlDays"></div>
 
           <div class="cmp-section">
-            <div class="cmp-title">SO SÁNH PRESET</div>
+            <div class="cmp-title">SO SÁNH CÁC PRESET</div>
             <div id="cmpArea"></div>
           </div>
         </div>
@@ -1087,7 +1324,7 @@ body::after {
        SWITCHER
   ═══════════════════════════════════════════ -->
   <div class="switcher-section" id="switcherSection">
-    <div class="switcher-title">Switch Strategy</div>
+    <div class="switcher-title">Đổi Chiến Lược</div>
     <div class="strategy-cards" id="strategyCards">
       <!-- populated by JS -->
     </div>
@@ -1100,11 +1337,11 @@ body::after {
 <div class="viz-tooltip" id="vizTooltip"></div>
 
 <script>
-// ── URL params ──────────────────────────────────────────────────
-const params  = new URLSearchParams(location.search);
-const LICENSE = params.get('license') || '';
-const ACCOUNT = params.get('account') || '';
-const BASE    = params.get('base')    || (location.origin === 'null' ? 'http://47.129.243.206:8000' : location.origin);
+// ── URL tham sốs ──────────────────────────────────────────────────
+const tham sốs  = new URLSearchParams(location.search);
+const LICENSE = tham sốs.get('license') || '';
+const ACCOUNT = tham sốs.get('account') || '';
+const BASE    = tham sốs.get('base')    || (location.origin === 'null' ? 'http://47.129.243.206:8000' : location.origin);
 const API     = BASE;
 
 // ── State ───────────────────────────────────────────────────────
@@ -1115,7 +1352,7 @@ let state = {
   liveScore:  null,
   radarTF:    'H1',
   symbols:    ACCOUNT || '—',
-  tfLocal:    params.get('tf') || 'H1',
+  tfLocal:    tham sốs.get('tf') || 'H1',
 };
 
 // ── Helpers ─────────────────────────────────────────────────────
@@ -1144,7 +1381,7 @@ function gateLabel(pos_pct) {
   if (pos_pct >= 125) return 'SCALE';
   if (pos_pct >= 100) return 'ALLOW';
   if (pos_pct >= 60)  return 'CAUTION';
-  if (pos_pct >= 30)  return 'WARN';
+  if (pos_pct >= 30)  return 'CẢNH BÁO';
   return 'BLOCK';
 }
 
@@ -1176,7 +1413,7 @@ async function fetchActive() {
 // ── Fetch live radar score for scope context ─────────────────────
 async function fetchLiveScore() {
   try {
-    const asset = params.get('asset') || 'GOLD';
+    const asset = tham sốs.get('asset') || 'GOLD';
     const tf    = state.tfLocal || 'H1';
     const r = await fetch(`${API}/radar/scan`, {
       method: 'POST',
@@ -1193,16 +1430,16 @@ function renderProfile(profile, activeId) {
   if (!profile) return;
 
   const sid = activeId || profile.strategy_id || 'S1';
-  document.title = `Z-ARMOR · Strategy ${sid}`;
+  document.title = `Z-ARMOR · Chiến lược ${sid}`;
   setEl('strategyIdTitle', sid);
-  setEl('profileNameSub', `${profile.profile_name || 'Profile'} · EA đang chạy preset này`);
+  setEl('profileNameSub', `${profile.profile_name || 'Profile'} · EA đang dùng preset này`);
 
   // Hero
-  setEl('hEntry', profile.entry_type || '--');
-  setEl('hEntryDir', profile.direction_bias || 'BOTH');
+  setEl('hKiểu vào', profile.entry_type || '--');
+  setEl('hKiểu vàoDir', profile.direction_bias || 'BOTH');
   setEl('hMinScore', profile.min_score_entry ?? '--');
   setEl('hRR', `1 : ${profile.rr_ratio ?? '--'}`);
-  setEl('hRiskMode', profile.risk_mode || '--');
+  setEl('hRủi roMode', profile.risk_mode || '--');
   const sessions = Array.isArray(profile.session_filter)
     ? profile.session_filter.join(' + ')
     : (profile.session_filter || '--');
@@ -1227,10 +1464,10 @@ function renderProfile(profile, activeId) {
   setEl('strip_rr', `1:${profile.rr_ratio ?? '--'}`);
 
   // Section A
-  setEl('a_entry', profile.entry_type || '--');
+  setEl('a_entry', profile.entry_type === 'BREAKOUT_ONLY' ? 'PHÁ VỠ' : profile.entry_type === 'PULLBACK_ONLY' ? 'HỒI GIÁ' : profile.entry_type || '--');
   const dirColor = profile.direction_bias === 'BUY_ONLY' ? 'green' : profile.direction_bias === 'SELL_ONLY' ? 'red' : 'white';
   const dirIcon  = profile.direction_bias === 'BUY_ONLY' ? '▲ ' : profile.direction_bias === 'SELL_ONLY' ? '▼ ' : '↕ ';
-  setEl('a_dir', `<span class="dr-value ${dirColor}">${dirIcon}${profile.direction_bias || 'BOTH'}</span>`);
+  setEl('a_dir', `<span class="dr-value ${dirColor}">${dirIcon}${profile.direction_bias === 'BUY_ONLY' ? 'CHỈ MUA' : profile.direction_bias === 'SELL_ONLY' ? 'CHỈ BÁN' : 'HAI CHIỀU'}</span>`);
 
   const sessionBadges = (Array.isArray(profile.session_filter) ? profile.session_filter : ['LON','NY'])
     .map(s => `<span class="badge b-dim">${s}</span>`).join(' ');
@@ -1240,7 +1477,8 @@ function renderProfile(profile, activeId) {
 
   // Section B
   const rmBadgeClass = profile.risk_mode === 'AGGRESSIVE' ? 'b-red' : profile.risk_mode === 'CONSERVATIVE' ? 'b-blue' : 'b-orange';
-  setEl('b_risk_mode', `<span class="badge ${rmBadgeClass}">${profile.risk_mode || '--'}  cap ${pos_pct}%</span>`);
+  const rmLabel = profile.risk_mode === 'CONSERVATIVE' ? 'BẢO THỦ' : profile.risk_mode === 'AGGRESSIVE' ? 'MẠO HIỂM' : 'BÌNH THƯỜNG';
+  setEl('b_risk_mode', `<span class="badge ${rmBadgeClass}">${rmLabel}  · giới hạn ${pos_pct}%</span>`);
 
   const barPct = Math.min((pos_pct / 125) * 100, 100);
   const barClass = pos_pct >= 100 ? 'fill-green' : pos_pct >= 60 ? 'fill-orange' : 'fill-red';
@@ -1250,11 +1488,11 @@ function renderProfile(profile, activeId) {
   setEl('b_pos_val', `${pos_pct}%`);
   document.getElementById('b_pos_val').style.color = posColor;
 
-  setEl('b_eff_lot', `${pos_pct}% pos × damping × exposure_scale`);
+  setEl('b_eff_lot', `${pos_pct}% pos × damping × phơi nhiễm_scale`);
   setEl('b_sl', `${profile.sl_multiplier ?? '--'} × ATR`);
   setEl('b_rr', `1 : ${profile.rr_ratio ?? '--'}`);
   const tslColor = profile.trailing_sl ? 'var(--green)' : 'var(--dimmer)';
-  setEl('b_tsl', `<span style="color:${tslColor}">${profile.trailing_sl ? 'ON' : 'off'}</span>`);
+  setEl('b_tsl', `<span style="color:${tslColor}">${profile.trailing_sl ? 'BẬT' : 'tắt'}</span>`);
 
   // Section C — build check rows
   const tf = state.tfLocal;
@@ -1263,12 +1501,12 @@ function renderProfile(profile, activeId) {
   const score = state.liveScore;
 
   const checks = [
-    { name:'Entry type', local: profile.entry_type||'--',   advice: 'cloud-controlled', status:'ok' },
-    { name:'Direction',  local: profile.direction_bias||'BOTH', advice: 'cloud-controlled', status:'ok' },
-    { name:'Min score',  local: `${minScore}`,   advice: score != null ? (score >= minScore ? `live ${score} ≥ min ✓` : `⚠ live ${score} < min`) : 'no live data', status: score != null ? (score >= minScore ? 'ok' : 'warn') : 'ok' },
-    { name:'Risk mode',  local: profile.risk_mode||'NORMAL', advice: 'from preset', status:'ok' },
-    { name:'TF match',   local: tf,     advice: tfMatch ? `= Radar TF ✓` : `mismatch → check EA input`, status: tfMatch ? 'ok' : 'warn' },
-    { name:'Pos%',       local: `${pos_pct}%`, advice: pos_pct >= 100 ? 'full size, regime OK' : 'scaled — regime caution', status: pos_pct >= 100 ? 'ok' : 'warn' },
+    { name:'Kiểu vào type', cục bộ: profile.entry_type||'--',   gợi ý: 'kiểm soát bởi cloud', status:'ok' },
+    { name:'Hướng giao dịch',  cục bộ: profile.direction_bias||'BOTH', gợi ý: 'kiểm soát bởi cloud', status:'ok' },
+    { name:'Score min',  cục bộ: `${minScore}`,   gợi ý: score != null ? (score >= minScore ? `live ${score} ≥ min ✓` : `⚠ live ${score} < min điểm`) : 'chưa có dữ liệu live', status: score != null ? (score >= minScore ? 'ok' : 'warn') : 'ok' },
+    { name:'Rủi ro mode',  cục bộ: profile.risk_mode||'NORMAL', gợi ý: 'từ preset', status:'ok' },
+    { name:'TF match',   cục bộ: tf,     gợi ý: tfMatch ? `= Radar TF ✓` : `lệch TF → kiểm tra input EA`, status: tfMatch ? 'ok' : 'warn' },
+    { name:'Pos%',       cục bộ: `${pos_pct}%`, gợi ý: pos_pct >= 100 ? 'full size, regime OK' : 'giảm size — cẩn thận regime', status: pos_pct >= 100 ? 'ok' : 'warn' },
   ];
 
   const icons = { ok:'✓', warn:'!', err:'✗' };
@@ -1278,9 +1516,9 @@ function renderProfile(profile, activeId) {
     return `<div class="check-row cr-${c.status}">
       <div class="cr-icon">${icons[c.status]}</div>
       <div class="cr-name">${c.name}</div>
-      <div class="cr-local">${c.local}</div>
+      <div class="cr-cục bộ">${c.cục bộ}</div>
       <div class="cr-arrow">›</div>
-      <div class="cr-advice">${c.advice}</div>
+      <div class="cr-gợi ý">${c.gợi ý}</div>
     </div>`;
   }).join('');
   setEl('checkRows', html);
@@ -1295,13 +1533,13 @@ function renderProfile(profile, activeId) {
   setEl('healthVal', `<span style="color:${healthColor}">${okCount}/${checks.length}</span>`);
 
   // Section D
-  setEl('d_symbols', params.get('symbols') || 'XAUUSD');
-  setEl('d_tf_local', tf);
+  setEl('d_symbols', tham sốs.get('symbols') || 'XAUUSD');
+  setEl('d_tf_cục bộ', tf);
   const radarTF = profile.radar_tf || 'H1';
   setEl('d_tf_radar', radarTF);
   const tfOk = tf === radarTF;
-  document.getElementById('d_tf_local').className = 'scope-val ' + (tfOk ? 'ok' : 'mismatch');
-  setEl('d_tf_note', tfOk ? '✓ matches Radar TF' : `⚠ mismatch with Radar TF (${radarTF})`);
+  document.getElementById('d_tf_cục bộ').className = 'scope-val ' + (tfOk ? 'ok' : 'mismatch');
+  setEl('d_tf_note', tfOk ? '✓ khớp Radar TF' : `⚠ mismatch with Radar TF (${radarTF})`);
   setEl('d_strat_id', sid);
 
   // Live score display
@@ -1309,8 +1547,8 @@ function renderProfile(profile, activeId) {
     setEl('a_live_score', score.toString());
     document.getElementById('a_live_score').style.color = colorForScore(score);
     setEl('a_score_status', score >= minScore
-      ? `<span style="color:var(--green)"> ✓ gate open</span>`
-      : `<span style="color:var(--orange)"> ⚠ ${minScore-score} below min</span>`);
+      ? `<span style="color:var(--green)"> ✓ gate mở</span>`
+      : `<span style="color:var(--orange)"> ⚠ ${minScore-score} dưới mức min</span>`);
     setEl('hScoreLive', `live: ${score}`);
     document.getElementById('hScoreLive').style.color = colorForScore(score);
   }
@@ -1329,11 +1567,11 @@ function renderSwitcherCards(presets, activeId) {
       <div class="sc-name">${p.profile_name}</div>
       <div class="sc-stats">
         <div class="sc-stat">
-          <span class="sc-stat-k">Entry</span>
-          <span class="sc-stat-v" style="color:var(--blue)">${p.entry_type}</span>
+          <span class="sc-stat-k">Kiểu vào</span>
+          <span class="sc-stat-v" style="color:var(--blue)">${p.entry_type === 'BREAKOUT_ONLY' ? 'PHÁ VỠ' : p.entry_type === 'PULLBACK_ONLY' ? 'HỒI GIÁ' : 'LINH HOẠT'}</span>
         </div>
         <div class="sc-stat">
-          <span class="sc-stat-k">Min score</span>
+          <span class="sc-stat-k">Score tối thiểu</span>
           <span class="sc-stat-v" style="color:var(--orange)">${p.min_score_entry}</span>
         </div>
         <div class="sc-stat">
@@ -1341,12 +1579,12 @@ function renderSwitcherCards(presets, activeId) {
           <span class="sc-stat-v">1:${p.rr_ratio}</span>
         </div>
         <div class="sc-stat">
-          <span class="sc-stat-k">Risk</span>
-          <span class="sc-stat-v">${p.risk_mode}</span>
+          <span class="sc-stat-k">Rủi ro</span>
+          <span class="sc-stat-v">${p.risk_mode === 'CONSERVATIVE' ? 'BẢO THỦ' : p.risk_mode === 'AGGRESSIVE' ? 'MẠO HIỂM' : 'BÌNH THƯỜNG'}</span>
         </div>
       </div>
       <button class="sc-btn" onclick="selectStrategy('${p.strategy_id}')">
-        ${isActive ? '✓ Active' : 'Select →'}
+        ${isActive ? '✓ Đang dùng' : 'Chọn →'}
       </button>
     </div>`;
   }).join('');
@@ -1356,10 +1594,10 @@ function renderSwitcherCards(presets, activeId) {
 // ── Select strategy ──────────────────────────────────────────────
 async function selectStrategy(sid) {
   if (!LICENSE) {
-    toast('No license key — open from EA panel', true); return;
+    toast('Chưa có license — mở từ panel EA', true); return;
   }
   if (sid === state.activeId) {
-    toast(`Strategy ${sid} already active`); return;
+    toast(`Chiến lược ${sid} already active`); return;
   }
   try {
     const r = await fetch(`${API}/strategy/select`, {
@@ -1373,12 +1611,12 @@ async function selectStrategy(sid) {
       const preset = state.presets.find(p => p.strategy_id === sid);
       if (preset) { state.profile = preset; renderProfile(preset, sid); }
       renderSwitcherCards(state.presets, sid);
-      toast(`✓ Strategy ${sid} active — EA updates in ≤30s`);
+      toast(`✓ Chiến lược ${sid} active — EA updates in ≤30s`);
     } else {
-      toast('Switch failed: ' + (d.message||'unknown'), true);
+      toast('Chuyển thất bại: ' + (d.message||'không rõ'), true);
     }
   } catch(e) {
-    toast('Network error: ' + e.message, true);
+    toast('Lỗi mạng: ' + e.message, true);
   }
 }
 
@@ -1442,7 +1680,7 @@ document.getElementById('loadingOverlay').style.transition = 'opacity 0.3s';
 
 // If no license in URL, show lighter badge
 if (!LICENSE) {
-  setEl('profileBadge', 'NO LICENSE — LIMITED VIEW');
+  setEl('profileBadge', 'CHƯA CÓ LICENSE — CHẾ ĐỘ XEM HẠN CHẾ');
   document.getElementById('profileBadge').style.background = 'rgba(255,165,0,0.08)';
   document.getElementById('profileBadge').style.color = 'var(--orange)';
   document.getElementById('profileBadge').style.borderColor = 'rgba(255,165,0,0.25)';
@@ -1450,13 +1688,13 @@ if (!LICENSE) {
 }
 
 // ══════════════════════════════════════════════════════════════
-// VISUAL MODEL — Signal Flow + Entry Zone + Radar + Timeline
+// VISUAL MODEL — Signal Flow + Kiểu vào Zone + Radar + Timeline
 // ══════════════════════════════════════════════════════════════
 
 const VIZ = (() => {
 
   // ── Radar axes ──────────────────────────────────────────────
-  const RADAR_AXES = ['Safety','Speed','Risk','Frequency','Profit','Consistency'];
+  const RADAR_AXES = ['An toàn','Tốc độ','Rủi ro','Tần suất','Lợi nhuận','Ổn định'];
   // Preset radar fingerprints (normalized 0-1)
   // Keyed by strategy_id — fallback to S1 defaults
   const RADAR_DATA = {
@@ -1474,10 +1712,10 @@ const VIZ = (() => {
 
   // Compare metrics [label, {S1,S2,S3}, max, suffix]
   const COMPARE = [
-    { label:'Win Rate',    vals:{S1:64, S2:57, S3:51}, max:100, sfx:'%' },
-    { label:'Avg RR',      vals:{S1:2.5,S2:2.0,S3:1.5},max:3,  sfx:'×' },
-    { label:'Max DD',      vals:{S1:4.2,S2:7.1,S3:14}, max:18, sfx:'%' },
-    { label:'Trades/wk',   vals:{S1:8,  S2:15, S3:30}, max:35, sfx:''  },
+    { label:'Tỷ lệ thắng',    vals:{S1:64, S2:57, S3:51}, max:100, sfx:'%' },
+    { label:'RR trung bình',      vals:{S1:2.5,S2:2.0,S3:1.5},max:3,  sfx:'×' },
+    { label:'DD tối đa',      vals:{S1:4.2,S2:7.1,S3:14}, max:18, sfx:'%' },
+    { label:'Lệnh/tuần',   vals:{S1:8,  S2:15, S3:30}, max:35, sfx:''  },
   ];
 
   // ── Gate color helper ────────────────────────────────────────
@@ -1486,7 +1724,7 @@ const VIZ = (() => {
     const g = gate.toUpperCase();
     if (g==='SCALE'||g==='ALLOW')  return 'var(--green)';
     if (g==='CAUTION')             return 'var(--orange)';
-    if (g==='WARN')                return 'var(--gold)';
+    if (g==='CẢNH BÁO')                return 'var(--gold)';
     return 'var(--red)';
   }
 
@@ -1497,7 +1735,7 @@ const VIZ = (() => {
     const minSc   = profile.min_score_entry || 65;
     const score   = liveScore ?? state.liveScore;
     const gateStr = profile.gate_label || gateLabel(posPct);
-    const gateOk  = !['BLOCK','WARN'].includes((gateStr||'').toUpperCase());
+    const gateOk  = !['BLOCK','CẢNH BÁO'].includes((gateStr||'').toUpperCase());
     const scoreOk = score != null ? score >= minSc : true;
     const canTrade = gateOk && scoreOk;
 
@@ -1510,14 +1748,14 @@ const VIZ = (() => {
     vnSet('gate', gateStr, `pos% ${posPct}%`, posPct/125, pColor, gateOk?'fn-active':'fn-blocked');
     // Safety
     const safetyOk = posPct > 0;
-    vnSet('safety', safetyOk?'PASS':'WARN', 'circuit breaker · streak', safetyOk?.85:.3, safetyOk?'var(--blue)':'var(--orange)', safetyOk?'fn-active':'fn-blocked');
+    vnSet('safety', safetyOk?'ĐẠT':'CẢNH BÁO', 'circuit breaker · streak', safetyOk?.85:.3, safetyOk?'var(--blue)':'var(--orange)', safetyOk?'fn-active':'fn-blocked');
     // Sizer
     const lotEst = ((posPct/100)*0.2).toFixed(2);
-    vnSet('sizer', `${posPct}%`, `est. ${lotEst} lot · 1× dmp`, posPct/125, 'var(--gold)', 'fn-active');
+    vnSet('sizer', `${posPct}%`, `ước: ${lotEst} lot · 1× dmp`, posPct/125, 'var(--gold)', 'fn-active');
     // Order
     const dir = profile.direction_bias || 'BOTH';
-    const orderLabel = !canTrade ? '✖ BLOCK' : dir==='BUY_ONLY'?'▲ BUY':dir==='SELL_ONLY'?'▼ SELL':'↕ BOTH';
-    vnSet('order', orderLabel, `${params.get('symbols')||'XAUUSDm'} · ${state.tfLocal||'H1'}`, canTrade?1:0, canTrade?'var(--green)':'var(--red)', canTrade?'fn-active':'fn-blocked');
+    const orderLabel = !canTrade ? '✖ CHẶN' : dir==='BUY_ONLY'?'▲ MUA':dir==='SELL_ONLY'?'▼ BÁN':'↕ HAI CHIỀU';
+    vnSet('order', orderLabel, `${tham sốs.get('symbols')||'XAUUSDm'} · ${state.tfLocal||'H1'}`, canTrade?1:0, canTrade?'var(--green)':'var(--red)', canTrade?'fn-active':'fn-blocked');
 
     // Arrows
     const ac = canTrade ? 'arr-ok' : gateOk ? 'arr-warn' : 'arr-block';
@@ -1534,7 +1772,7 @@ const VIZ = (() => {
     textSet('vizPosPct', `${posPct}%`);
     textSet('vizSL', profile.sl_multiplier ?? '--');
     textSet('vizRR', profile.rr_ratio ?? '--');
-    textSet('vizTSL', profile.trailing_sl ? 'ON' : 'off');
+    textSet('vizTSL', profile.trailing_sl ? 'BẬT' : 'tắt');
   }
 
   function vnSet(id, val, sub, barPct, color, cls) {
@@ -1555,8 +1793,8 @@ const VIZ = (() => {
     if (el) el.textContent = val;
   }
 
-  // ── Entry Zone Candle Chart ──────────────────────────────────
-  function renderEntryZone(profile) {
+  // ── Kiểu vào Zone Candle Chart ──────────────────────────────────
+  function renderKiểu vàoZone(profile) {
     const svg = document.getElementById('entrySvg');
     if (!svg || !profile) return;
 
@@ -1626,11 +1864,11 @@ const VIZ = (() => {
       if (labelR) html += `<text x="${W-3}" y="${y-3}" fill="${color}" font-family="JetBrains Mono,monospace" font-size="8" text-anchor="end">${labelR}</text>`;
       if (labelL) html += `<text x="3" y="${y-3}" fill="${color}" font-family="JetBrains Mono,monospace" font-size="8">${labelL}</text>`;
     };
-    dashLine(tpY,    '#00C875', `TP  +${tpPts.toFixed(1)} pts  (RR ${rr}×)`);
-    dashLine(entryY, '#00B4D8', 'ENTRY', '');
-    dashLine(slY,    '#E53935', `SL  −${slPts.toFixed(1)} pts  (${slMult}×ATR)`);
+    dashLine(tpY,    '#00C875', `TP  +${tpPts.toFixed(1)} điểm  (RR ${rr}×)`);
+    dashLine(entryY, '#00B4D8', 'VÀO LỆNH', '');
+    dashLine(slY,    '#E53935', `SL  −${slPts.toFixed(1)} điểm  (${slMult}×ATR)`);
 
-    // Entry arrow
+    // Kiểu vào arrow
     const ax = cx(n-4);
     const arrowDir = isBuy ? 1 : -1;
     const ay = entryY + arrowDir*28;
@@ -1639,9 +1877,9 @@ const VIZ = (() => {
 
     // RR label in zone center
     const rrLabelY = (entryY + tpY) / 2 + 4;
-    html += `<text x="${W*.5}" y="${rrLabelY}" fill="#00C87566" font-family="JetBrains Mono,monospace" font-size="11" text-anchor="middle" font-weight="700">PROFIT ZONE  1:${rr}</text>`;
+    html += `<text x="${W*.5}" y="${rrLabelY}" fill="#00C87566" font-family="JetBrains Mono,monospace" font-size="11" text-anchor="middle" font-weight="700">VÙNG LỢI NHUẬN  1:${rr}</text>`;
     const slLabelY = (entryY + slY) / 2 + 4;
-    html += `<text x="${W*.5}" y="${slLabelY}" fill="#E5393566" font-family="JetBrains Mono,monospace" font-size="11" text-anchor="middle" font-weight="700">STOP ZONE  SL×${slMult}</text>`;
+    html += `<text x="${W*.5}" y="${slLabelY}" fill="#E5393566" font-family="JetBrains Mono,monospace" font-size="11" text-anchor="middle" font-weight="700">VÙNG DỪNG LỖ  SL×${slMult}</text>`;
 
     svg.innerHTML = html;
   }
@@ -1711,7 +1949,7 @@ const VIZ = (() => {
     const col   = PCOL[sid] || '#00B4D8';
     const data  = TIMELINE_DATA[sid] || TIMELINE_DATA.S1;
     const max   = Math.max(...data);
-    const regimes = ['Bearish','No Signal','Weak Bull','Moderate','Strong','Strong','Very Strong'];
+    const regimes = ['Giảm mạnh','Không tín hiệu','Tăng yếu','Trung bình','Mạnh','Mạnh','Rất mạnh'];
 
     bars.innerHTML = data.map((v,i) => {
       const h = v===0 ? 4 : Math.max(12, (v/max)*86);
@@ -1779,7 +2017,7 @@ const VIZ = (() => {
   function render(profile, liveScore) {
     if (!profile) return;
     renderFlow(profile, liveScore);
-    renderEntryZone(profile);
+    renderKiểu vàoZone(profile);
     renderRadar(profile);
     renderTimeline(profile);
     renderCompare(profile);
@@ -1788,11 +2026,274 @@ const VIZ = (() => {
   return { render, tip, untip };
 })();
 
+
+// ════════════════════════════════════════════════════════════════
+// SECTION E — Domain Match Engine
+// Kiểm tra khớp lệnh giữa D1 (ZCloud), D2 (Profile), D3 (EA)
+// ════════════════════════════════════════════════════════════════
+
+function renderDomainMatch(profile, liveScore) {
+  if (!profile) return;
+
+  const sc      = liveScore ?? state.liveScore;
+  const pos     = profile.position_pct     || 100;
+  const minSc   = profile.min_score_entry  || 65;
+  const rr      = profile.rr_ratio         || 2.0;
+  const slMult  = profile.sl_multiplier    || 1.5;
+  const entry   = profile.entry_type       || 'BOTH';
+  const dir     = profile.direction_bias   || 'BOTH';
+  const riskM   = profile.risk_mode        || 'NORMAL';
+  const tf      = state.tfLocal            || 'H1';
+  const radarTF = profile.radar_tf         || 'H1';
+  const tsl     = profile.trailing_sl      ? 'ON' : 'off';
+
+  // ── Gate derivation (Domain 1 → EA) ──────────────────────────
+  function gateFromScore(s) {
+    if (s == null) return 'K/A';
+    if (s >= 85) return 'SCALE';
+    if (s >= 70) return 'ALLOW';
+    if (s >= 50) return 'CAUTION';
+    if (s >= 30) return 'CẢNH BÁO';
+    return 'BLOCK';
+  }
+  const d1Gate  = gateFromScore(sc);
+  const d2MinOk = (sc != null) ? sc >= minSc : null;
+
+  // ── EA pos% from gate (Domain 3 linear gradient) ─────────────
+  function eaPosFromGate(g) {
+    if (g === 'SCALE')   return 125;
+    if (g === 'ALLOW')   return pos >= 70 ? pos : 100;
+    if (g === 'CAUTION') return pos >= 50 ? pos : 60;
+    if (g === 'CẢNH BÁO')    return 30;
+    if (g === 'BLOCK')   return 0;
+    return pos;
+  }
+  const eaPos = eaPosFromGate(d1Gate);
+
+  // ── Rủi ro mode cap (Domain 2) ──────────────────────────────────
+  const riskCap = riskM === 'CONSERVATIVE' ? 60 : riskM === 'AGGRESSIVE' ? 125 : 100;
+  const effectivePos = Math.min(eaPos, riskCap);
+  const capApplied = effectivePos < eaPos;
+
+  // ── TF match (D2 ↔ D3) ───────────────────────────────────────
+  const tfOk = tf === radarTF;
+
+  // ── Direction match (D1 regime → D2 bias → D3 dir_mode) ──────
+  // ZCloud regime string (simulated from score)
+  let d1Regime = 'NEUTRAL';
+  if (sc != null) {
+    if (sc >= 80) d1Regime = 'STRONG_TREND';
+    else if (sc >= 70) d1Regime = 'TRENDING';
+    else if (sc >= 50) d1Regime = 'NEUTRAL';
+    else if (sc >= 35) d1Regime = 'MEAN_REVERSION';
+    else d1Regime = 'VOLATILE';
+  }
+  // Is profile direction compatible with regime?
+  const regimeBullish = ['STRONG_TREND','TRENDING'].includes(d1Regime);
+  const regimeBearish = ['VOLATILE'].includes(d1Regime);
+  let dirOk = true, dirNote = '';
+  if (dir === 'BUY_ONLY' && regimeBearish)  { dirOk = false; dirNote = 'Regime VOLATILE mâu thuẫn BUY_ONLY'; }
+  if (dir === 'SELL_ONLY' && regimeBullish) { dirOk = false; dirNote = 'Regime TREND mâu thuẫn SELL_ONLY'; }
+
+  // ── EA SL field match (D1 ea_sl_multiplier → D3) ─────────────
+  // SL multiplier ZCloud returns vs profile
+  const d1SL = slMult; // already from heartbeat
+  const slOk = true;   // always numeric, just display
+
+  // ── Build rows ────────────────────────────────────────────────
+  const rows = [
+    {
+      tham số: 'Score → Gate',
+      d1: sc != null ? `Score ${sc}` : 'K/A',
+      d2: `min ${minSc}`,
+      d3: `Gate: ${d1Gate}`,
+      bridge1: d2MinOk == null ? 'na' : d2MinOk ? 'ok' : 'warn',
+      bridge2: d1Gate !== 'BLOCK' ? 'ok' : 'err',
+      status:  d1Gate === 'BLOCK' ? 'err' : d2MinOk === false ? 'warn' : 'ok',
+      label:   d1Gate === 'BLOCK' ? 'BLOCK' : d2MinOk === false ? 'CẢNH BÁO' : 'KHỚP',
+    },
+    {
+      tham số: 'Vị thế %',
+      d1: `ea_pos ${pos}%`,
+      d2: `cap ${riskCap}% (${riskM})`,
+      d3: `eff ${effectivePos}%`,
+      bridge1: 'ok',
+      bridge2: capApplied ? 'warn' : 'ok',
+      status:  capApplied ? 'warn' : 'ok',
+      label:   capApplied ? 'BỊ CAP' : 'KHỚP',
+    },
+    {
+      tham số: 'Hướng giao dịch',
+      d1: d1Regime,
+      d2: dir,
+      d3: dir === 'BUY_ONLY' ? 'CHỈ MUA' : dir === 'SELL_ONLY' ? 'CHỈ BÁN' : 'HAI CHIỀU',
+      bridge1: dirOk ? 'ok' : 'err',
+      bridge2: 'ok',
+      status:  dirOk ? 'ok' : 'err',
+      label:   dirOk ? 'KHỚP' : 'XUNG ĐỘT',
+      note:    dirNote,
+    },
+    {
+      tham số: 'Khung thời gian',
+      d1: radarTF,
+      d2: radarTF,
+      d3: tf,
+      bridge1: 'ok',
+      bridge2: tfOk ? 'ok' : 'warn',
+      status:  tfOk ? 'ok' : 'warn',
+      label:   tfOk ? 'KHỚP' : 'LỆCH TF',
+    },
+    {
+      tham số: 'Hệ số SL',
+      d1: `${slMult}×ATR`,
+      d2: `${slMult}×ATR`,
+      d3: `${slMult}×ATR`,
+      bridge1: 'ok',
+      bridge2: 'ok',
+      status: 'ok',
+      label: 'KHỚP',
+    },
+    {
+      tham số: 'Tỷ lệ RR',
+      d1: 'K/Á',
+      d2: `1:${rr}`,
+      d3: `1:${rr}`,
+      bridge1: 'na',
+      bridge2: 'ok',
+      status: 'ok',
+      label: 'KHỚP',
+    },
+    {
+      tham số: 'Kiểu vào Type',
+      d1: 'K/Á',
+      d2: entry,
+      d3: entry,
+      bridge1: 'na',
+      bridge2: 'ok',
+      status: 'ok',
+      label: 'KHỚP',
+    },
+    {
+      tham số: 'Trailing SL',
+      d1: 'K/Á',
+      d2: tsl,
+      d3: tsl,
+      bridge1: 'na',
+      bridge2: 'ok',
+      status: 'ok',
+      label: 'KHỚP',
+    },
+  ];
+
+  // ── Bridge icons ──────────────────────────────────────────────
+  const bridgeIcon = { ok:'→', warn:'⚠', err:'✗', na:'·' };
+  const statusBadge = (s, lbl) => {
+    const cls = s==='ok'?'dsb-ok':s==='warn'?'dsb-warn':s==='err'?'dsb-err':'dsb-na';
+    const icon = s==='ok'?'✓':s==='warn'?'!':s==='err'?'✗':'–';
+    return `<span class="dm-status-badge ${cls}">${icon} ${lbl}</span>`;
+  };
+
+  const colColor = { d1:'var(--cyan)', d2:'var(--orange)', d3:'var(--green)' };
+
+  // ── Render rows ───────────────────────────────────────────────
+  const rowsHtml = rows.map(r => {
+    const cls = `dm-row row-${r.status}`;
+    const b1cls = `dm-bridge ${r.bridge1}`;
+    const b2cls = `dm-bridge ${r.bridge2}`;
+    const note = r.note ? `<div style="font-size:8px;color:var(--red);margin-top:2px;">${r.note}</div>` : '';
+    return `<div class="${cls}">
+      <div class="dm-tham số">${r.tham số}</div>
+      <div class="dm-cell" style="color:${colColor.d1}">${r.d1}</div>
+      <div class="${b1cls}">${bridgeIcon[r.bridge1]}</div>
+      <div class="dm-cell" style="color:${colColor.d2}">${r.d2}</div>
+      <div class="${b2cls}">${bridgeIcon[r.bridge2]}</div>
+      <div class="dm-cell" style="color:${colColor.d3}">${r.d3}${note}</div>
+      <div>${statusBadge(r.status, r.label)}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('dmRows').innerHTML = rowsHtml;
+
+  // ── Issues pills ──────────────────────────────────────────────
+  const issues = [];
+  if (d1Gate === 'BLOCK') issues.push({ cls:'dip-err',  icon:'✗', text:`Gate BLOCK — Score ${sc} dưới ngưỡng` });
+  else if (d2MinOk === false) issues.push({ cls:'dip-warn', icon:'!', text:`Score ${sc} dưới min ${minSc}` });
+  if (!dirOk) issues.push({ cls:'dip-err', icon:'✗', text:`Xung đột hướng: ${dirNote}` });
+  if (!tfOk)  issues.push({ cls:'dip-warn', icon:'!', text:`Lệch TF: EA=${tf}, Radar=${radarTF}` });
+  if (capApplied) issues.push({ cls:'dip-warn', icon:'!', text:`Pos% bị giới hạn (${riskM}): ${eaPos}%→${effectivePos}%` });
+  if (issues.length === 0) issues.push({ cls:'dip-ok', icon:'✓', text:'Tất cả tham số khớp — hệ thống sẵn sàng' });
+
+  document.getElementById('dmIssues').innerHTML = issues.map(i =>
+    `<div class="dm-issue-pill ${i.cls}"><span class="dip-icon">${i.icon}</span>${i.text}</div>`
+  ).join('');
+
+  // ── Attention banner ──────────────────────────────────────────
+  const critical = issues.filter(i => i.cls === 'dip-err');
+  const attn = document.getElementById('dmAttention');
+  if (critical.length > 0) {
+    attn.classList.add('visible');
+    document.getElementById('dmAttentionText').textContent =
+      ' ' + critical.map(i => i.text).join(' · ') + '. Vui lòng kiểm tra lại cấu hình.';
+  } else {
+    attn.classList.remove('visible');
+  }
+
+  // ── Match score donut ─────────────────────────────────────────
+  const errCount  = rows.filter(r => r.status === 'err').length;
+  const warnCount = rows.filter(r => r.status === 'warn').length;
+  const naCount   = rows.filter(r => r.status === 'na').length;
+  const total     = rows.length - naCount;
+  const score_e   = Math.round(((total - errCount - warnCount * 0.5) / total) * 100);
+  const matchColor = score_e >= 80 ? 'var(--green)' : score_e >= 55 ? 'var(--orange)' : 'var(--red)';
+
+  const circ = 2 * Math.PI * 26; // 163.4
+  const arc  = (score_e / 100) * circ;
+  const donut = document.getElementById('dmDonutArc');
+  donut.setAttribute('stroke', matchColor);
+  setTimeout(() => {
+    donut.setAttribute('stroke-dasharray', `${arc.toFixed(1)} ${circ.toFixed(1)}`);
+  }, 80);
+
+  const pctEl = document.getElementById('dmDonutPct');
+  pctEl.textContent = score_e + '%';
+  pctEl.style.color = matchColor;
+
+  // ── Bridge header icons ───────────────────────────────────────
+  const b1ok = rows.filter(r=>r.bridge1!=='na').every(r=>r.bridge1==='ok');
+  const b2ok = rows.filter(r=>r.bridge2!=='na').every(r=>r.bridge2==='ok');
+  const bridge1 = document.getElementById('dmBridge1');
+  const bridge2 = document.getElementById('dmBridge2');
+  if (bridge1) {
+    bridge1.textContent = b1ok ? '→' : '⚠';
+    bridge1.className   = 'dm-bridge-col ' + (b1ok ? 'ok' : 'warn');
+  }
+  if (bridge2) {
+    bridge2.textContent = b2ok ? '→' : '⚠';
+    bridge2.className   = 'dm-bridge-col ' + (b2ok ? 'ok' : 'warn');
+  }
+
+  // ── Summary text ──────────────────────────────────────────────
+  const matchTitle = score_e >= 80
+    ? '✓ Khớp tốt — 3 miền đồng thuận'
+    : score_e >= 55
+    ? '⚠ Có vấn đề nhẹ — kiểm tra lại'
+    : '✗ Xung đột nghiêm trọng — cần xử lý';
+  document.getElementById('dmScoreTitle').textContent = matchTitle;
+  document.getElementById('dmScoreTitle').style.color = matchColor;
+
+  const details = [];
+  if (errCount  > 0) details.push(`${errCount} lỗi nghiêm trọng`);
+  if (warnCount > 0) details.push(`${warnCount} cảnh báo`);
+  details.push(`${rows.length - errCount - warnCount} tham số khớp hoàn toàn`);
+  document.getElementById('dmScoreBody').textContent = details.join(' · ');
+}
+
+
 // Hook into existing renderProfile — call VIZ.render after profile loads
 const _origRenderProfile = renderProfile;
 window.renderProfile = function(profile, activeId) {
   _origRenderProfile(profile, activeId);
   VIZ.render(profile, state.liveScore);
+  renderDomainMatch(profile, state.liveScore); // Section E
 };
 
 // Also re-render when live score updates

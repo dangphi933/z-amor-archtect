@@ -1,0 +1,220 @@
+name: PR Checks
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+# Cancel in-progress runs on new push to same PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ─── Job 1: Lint & Type Check ──────────────────────────────────────────────
+  lint:
+    name: Lint & Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install lint tools
+        run: pip install ruff mypy
+
+      - name: Ruff lint
+        run: ruff check . --output-format=github
+
+      - name: Ruff format check
+        run: ruff format --check .
+
+      # mypy chỉ check main.py và api/ để tránh noise từ code cũ
+      # - name: Mypy type check (core modules)
+      #   run: mypy main.py api/ --ignore-missing-imports
+
+  # ─── Job 2: Tests ─────────────────────────────────────────────────────────
+  test:
+    name: Tests (Python 3.12)
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: zarmor_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports: ['6379:6379']
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 3s
+          --health-retries 3
+
+    env:
+      DATABASE_URL: postgresql+psycopg2://test:test@localhost:5432/zarmor_test
+      REDIS_URL: redis://localhost:6379/0
+      JWT_SECRET_KEY: ci-test-secret-key-not-for-production
+      JWT_ACCESS_TTL_MINUTES: "60"
+      DEBUG: "true"
+      APP_ENV: test
+      BASE_URL: "http://localhost:8000"
+      EA_HMAC_SALT: ci-test-hmac-salt
+      LICENSE_ADMIN_TOKEN: ci-test-admin-token
+      TELEGRAM_BOT_TOKEN: ""
+      SMTP_EMAIL: ""
+      LARK_APP_ID: ""
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest pytest-asyncio pytest-cov pytest-env httpx
+
+      - name: Run Alembic migrations on test DB
+        run: alembic upgrade head
+
+      - name: Run tests with coverage
+        run: |
+          pytest tests/ -v \
+            --cov=. \
+            --cov-report=xml \
+            --cov-report=term-missing \
+            --cov-fail-under=60 \
+            -x  # stop on first failure
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        if: always()
+        with:
+          file: ./coverage.xml
+          fail_ci_if_error: false  # không block CI nếu Codecov down
+
+  # ─── Job 3: Migration Consistency Check ───────────────────────────────────
+  migration-check:
+    name: Migration Consistency Check
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: zarmor_migrate_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql+psycopg2://test:test@localhost:5432/zarmor_migrate_test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install Alembic deps
+        run: pip install alembic psycopg2-binary python-dotenv sqlalchemy
+
+      - name: Upgrade to head (fresh DB)
+        run: alembic upgrade head
+
+      - name: Check alembic current
+        run: alembic current
+
+      - name: Check no pending schema changes
+        run: |
+          # Autogenerate để check — nếu có schema change chưa migrate, file sẽ không rỗng
+          alembic revision --autogenerate -m "ci_check" --rev-id ci_check_rev_tmp 2>&1 || true
+          python3 -c "
+          import glob, os
+          files = glob.glob('migrations/versions/*ci_check_rev_tmp*.py')
+          if not files:
+              print('✅ No pending schema changes')
+              exit(0)
+          content = open(files[0]).read()
+          upgrade_body = content.split('def upgrade')
+          if len(upgrade_body) > 1:
+              body = upgrade_body[1].split('def downgrade')[0]
+              if 'pass' not in body and ('op.' in body or 'sa.' in body):
+                  print('❌ ERROR: Schema changes detected without migration!')
+                  print('   Run: alembic revision --autogenerate -m \"your_migration_name\"')
+                  exit(1)
+          # Cleanup temp file
+          for f in files:
+              os.remove(f)
+          print('✅ Schema is in sync with migrations')
+          "
+
+      - name: Test downgrade cycle
+        run: |
+          alembic downgrade -1
+          alembic upgrade head
+          echo "✅ Downgrade cycle passed"
+
+  # ─── Job 4: Security Scan ─────────────────────────────────────────────────
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install security tools
+        run: pip install bandit
+
+      - name: Bandit security scan
+        run: |
+          bandit -r . \
+            -x tests,migrations,fix_*.py,docs \
+            --severity-level medium \
+            --confidence-level medium \
+            -f txt \
+            || true  # warn only in Part 1 — sẽ block ở Part 2
+
+      - name: Check for hardcoded secrets
+        run: |
+          echo "Checking for hardcoded IPs..."
+          FOUND=$(grep -rn '47\.129\.' --include='*.py' --include='*.js' --include='*.html' \
+            . | grep -v '.git' | grep -v 'test_' || true)
+          if [ -n "$FOUND" ]; then
+            echo "❌ Hardcoded IP found:"
+            echo "$FOUND"
+            exit 1
+          fi
+          echo "✅ No hardcoded IPs found"
+
+          echo "Checking for long-lived tokens in code..."
+          # Chỉ warn, không block — sẽ block ở Part 2
+          grep -rn 'token.*=.*["\x27][A-Za-z0-9_\-]{30,}["\x27]' \
+            --include='*.py' . | grep -v test | grep -v '.git' || true

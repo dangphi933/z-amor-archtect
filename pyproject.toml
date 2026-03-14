@@ -1,0 +1,82 @@
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes (undefined names, unused imports)
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "UP",  # pyupgrade (modern Python syntax)
+]
+ignore = [
+    "E501", # line too long — đôi khi cần dài hơn 100 cho SQL strings
+    "B008", # do not perform function calls in default args (FastAPI Depends pattern)
+    "E741", # ambiguous variable name (l, O, I) — đôi khi cần trong domain models
+]
+exclude = [
+    "migrations/",
+    "*.bak",
+    "fix_*.py",
+    "hotfix*.py",
+    "patch_main*.py",
+    "docs/",
+    ".venv/",
+    "venv/",
+]
+
+[tool.ruff.isort]
+known-first-party = ["database", "api", "radar", "performance", "ml"]
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true       # tắt cho third-party chưa có stubs
+disallow_untyped_defs = false       # bật dần sau khi cleanup
+warn_return_any = false
+exclude = ["migrations/", "tests/", "docs/"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+env = [
+    "DATABASE_URL=postgresql+psycopg2://test:test@localhost:5432/zarmor_test",
+    "REDIS_URL=redis://localhost:6379/0",
+    "JWT_SECRET_KEY=test-secret-not-for-production-ci-only",
+    "JWT_ACCESS_TTL_MINUTES=60",
+    "DEBUG=true",
+    "APP_ENV=test",
+    "BASE_URL=http://localhost:8000",
+    "TELEGRAM_BOT_TOKEN=",
+    "SMTP_EMAIL=",
+    "LARK_APP_ID=",
+    "EA_HMAC_SALT=test-hmac-salt-ci",
+    "LICENSE_ADMIN_TOKEN=test-admin-token-ci",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning",
+]
+
+[tool.coverage.run]
+source = ["."]
+omit = [
+    "tests/*",
+    "migrations/*",
+    "docs/*",
+    "fix_*.py",
+    "hotfix*.py",
+    "patch_main*.py",
+    "scripts/cleanup_hotfixes.py",
+    ".venv/*",
+    "venv/*",
+]
+
+[tool.coverage.report]
+fail_under = 60                     # 60% coverage tối thiểu — tăng dần mỗi sprint
+exclude_lines = [
+    "if __name__ == '__main__'",
+    "pragma: no cover",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+]
+show_missing = true

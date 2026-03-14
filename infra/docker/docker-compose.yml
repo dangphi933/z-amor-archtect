@@ -1,0 +1,312 @@
+version: "3.9"
+
+# ══════════════════════════════════════════════════════════════════
+# Z-ARMOR CLOUD — Docker Compose v3
+# Architecture: Event-driven, Market Data Layer separated
+#
+# Service map:
+#   Port 8001 — auth-service
+#   Port 8002 — user-service
+#   Port 8003 — engine-service      (EA heartbeat)
+#   Port 8004 — radar-service       (read-only API + workers)
+#   Port 8005 — ml-service
+#   Port 8006 — market-data-service (candle collection, ONLY external API caller)
+#   No port   — notification-service, scheduler-service
+#
+# Event streams (Redis Streams):
+#   stream:candle-events    market-data → radar workers
+#   stream:radar-updates    radar workers → strategy/risk/notification
+#   stream:trade-events     engine → event_persister
+#   stream:notifications    all services → notification-service
+#   stream:risk-alerts      engine → risk monitors
+# ══════════════════════════════════════════════════════════════════
+
+x-common-env: &common-env
+  DATABASE_URL: postgresql+psycopg2://zarmor:Zarmor%402025@postgres:5432/zarmor_db
+  REDIS_URL: redis://redis:6379/0
+  REDIS_PASSWORD: ${REDIS_PASSWORD:-ZarmorRedis2025}
+  DEBUG: "false"
+  TZ: Asia/Ho_Chi_Minh
+
+x-common: &common
+  restart: unless-stopped
+  networks:
+    - zarmor-net
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+
+services:
+
+  # ── Infrastructure ────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: zarmor-postgres
+    environment:
+      POSTGRES_USER: zarmor
+      POSTGRES_PASSWORD: "Zarmor@2025"
+      POSTGRES_DB: zarmor_db
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - zarmor-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U zarmor -d zarmor_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: zarmor-redis
+    command: redis-server --requirepass ${REDIS_PASSWORD:-ZarmorRedis2025} --maxmemory 512mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - zarmor-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-ZarmorRedis2025}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+
+  # ── Auth Service (Port 8001) ───────────────────────────────────────
+  auth-service:
+    <<: *common
+    build:
+      context: ./services/auth-service
+      dockerfile: Dockerfile
+    container_name: zarmor-auth
+    ports:
+      - "8001:8001"
+    environment:
+      <<: *common-env
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      SMTP_EMAIL: ${SMTP_EMAIL:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_FROM_NAME: "Z-ARMOR CLOUD"
+      COOKIE_SECURE: "false"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+
+  # ── User Service (Port 8002) ───────────────────────────────────────
+  user-service:
+    <<: *common
+    build:
+      context: ./services/user-service
+      dockerfile: Dockerfile
+    container_name: zarmor-user
+    ports:
+      - "8002:8002"
+    environment:
+      <<: *common-env
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      AUTH_SERVICE_URL: http://auth-service:8001
+      LARK_APP_ID: ${LARK_APP_ID:-}
+      LARK_APP_SECRET: ${LARK_APP_SECRET:-}
+      REDIS_STREAM_NOTIFY: "stream:notifications"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+
+  # ── Engine Service (Port 8003) ─────────────────────────────────────
+  # EA heartbeat hot path — 1 worker, scale via replicas
+  engine-service:
+    <<: *common
+    build:
+      context: ./services/engine-service
+      dockerfile: Dockerfile
+    container_name: zarmor-engine
+    ports:
+      - "8003:8003"
+    environment:
+      <<: *common-env
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      EA_HMAC_SALT: ${EA_HMAC_SALT:-zarmor-hmac-salt-change-me}
+      ADMIN_SECRET_KEY: ${ADMIN_SECRET_KEY:-CHANGE_ME}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      TELEGRAM_ADMIN_CHAT_ID: ${TELEGRAM_ADMIN_CHAT_ID:-}
+      RADAR_SERVICE_URL: http://radar-service:8004
+      REDIS_STREAM_NOTIFY: "stream:notifications"
+      REDIS_STREAM_TRADE: "stream:trade-events"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+
+  # ── Market Data Service (Port 8006) ───────────────────────────────
+  # THE ONLY service allowed to call external market data APIs.
+  # Collects OHLCV at candle close → writes Redis candle cache
+  # → publishes stream:candle-events → triggers Radar Workers
+  market-data-service:
+    <<: *common
+    build:
+      context: ./services/market-data-service
+      dockerfile: Dockerfile
+    container_name: zarmor-market-data
+    ports:
+      - "8006:8006"
+    environment:
+      <<: *common-env
+      # TwelveData API key — only used in this service
+      TWELVEDATA_API_KEY: ${TWELVEDATA_API_KEY:-}
+      # Fallback providers (future)
+      POLYGON_API_KEY: ${POLYGON_API_KEY:-}
+      ALPHAVANTAGE_API_KEY: ${ALPHAVANTAGE_API_KEY:-}
+      # Universe config
+      MAX_ACTIVE_SYMBOLS: ${MAX_ACTIVE_SYMBOLS:-10}
+      # Stream
+      REDIS_STREAM_CANDLE: "stream:candle-events"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8006/health"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+
+  # ── Radar Service (Port 8004) ──────────────────────────────────────
+  # API: READ-ONLY — serves pre-computed radar_map from Redis
+  # Workers: consume stream:candle-events → compute 5-layer pipeline
+  # TWELVEDATA_API_KEY removed — radar no longer calls external APIs
+  radar-service:
+    <<: *common
+    build:
+      context: ./services/radar-service
+      dockerfile: Dockerfile
+    container_name: zarmor-radar
+    ports:
+      - "8004:8004"
+    environment:
+      <<: *common-env
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      # Number of radar worker threads (each handles a TF subset)
+      # worker-1=H1, worker-2=M15, worker-3+=M5
+      RADAR_WORKERS: ${RADAR_WORKERS:-2}
+      ML_SERVICE_URL: http://ml-service:8005
+      REDIS_STREAM_RADAR: "stream:radar-updates"
+      REDIS_STREAM_CANDLE: "stream:candle-events"
+      BASE_URL: ${BASE_URL:-http://localhost:8004}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      market-data-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8004/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+
+  # ── ML Service (Port 8005) ─────────────────────────────────────────
+  ml-service:
+    <<: *common
+    build:
+      context: ./services/ml-service
+      dockerfile: Dockerfile
+    container_name: zarmor-ml
+    ports:
+      - "8005:8005"
+    environment:
+      <<: *common-env
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      RADAR_SERVICE_URL: http://radar-service:8004
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8005/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+
+  # ── Notification Service (consumer only) ──────────────────────────
+  notification-service:
+    <<: *common
+    build:
+      context: ./services/notification-service
+      dockerfile: Dockerfile
+    container_name: zarmor-notification
+    environment:
+      <<: *common-env
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      TELEGRAM_ADMIN_CHAT_ID: ${TELEGRAM_ADMIN_CHAT_ID:-}
+      SMTP_EMAIL: ${SMTP_EMAIL:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      LARK_BOT_WEBHOOK: ${LARK_BOT_WEBHOOK:-}
+      REDIS_STREAM_NOTIFY: "stream:notifications"
+      # Also consume radar-updates for regime change alerts
+      REDIS_STREAM_RADAR: "stream:radar-updates"
+      DLQ_STREAM: "stream:notifications-dlq"
+      MAX_RETRY: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+
+  # ── Scheduler Service (cron jobs) ─────────────────────────────────
+  scheduler-service:
+    <<: *common
+    build:
+      context: ./services/scheduler-service
+      dockerfile: Dockerfile
+    container_name: zarmor-scheduler
+    environment:
+      <<: *common-env
+      RADAR_SERVICE_URL: http://radar-service:8004
+      SMTP_EMAIL: ${SMTP_EMAIL:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      BACKEND_URL: ${BACKEND_URL:-http://engine-service:8003}
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+
+volumes:
+  postgres-data:
+  redis-data:
+
+networks:
+  zarmor-net:
+    driver: bridge

@@ -1,0 +1,77 @@
+# ============================================================
+# .gitignore — Z-ARMOR CLOUD
+# ============================================================
+
+# === SECRETS — NEVER COMMIT ===
+.env
+*.env
+.env.*
+!.env.example
+
+# === DEAD CODE — BLOCKED FROM NEW COMMITS ===
+# Các file này đã được cleanup ở Part 1, không cho phép commit lại
+fix_*.py
+hotfix*.py
+patch_main*.py
+main_patch*.py
+main_patches*.py
+main_routes_patch*.py
+
+# === BACKUP FILES ===
+*.bak
+*.backup
+*.orig
+*~
+
+# === DATABASE — SQLITE LEGACY ===
+*.db
+*.sqlite
+*.sqlite3
+Z-Armor.db
+logs/Z-Armor.db
+
+# === PYTHON ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+coverage.xml
+*.cover
+
+# === LOGS ===
+logs/
+*.log
+!docs/*.log
+
+# === OS ===
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# === IDE ===
+.vscode/
+.idea/
+*.swp
+*.swo
+.cursorrules
+
+# === NODE ===
+node_modules/
+npm-debug.log*
+
+# === TEMP ===
+tmp/
+temp/

@@ -30,6 +30,9 @@ from fastapi import FastAPI, Request, Depends, HTTPException, Query
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+static_dir = os.path.join(os.path.dirname(__file__), "static")
+os.makedirs(static_dir, exist_ok=True)
+app.mount("/static", StaticFiles(directory=static_dir), name="static")
 import sys
 sys.stdout.reconfigure(encoding='utf-8', line_buffering=True)
 sys.stderr.reconfigure(encoding='utf-8', line_buffering=True)
@@ -69,13 +72,7 @@ from api.billing_router import router as billing_router, init_billing
 from api.radar_identity_router import router as radar_id_router, init_radar_identity
 from api.growth_router import router as growth_router
 from api.compliance_router import router as compliance_router, init_compliance
-from auth import (
-    init_auth, require_jwt, optional_jwt, decode_jwt_unsafe,
-    set_auth_cookies, clear_auth_cookies,
-    set_account_lock_db, check_account_locked_db,
-    check_account_access, _upsert_za_user,
-    _get_account_ids_for_email,
-)
+from auth_service import init_auth
 from remarketing_scheduler import start_remarketing_scheduler
 # ── Phase 3: ML Regime Classifier ────────────────────────────────
 from ml.router  import router as ml_router
@@ -142,7 +139,7 @@ app = FastAPI(
 )
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=os.getenv("CORS_ORIGINS", "http://47.129.1.31:8000,http://47.129.1.31").split(","),
+    allow_origins=os.getenv("CORS_ORIGINS", "http://localhost:8000").split(","),  # A.3: set CORS_ORIGINS in .env
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
@@ -165,10 +162,6 @@ app.include_router(growth_router,     prefix="/growth")
 app.include_router(compliance_router, prefix="/compliance")
 # Multi-Strategy — GET /strategy/presets, POST /strategy/select, GET /strategy/active
 app.include_router(strategy_router)
-# Static files — admin dashboards (zone_control, ops, scan, salemain)
-static_dir = os.path.join(os.path.dirname(__file__), "static")
-os.makedirs(static_dir, exist_ok=True)
-app.mount("/static", StaticFiles(directory=static_dir), name="static")
 # ==========================================
 # CONFIG
 # ==========================================
@@ -238,7 +231,7 @@ def send_license_email_to_customer(receiver_email: str, buyer_name: str, tier: s
         return False
 
     # Dashboard URL
-    dashboard_url = os.environ.get("NEW_BACKEND_URL", "http://47.129.1.31:8000")
+    dashboard_url = os.environ.get("BASE_URL", os.environ.get("NEW_BACKEND_URL", "http://localhost:8000"))  # A.3: use BASE_URL
     dashboard_link = f"{dashboard_url}/web/"
 
     msg = MIMEMultipart("alternative")
@@ -452,125 +445,60 @@ class SendTelegramRequest(BaseModel):
 # ==========================================
 # ROUTES — HEALTH & DASHBOARD
 # ==========================================
-@app.get("/api/health")
+@app.get("/health")           # C.5: CI/CD smoke test endpoint
+@app.get("/api/health")      # backward-compat alias
 async def health_check():
-    return {"status": "ok", "version": "8.3.1", "phase": "radar-crm+strategy", "timestamp": datetime.now(timezone.utc).isoformat()}
-
-@app.get("/health")
-async def health_check_alias():
-    """Alias cho /api/health — dùng bởi load balancer / uptime monitor."""
-    return {"status": "ok", "version": "8.3.1", "phase": "radar-crm+strategy", "timestamp": datetime.now(timezone.utc).isoformat()}
-
-
-# ── Phase 4: Email Capture (scan.html gate) ──────────────────────
-class EmailCapturePayload(BaseModel):
-    email:             str
-    asset_interest:    Optional[str] = ""
-    timeframe_interest:Optional[str] = "H1"
-    captured_at:       Optional[str] = ""
-    source:            Optional[str] = "radar_scan_gate"
-    ref:               Optional[str] = ""
-
-@app.post("/api/email-capture")
-async def api_email_capture(payload: EmailCapturePayload, request: Request, db=Depends(get_db)):
-    """
-    Phase 4: Lưu email từ scan gate vào radar_email_captures.
-    Gọi từ scan.html khi user nhập email để xem full score.
-    """
-    from sqlalchemy import text
-    ip = request.client.host if request.client else ""
+    """Health check cho CI/CD + load balancer. HTTP 200=ok, 503=degraded."""
+    import time as _time
+    start = _time.time()
+    checks: dict = {}
+    # Check DB
     try:
-        db.execute(text("""
-            INSERT INTO radar_email_captures
-                (id, email, asset_interest, timeframe_interest,
-                 source, ref_code, ip_address, captured_at)
-            VALUES
-                (:id, :email, :asset, :tf, :source, :ref, :ip, NOW())
-            ON CONFLICT (email) DO UPDATE SET
-                last_seen_at   = NOW(),
-                asset_interest = EXCLUDED.asset_interest
-        """), {
-            "id":     str(uuid.uuid4()),
-            "email":  payload.email.strip().lower(),
-            "asset":  payload.asset_interest or "",
-            "tf":     payload.timeframe_interest or "H1",
-            "source": payload.source or "radar_scan_gate",
-            "ref":    payload.ref or "",
-            "ip":     ip,
-        })
-        db.commit()
-        # Upsert za_users để user có thể nhận magic link sau
-        try:
-            _upsert_za_user(payload.email.strip().lower())
-        except Exception:
-            pass
-        return {"captured": True}
+        db = SessionLocal()
+        from sqlalchemy import text as _text
+        db.execute(_text("SELECT 1"))
+        db.close()
+        checks["database"] = "ok"
     except Exception as e:
-        # Bảng chưa tồn tại → tự tạo rồi retry
-        try:
-            db.rollback()
-            db.execute(text("""
-                CREATE TABLE IF NOT EXISTS radar_email_captures (
-                    id            VARCHAR(40) PRIMARY KEY,
-                    email         VARCHAR(200) UNIQUE NOT NULL,
-                    asset_interest    VARCHAR(20),
-                    timeframe_interest VARCHAR(10),
-                    source        VARCHAR(50) DEFAULT 'radar_scan_gate',
-                    ref_code      VARCHAR(20),
-                    ip_address    VARCHAR(50),
-                    converted     BOOLEAN DEFAULT FALSE,
-                    captured_at   TIMESTAMPTZ DEFAULT NOW(),
-                    last_seen_at  TIMESTAMPTZ DEFAULT NOW()
-                )
-            """))
-            db.commit()
-        except Exception:
-            pass
-        return {"captured": False, "note": "table initializing"}
-
-@app.get("/api/email-captures")
-async def api_email_captures_list(
-    limit: int = 50,
-    db=Depends(get_db),
-    jwt_payload: dict = Depends(require_jwt),
-):
-    """Admin: xem danh sách email đã capture. Yêu cầu JWT."""
-    from sqlalchemy import text
-    if not jwt_payload.get("is_admin"):
-        raise HTTPException(status_code=403, detail="Admin only")
+        checks["database"] = f"error: {str(e)[:80]}"
+    # Check Redis
     try:
-        rows = db.execute(text("""
-            SELECT email, asset_interest, source, ref_code,
-                   converted, captured_at, last_seen_at
-            FROM radar_email_captures
-            ORDER BY captured_at DESC
-            LIMIT :limit
-        """), {"limit": min(limit, 500)}).mappings().fetchall()
-        return {"count": len(rows), "captures": [dict(r) for r in rows]}
+        import redis as _redis
+        _r = _redis.from_url(os.getenv("REDIS_URL", "redis://127.0.0.1:6379/0"), socket_connect_timeout=2)
+        _r.ping()
+        checks["redis"] = "ok"
     except Exception as e:
-        return {"count": 0, "captures": [], "error": str(e)}
+        checks["redis"] = f"error: {str(e)[:80]}"
+    all_ok = all(v == "ok" for v in checks.values())
+    from fastapi.responses import JSONResponse
+    return JSONResponse(
+        status_code=200 if all_ok else 503,
+        content={
+            "status": "healthy" if all_ok else "degraded",
+            "checks": checks,
+            "version": "8.3.1",
+            "latency_ms": round((_time.time() - start) * 1000, 1),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        }
+    )
 # Cache dict cho init-data (tránh spam DB mỗi 1s)
 _init_data_cache: dict = {}
 @app.get("/api/init-data")
 async def get_init_data(request: Request, account_id: str = "MainUnit", license_key: str = ""):
     import time as _t
-    # decode_jwt_unsafe imported from auth at top — F-09: verifies HS256 signature
+    from auth_service import decode_jwt_unsafe
     # ── Sprint A: Dual-auth ──────────────────────────────────────
-    # Ưu tiên: 1) Bearer JWT / HttpOnly cookie  2) X-License-Key header (F-13)  3) ?license_key param (legacy)
+    # Ưu tiên: 1) Bearer JWT  2) ?license_key param (backward-compat)
     owner_email = None
     auth_header = request.headers.get("Authorization", "")
-    # Also check HttpOnly cookie (F-01)
-    _cookie_token = request.cookies.get("za_access_token")
-    _raw_token = auth_header[7:] if auth_header.startswith("Bearer ") else (_cookie_token or "")
-    if _raw_token:
-        jwt_payload = decode_jwt_unsafe(_raw_token)
+    if auth_header.startswith("Bearer "):
+        jwt_payload = decode_jwt_unsafe(auth_header[7:])
         if jwt_payload:
             owner_email = jwt_payload.get("email")
+            # Lấy license_key đầu tiên active để dùng cho cache key
             if not license_key:
+                _lic_list = jwt_payload.get("account_ids", [])
                 license_key = f"jwt_{owner_email[:8]}" if owner_email else ""
-    # F-13: Accept license key from X-License-Key header (not URL param)
-    if not license_key:
-        license_key = request.headers.get("X-License-Key", "").strip()
     # Nếu không có JWT hợp lệ, fallback về license_key param
     if not owner_email and not license_key:
         return {"units_config": {}, "global_status": {
@@ -715,18 +643,12 @@ async def handle_trade_event(payload: TradeEventPayload):
 # ROUTES — CONFIG MANAGEMENT
 # ==========================================
 @app.post("/api/update-unit-config")
-async def update_config(request: Request,
-                        jwt_payload: dict = Depends(require_jwt),
-                        db=Depends(get_db)):
-    """F-07: Requires JWT. Ghi ConfigAuditTrail cho mọi thay đổi config."""
+async def update_config(request: Request):
     try:
         data       = await request.json()
         account_id = str(data.get("mt5_login") or data.get("unit_key") or "")
         if not account_id or account_id == "None":
             return {"status": "error", "message": "Thiếu mt5_login"}
-        # F-07: Verify JWT có quyền trên account này
-        if not check_account_access(account_id, jwt_payload):
-            raise HTTPException(status_code=403, detail="Không có quyền trên account này")
         # BUG G FIX: Bảo vệ neural_profile nếu payload không gửi kèm
         # fetch_dashboard_state() trả về {"global_status":{...}, "units_config":{...}}
         # → phải lấy từ units_config[account_id].neural_profile, không phải top-level
@@ -741,37 +663,15 @@ async def update_config(request: Request,
     except Exception as e:
         return {"status": "error", "message": str(e)}
 @app.post("/api/unlock-unit")
-async def unlock_unit(request: Request,
-                      jwt_payload: dict = Depends(require_jwt),
-                      db=Depends(get_db)):
-    """F-06: Requires JWT. F-02: Unlock lưu vào DB — không thể bypass bằng localStorage."""
-    data       = await request.json()
-    account_id = data.get("account_id")
-    if not account_id:
-        raise HTTPException(status_code=400, detail="Thiếu account_id")
-    if not check_account_access(str(account_id), jwt_payload):
-        raise HTTPException(status_code=403, detail="Không có quyền trên account này")
-    ip     = request.client.host if request.client else ""
-    result = set_account_lock_db(str(account_id), False, db,
-                                  changed_by=jwt_payload.get("email", "?"), ip=ip)
-    set_lock_status(account_id, False)   # sync in-memory cache
-    return {"status": "unlocked", **result}
+async def unlock_unit(request: Request):
+    data = await request.json()
+    set_lock_status(data.get("account_id"), False)
+    return {"status": "unlocked"}
 @app.post("/api/panic-kill")
-async def panic_kill(request: Request,
-                     jwt_payload: dict = Depends(require_jwt),
-                     db=Depends(get_db)):
-    """F-06: Requires JWT. F-02: Lock lưu vào DB — client không thể bypass."""
-    data       = await request.json()
-    account_id = data.get("account_id")
-    if not account_id:
-        raise HTTPException(status_code=400, detail="Thiếu account_id")
-    if not check_account_access(str(account_id), jwt_payload):
-        raise HTTPException(status_code=403, detail="Không có quyền trên account này")
-    ip     = request.client.host if request.client else ""
-    result = set_account_lock_db(str(account_id), True, db,
-                                  changed_by=jwt_payload.get("email", "?"), ip=ip)
-    set_lock_status(account_id, True)   # sync in-memory cache
-    return {"status": "locked", **result}
+async def panic_kill(request: Request):
+    data = await request.json()
+    set_lock_status(data.get("account_id"), True)
+    return {"status": "locked"}
 # ==========================================
 # ROUTES — TELEGRAM
 # ==========================================
@@ -869,13 +769,7 @@ async def route_get_trade_history(account_id: str, limit: int = 500):
 async def route_get_session_history(account_id: str, limit: int = 90):
     return api_get_session_history(account_id, limit=limit)
 @app.get("/api/sync-history/{account_id}")
-async def route_sync_history(account_id: str,
-                              db=Depends(get_db),
-                              jwt_payload: dict = Depends(require_jwt)):
-    """F-08: Requires JWT. F-02: Verify account access."""
-    # Chỉ cho phép truy cập account của chính mình (hoặc admin)
-    if not check_account_access(str(account_id), jwt_payload):
-        raise HTTPException(status_code=403, detail="Không có quyền truy cập account này")
+async def route_sync_history(account_id: str, db=Depends(get_db)):
     try:
         from database import TradeHistory, SessionHistory
         import json as _json
@@ -952,34 +846,25 @@ async def api_radar_apply(payload: RadarApplyPayload):
     """
     User nhấn 'Apply to Account' trong scan.html → sync regime_context vào units_config.
     EA đọc tại heartbeat kế tiếp (≤ 30s) thông qua radar_map injection.
-
-    FIX C-3: Dùng engine._ea_params() thay vì duplicate threshold logic.
-    engine._ea_params() là single source of truth cho allow_trade/position_pct/sl_multiplier.
     """
     try:
-        from radar.engine import _ea_params, SCORE_LABELS
-
+        # Tính EA params từ score
         score = int(payload.score)
-        regime = payload.regime or "NEUTRAL"
-
-        # Tính gate từ score (giống SCORE_LABELS trong engine.py)
-        gate = "BLOCK"
-        for lo, hi, *_, g in SCORE_LABELS:
-            if lo <= score < hi:
-                gate = g
-                break
-
-        ea = _ea_params(score, regime, gate)
-        allow    = ea["allow_trade"]
-        pos_pct  = ea["position_pct"]
-        sl_mult  = ea["sl_multiplier"]
-        state    = ea["state_cap"]
-
+        if score >= 85:
+            allow, pos_pct, sl_mult, state = True,  125, 1.5, "SCALE"
+        elif score >= 70:
+            allow, pos_pct, sl_mult, state = True,  100, 1.0, "OPTIMAL"
+        elif score >= 50:
+            allow, pos_pct, sl_mult, state = True,   60, 1.2, "REDUCED"
+        elif score >= 30:
+            allow, pos_pct, sl_mult, state = True,   30, 1.5, "MINIMAL"
+        else:
+            allow, pos_pct, sl_mult, state = False,   0, 2.0, "BLOCKED"
         regime_ctx = {
             "asset":          payload.asset,
             "timeframe":      payload.timeframe,
             "score":          score,
-            "regime":         regime,
+            "regime":         payload.regime,
             "allow_trade":    allow,
             "position_pct":   pos_pct,
             "sl_multiplier":  sl_mult,
@@ -992,20 +877,20 @@ async def api_radar_apply(payload: RadarApplyPayload):
         from dashboard_service import get_units_config_cached, update_unit_from_payload
         units = get_units_config_cached()
         for acc_id, cfg in (units or {}).items():
+            # Match theo email hoặc update all nếu không có email filter
             owner = cfg.get("owner_email", "") or cfg.get("buyer_email", "")
             if not payload.email or owner == payload.email or not owner:
                 update_unit_from_payload(acc_id, {"regime_context": regime_ctx})
                 updated.append(acc_id)
-        print(f"[RADAR-APPLY] {payload.asset}/{payload.timeframe} score={score} gate={gate} state={state} pos={pos_pct}% → accounts={updated}", flush=True)
+        print(f"[RADAR-APPLY] {payload.asset}/{payload.timeframe} score={score} state={state} → accounts={updated}", flush=True)
         return {
-            "status":            "ok",
-            "applied":           True,
-            "state_cap":         state,
-            "position_pct":      pos_pct,
-            "sl_multiplier":     sl_mult,
-            "allow_trade":       allow,
+            "status":           "ok",
+            "applied":          True,
+            "state_cap":        state,
+            "position_pct":     pos_pct,
+            "allow_trade":      allow,
             "next_heartbeat_in": 30,
-            "accounts_updated":  updated,
+            "accounts_updated": updated,
         }
     except Exception as e:
         print(f"[RADAR-APPLY] Error: {e}", flush=True)
@@ -1109,7 +994,7 @@ async def api_checkout(payload: CheckoutPayload, request: Request, db=Depends(ge
     if license_key and buyer_email:
         # Sprint A: upsert za_users — tạo account cho user ngay tại checkout
         try:
-            # _upsert_za_user imported from auth at top
+            from auth_service import _upsert_za_user
             _upsert_za_user(buyer_email)
             print(f"[CHECKOUT] ✅ za_users upserted for {buyer_email}", flush=True)
         except Exception as _ue:
@@ -1289,29 +1174,6 @@ def _add_machine(db, license_key: str, account_id: str, magic: str = "") -> bool
 _hb_last_seen: dict = {}   # license_key → last heartbeat unix timestamp
 _co_ip_log:    dict = {}   # ip → [timestamps] cho checkout
 HB_MIN_INTERVAL = 20       # giây tối thiểu giữa 2 heartbeat / key
-
-# ── FIX C-4: Centralized symbol → asset map ───────────────────────────────────
-# Single source of truth — dùng chung cho heartbeat, radar-apply, và cockpit.
-# Bao gồm broker variants: .pro, m suffix, .cash, .int
-# Frontend cũng có thể fetch qua GET /radar/symbol-map (Sprint D).
-SYMBOL_TO_ASSET: dict = {
-    # GOLD variants
-    "XAUUSD": "GOLD", "XAUUSDm": "GOLD", "XAUUSD.pro": "GOLD",
-    "GOLD": "GOLD", "GOLD.pro": "GOLD", "GOLD.cash": "GOLD", "XAU": "GOLD",
-    # EURUSD variants
-    "EURUSD": "EURUSD", "EURUSDm": "EURUSD", "EURUSD.pro": "EURUSD",
-    "EURUSD.cash": "EURUSD",
-    # BTC variants
-    "BTCUSD": "BTC", "BTCUSDm": "BTC", "BTCUSDT": "BTC",
-    "BTCUSD.int": "BTC", "BTCUSDT.p": "BTC", "BTC": "BTC",
-    # NASDAQ variants
-    "NAS100": "NASDAQ", "NAS100m": "NASDAQ", "USTEC": "NASDAQ",
-    "US100": "NASDAQ", "NAS100.cash": "NASDAQ", "NDX": "NASDAQ",
-}
-
-def _mt5_symbol_to_asset(symbol: str) -> str | None:
-    """Map MT5 broker symbol → Radar asset key. Returns None nếu không nhận ra."""
-    return SYMBOL_TO_ASSET.get(symbol) or SYMBOL_TO_ASSET.get(symbol.upper())
 _hb_disconnect_last_alert = {}  # debounce 5min per account
 CO_MAX_PER_IP   = 5        # max checkout / IP trong 10 phút
 CO_WINDOW       = 600      # 10 phút
@@ -1387,37 +1249,22 @@ async def _ea_heartbeat_handler(
     db.commit()
     # ── Phase 4B: Radar Context — gắn radar_map vào heartbeat response ──────
     radar_map = {}
-    any_warn  = False  # init — set True nếu có symbol ở MINIMAL state
     try:
         from radar.router import get_radar_map_for_symbols
-        # FIX C-4: dùng SYMBOL_TO_ASSET map để resolve broker symbols → Radar asset keys
-        raw_syms = [s.strip().upper() for s in symbols.split(",") if s.strip()] if symbols else []
-        sym_list = []
-        for s in raw_syms:
-            asset = _mt5_symbol_to_asset(s)
-            if asset and asset not in sym_list:
-                sym_list.append(asset)
-            elif not asset:
-                # Symbol không nhận ra — log warn nhưng không drop
-                print(f"[HEARTBEAT] Unknown symbol '{s}' — not in SYMBOL_TO_ASSET map", flush=True)
+        sym_list = [s.strip().upper() for s in symbols.split(",") if s.strip()] if symbols else []
         if not sym_list and account:
             try:
                 unit_cfg = get_all_units().get(account, {})
                 cfg_sym  = unit_cfg.get("current_symbol", "")
                 if cfg_sym:
-                    mapped = _mt5_symbol_to_asset(cfg_sym)
-                    if mapped:
-                        sym_list = [mapped]
+                    sym_list = [cfg_sym.upper()]
             except Exception:
                 pass
         if not sym_list:
-            sym_list = ["GOLD"]  # default fallback — XAUUSD→GOLD via map
+            sym_list = ["XAUUSD"]
         radar_map = get_radar_map_for_symbols(sym_list, tf or "H1")
         any_avoid = any(v.get("allow_trade") is False for v in radar_map.values())
-        any_warn  = any(v.get("state_cap") == "MINIMAL" for v in radar_map.values())
         if any_avoid:
-            # FIX C-2: allow_trade=False được set khi gate=="BLOCK" (score<30) bởi engine._ea_params()
-            # Trước đây hardcode score<20 — vùng 20-29 bị lọt qua.
             print(f"[HEARTBEAT] RADAR_AVOID | account={account} symbols={sym_list}", flush=True)
             return {
                 "valid":      True,
@@ -1428,8 +1275,6 @@ async def _ea_heartbeat_handler(
                 "reason":     "RADAR_AVOID",
                 "radar_map":  radar_map,
             }
-        if any_warn:
-            print(f"[HEARTBEAT] RADAR_WARN | account={account} symbols={sym_list}", flush=True)
     except Exception as _re:
         print(f"[HEARTBEAT] Radar context error (non-fatal): {_re}", flush=True)
         radar_map = {}
@@ -1453,7 +1298,7 @@ async def _ea_heartbeat_handler(
         "emergency":  False,
         "status":     db_license.status,
         "expires_at": db_license.expires_at.isoformat() if db_license.expires_at else "lifetime",
-        "reason":     "RADAR_WARN" if any_warn else "OK",
+        "reason":     "OK",
         "radar_map":  radar_map,
     }
     if strategy_profile:

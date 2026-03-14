@@ -1,0 +1,43 @@
+name: Build Images
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        service:
+          - auth-service
+          - engine-service
+          - user-service
+          - radar-service
+          - notification-service
+          - ml-service
+          - scheduler-service
+
+    steps:
+
+    - uses: actions/checkout@v3
+
+    - name: Login Docker
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Build image
+      run: |
+        docker build \
+          -t ghcr.io/${{ github.repository }}/${{ matrix.service }}:latest \
+          ./services/${{ matrix.service }}
+
+    - name: Push image
+      run: |
+        docker push \
+          ghcr.io/${{ github.repository }}/${{ matrix.service }}:latest

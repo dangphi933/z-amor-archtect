@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 scripts/cleanup_hotfixes.py
 ===========================

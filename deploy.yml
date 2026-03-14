@@ -1,0 +1,83 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches: [main]
+
+# Chỉ 1 deploy chạy tại một thời điểm
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: false  # không cancel deploy đang chạy
+
+jobs:
+  deploy-staging:
+    name: Deploy → Staging
+    runs-on: ubuntu-latest
+    environment: staging  # có thể thêm manual approval gate ở đây
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup SSH Agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.STAGING_SSH_KEY }}
+
+      - name: Add staging server to known_hosts
+        run: |
+          ssh-keyscan -H ${{ secrets.STAGING_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to staging server
+        env:
+          STAGING_HOST: ${{ secrets.STAGING_HOST }}
+          STAGING_USER: ${{ secrets.STAGING_USER }}
+        run: |
+          ssh $STAGING_USER@$STAGING_HOST << 'DEPLOY_SCRIPT'
+          set -e  # Dừng ngay nếu có bất kỳ lỗi nào
+
+          echo "=== [1/6] Pulling latest code ==="
+          cd /opt/zarmor
+          git fetch origin main
+          git reset --hard origin/main
+
+          echo "=== [2/6] Installing Python dependencies ==="
+          pip install -r requirements.txt --quiet
+
+          echo "=== [3/6] Running Alembic migrations ==="
+          alembic upgrade head
+
+          echo "=== [4/6] Restarting service (graceful) ==="
+          pm2 reload z-armor-core --update-env
+          pm2 save
+
+          echo "=== [5/6] Waiting for startup ==="
+          sleep 8
+
+          echo "=== [6/6] Smoke test: GET /health ==="
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/health)
+          if [ "$HTTP_STATUS" != "200" ]; then
+            echo "❌ Smoke test FAILED — HTTP $HTTP_STATUS"
+            echo "--- Last 30 lines of PM2 logs ---"
+            pm2 logs z-armor-core --lines 30 --nostream
+            exit 1
+          fi
+
+          echo "✅ Deploy SUCCESS — HTTP $HTTP_STATUS"
+          curl -s http://localhost:8000/health | python3 -m json.tool
+          DEPLOY_SCRIPT
+
+      - name: Notify Telegram — Success
+        if: success()
+        run: |
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+            -d "chat_id=${{ secrets.TELEGRAM_ADMIN_CHAT_ID }}" \
+            -d "parse_mode=HTML" \
+            -d "text=✅ <b>Deploy SUCCESS</b>%0AZ-Armor Cloud → Staging%0ABranch: main%0ASHA: <code>${{ github.sha }}</code>%0ATriggered by: ${{ github.actor }}"
+
+      - name: Notify Telegram — Failure
+        if: failure()
+        run: |
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+            -d "chat_id=${{ secrets.TELEGRAM_ADMIN_CHAT_ID }}" \
+            -d "parse_mode=HTML" \
+            -d "text=❌ <b>Deploy FAILED</b>%0AZ-Armor Cloud → Staging%0ASHA: <code>${{ github.sha }}</code>%0ACheck: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
